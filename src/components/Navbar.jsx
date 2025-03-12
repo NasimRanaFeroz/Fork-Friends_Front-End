@@ -27,33 +27,33 @@ const Navbar = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a>Data Analysis & Visualization</a>
+              <a href="/data-analysis">Data Analysis & Visualization</a>
             </li>
             <li>
-              <a>Friend Recommendation</a>
+              <a href="/friend-recommendation">Friend Recommendation</a>
             </li>
             <li>
-              <a>Business Recommendation</a>
+              <a href="/business-recommendation">Business Recommendation</a>
             </li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">Fork & Friends</a>
+        <a href="/" className="btn btn-ghost text-xl">Fork & Friends</a>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a>Data Analysis & Visualization</a>
+            <a href="/data-analysis">Data Analysis & Visualization</a>
           </li>
           <li>
-            <a>Friend Recommendation</a>
+            <a href="/friend-recommendation">Friend Recommendation</a>
           </li>
           <li>
-            <a>Business Recommendation</a>
+            <a href="/business-recommendation">Business Recommendation</a>
           </li>
         </ul>
       </div>
       <div className="navbar-end">
-        <a className="btn">Give a Feedback</a>
+        <a href="/feedback" className="btn">Give a Feedback!</a>
       </div>
     </div>
   );

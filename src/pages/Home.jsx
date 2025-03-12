@@ -9,8 +9,6 @@ function Home() {
       <Navbar />
       <main className="flex-grow">
         <ImageSlider />
-        {/* <CategorySection /> */}
-        {/* Add more sections as needed */}
       </main>
       <Footer />
     </div>
