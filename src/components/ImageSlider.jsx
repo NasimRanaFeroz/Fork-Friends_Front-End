@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import image1 from '../assets/images/slider2.jpg';
-import image2 from '../assets/images/beauty.png';
-import image3 from '../assets/images/food.png';
-import image4 from '../assets/images/restaurant.png';
+import image1 from '../assets/beauty.png';
+import image2 from '../assets/food.png';
+import image3 from '../assets/restaurant.png';
 
 function ImageSlider() {
-    const images = [image3, image4, image2, image1];
+    const images = [image2, image3, image1];
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const nextSlide = () => {
@@ -15,7 +14,7 @@ function ImageSlider() {
     useEffect(() => {
         const interval = setInterval(() => {
             nextSlide();
-        }, 5000);
+        }, 8000);
 
         return () => clearInterval(interval);
     }, []);

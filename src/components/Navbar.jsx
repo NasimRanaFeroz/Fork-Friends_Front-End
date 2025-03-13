@@ -1,11 +1,23 @@
 import React from "react";
+import { Link, NavLink } from "react-router-dom";
 
 const Navbar = () => {
+  const navLinkStyles = ({ isActive }) => {
+    return isActive 
+      ? "font-bold text-primary" 
+      : "";
+  };
+
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+          <div 
+            tabIndex={0} 
+            role="button" 
+            className="btn btn-ghost lg:hidden"
+            aria-label="Navigation menu"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -13,47 +25,62 @@ const Navbar = () => {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              {" "}
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
                 d="M4 6h16M4 12h8m-8 6h16"
-              />{" "}
+              />
             </svg>
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[100] mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a href="/data-analysis">Data Analysis & Visualization</a>
+              <NavLink to="/data-analysis" className={navLinkStyles}>
+                Data Analysis & Visualization
+              </NavLink>
             </li>
             <li>
-              <a href="/friend-recommendation">Friend Recommendation</a>
+              <NavLink to="/friend-recommendation" className={navLinkStyles}>
+                Friend Recommendation
+              </NavLink>
             </li>
             <li>
-              <a href="/business-recommendation">Business Recommendation</a>
+              <NavLink to="/business-recommendation" className={navLinkStyles}>
+                Business Recommendation
+              </NavLink>
             </li>
           </ul>
         </div>
-        <a href="/" className="btn btn-ghost text-xl">Fork & Friends</a>
+        <Link to="/" className="btn btn-ghost text-xl">Fork & Friends</Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a href="/data-analysis">Data Analysis & Visualization</a>
+            <NavLink to="/data-analysis" className={navLinkStyles}>
+              Data Analysis & Visualization
+            </NavLink>
           </li>
           <li>
-            <a href="/friend-recommendation">Friend Recommendation</a>
+            <NavLink to="/friend-recommendation" className={navLinkStyles}>
+              Friend Recommendation
+            </NavLink>
           </li>
           <li>
-            <a href="/business-recommendation">Business Recommendation</a>
+            <NavLink to="/business-recommendation" className={navLinkStyles}>
+              Business Recommendation
+            </NavLink>
           </li>
         </ul>
       </div>
       <div className="navbar-end">
-        <a href="/feedback" className="btn">Give a Feedback!</a>
+        <NavLink to="/feedback" className={({ isActive }) => 
+          `btn ${isActive ? "btn-primary" : ""}`
+        }>
+          Give a Feedback!
+        </NavLink>
       </div>
     </div>
   );
