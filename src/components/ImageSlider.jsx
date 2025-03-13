@@ -65,7 +65,7 @@ function ImageSlider() {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
 
-            <div className="flex flex-col gap-6 items-start justify-center h-full w-1/3 ml-20 relative z-10">
+            <div className="flex flex-col gap-6 items-start justify-center h-full w-1/3 md:ml-20 ml-5 relative z-10">
               <div className="flex flex-col gap-2">
                 <p className="text-white text-4xl font-bold bebas-neue">
                   {slide.title}
