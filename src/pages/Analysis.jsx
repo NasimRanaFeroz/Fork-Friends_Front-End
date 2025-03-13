@@ -7,7 +7,7 @@ function Analysis() {
   // Style function for NavLink - applies active styles when route is active
   const navLinkStyles = ({ isActive }) => {
     return isActive 
-      ? "font-bold bg-primary text-primary-content" 
+      ? "font-bold bg-[#ff5722] text-primary-content roboto-bold" 
       : "";
   };
 
@@ -21,7 +21,7 @@ function Analysis() {
           <Outlet />
           <label
             htmlFor="my-drawer-2"
-            className="btn btn-primary drawer-button lg:hidden"
+            className="btn btn-primary drawer-button lg:hidden roboto-bold"
           >
             Open drawer
           </label>
@@ -32,7 +32,7 @@ function Analysis() {
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+          <ul className="menu bg-base-200 text-md min-h-full w-80 p-4 roboto-regular">
             <li>
               <NavLink to="/data-analysis" end className={navLinkStyles}>
                 Business Analysis

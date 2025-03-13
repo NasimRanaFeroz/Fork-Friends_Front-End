@@ -20,7 +20,7 @@ function ImageSlider() {
     }, []);
 
     return (
-        <div className="relative w-full mx-auto h-159">
+        <div className="relative w-full mx-auto h-159 bg-base-300">
             <div className="overflow-hidden relative h-full">
                 {images.map((image, index) => (
                     <div
@@ -29,7 +29,7 @@ function ImageSlider() {
                         style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
                     >
                         <div className="flex items-center justify-center h-full">
-                            <div className="text-white text-4xl font-bold">Femboy Tahmid</div>
+                            <div className="text-white text-4xl font-bold roboto-bold">Femboy Tahmid</div>
                         </div>
                     </div>
                 ))}

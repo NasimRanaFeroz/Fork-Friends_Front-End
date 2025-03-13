@@ -5,7 +5,7 @@ import ImageSlider from '../components/ImageSlider';
 
 function Home() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-base-300">
       <Navbar />
       <main className="flex-grow">
         <ImageSlider />

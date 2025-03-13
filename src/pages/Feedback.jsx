@@ -56,11 +56,11 @@ const Feedback = () => {
   return (
     <div>
       <Navbar />
-      <div className="h-auto sm:h-[40rem] bg-[#1B263B] bg-cover bg-center flex justify-center items-center">
-        <div className="grid grid-cols-1 xl:w-1/2 mt-6 mb-4 md:px-8 gap-4 rounded-lg bg-[#202b43ea] shadow-xl transition-shadow duration-300 hover:shadow-2xl">
+      <div className="h-auto sm:h-[40rem] bg-base-200 bg-cover bg-center flex justify-center items-center">
+        <div className="grid grid-cols-1 xl:w-1/2 mt-6 mb-4 md:px-8 gap-4 rounded-lg bg-base-100 shadow-xl transition-shadow duration-300 hover:shadow-2xl">
           <div>
-            <p className="text-2xl text-white p-3 mt-2 text-center">
-              Give a feedback!
+            <p className="text-2xl text-[#ff5722] p-3 mt-2 text-center roboto-bold">
+              Give us a feedback!
             </p>
           </div>
           <div className="flex justify-center items-center ">
@@ -68,7 +68,7 @@ const Feedback = () => {
               onSubmit={handleSubmit}
               className=" rounded-lg pt-1 w-full px-4"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-2 px-2 sm:px-4 gap-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 sm:gap-2 px-2 sm:px-4 gap-y-4 roboto-regular">
                 <div>
                   <label
                     htmlFor="name"
@@ -80,7 +80,7 @@ const Feedback = () => {
                     id="name"
                     name="name"
                     type="text"
-                    className="p-2 w-full border text-black bg-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    className="p-2 w-full border text-black bg-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600 focus:outline-none"
                     placeholder="Your Name"
                     required
                     value={name}
@@ -98,7 +98,7 @@ const Feedback = () => {
                     id="email"
                     name="email"
                     type="email"
-                    className="mt-1 p-2 w-full border text-black bg-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                    className="mt-1 p-2 w-full border text-black bg-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600 focus:outline-none"
                     placeholder="Your Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -117,7 +117,7 @@ const Feedback = () => {
                   rows="3"
                   id="message"
                   name="message"
-                  className="mt-1 p-2 text-black w-full border bg-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                  className="mt-1 p-2 text-black w-full border bg-gray-300 rounded-lg focus:ring-2 focus:ring-orange-600 focus:outline-none"
                   placeholder="Your Message"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -130,9 +130,9 @@ const Feedback = () => {
                   disabled={isLoading}
                   className={`${
                     isLoading
-                      ? "bg-blue-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-500"
-                  } text-white text-base px-6 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400`}
+                      ? "bg-orange-600 cursor-not-allowed"
+                      : "bg-orange-600 hover:bg-[#e64a19]"
+                  } text-white text-base px-6 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-600`}
                 >
                   {isLoading ? "Sending..." : "Send Email"}
                 </button>
@@ -143,22 +143,22 @@ const Feedback = () => {
               </div>
             </form>
           </div>
-          <div>
+          <div className="roboto-regular">
             <p className="text-center text-sm sm:text-base text-white">
               or send us an e-mail at
             </p>
             <p className="text-center text-white text-base sm:text-lg">
-              feroznasimrana@gmail.com
+              femboytahmid@gmail.com
             </p>
           </div>
-          <div className="border-t-2 border-text-white">
+          <div className="border-t-2 border-text-white roboto-regular">
             <p className="text-center text-sm sm:text-base text-white mt-2">
               Connect with us on other platforms
             </p>
             <div className="text-lg p-2 text-white flex justify-center gap-3 sm:gap-4">
               <div className="flex gap-2 sm:gap-3 pt-1">
                 <a
-                  className="p-2 border-sky-400 rounded-lg shadow-sm hover:shadow-md hover:shadow-sky-500 transition duration-300"
+                  className="p-2 border-orange-400 rounded-lg shadow-sm hover:shadow-md hover:shadow-orange-500 transition duration-300"
                   href="https://github.com/NasimRanaFeroz"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -166,7 +166,7 @@ const Feedback = () => {
                   <FaGithub />
                 </a>
                 <a
-                  className="p-2 border-sky-400 rounded-lg shadow-sm hover:shadow-md hover:shadow-sky-500 transition duration-300"
+                  className="p-2 border-orange-400 rounded-lg shadow-sm hover:shadow-md hover:shadow-orange-500 transition duration-300"
                   href="https://www.linkedin.com/in/nasim-rana-feroz"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -174,7 +174,7 @@ const Feedback = () => {
                   <FaLinkedin />
                 </a>
                 <a
-                  className="p-2 border-sky-400 rounded-lg shadow-sm hover:shadow-md hover:shadow-sky-500 transition duration-300"
+                  className="p-2 border-orange-400 rounded-lg shadow-sm hover:shadow-md hover:shadow-orange-500 transition duration-300"
                   href="https://www.instagram.com/nasim_rana_feroz/"
                   target="_blank"
                   rel="noopener noreferrer"

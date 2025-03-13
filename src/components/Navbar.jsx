@@ -4,12 +4,12 @@ import { Link, NavLink } from "react-router-dom";
 const Navbar = () => {
   const navLinkStyles = ({ isActive }) => {
     return isActive 
-      ? "font-bold text-primary" 
+      ? "font-bold text-[#ff5722]" 
       : "";
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    <div className="navbar bg-base-300 shadow-sm">
       <div className="navbar-start">
         <div className="dropdown">
           <div 
@@ -54,10 +54,10 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <Link to="/" className="btn btn-ghost text-xl">Fork & Friends</Link>
+        <Link to="/" className="btn btn-ghost bebas-neue-regular text-3xl text-[#ff5722]">Fork & Friends</Link>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
+        <ul className="menu menu-horizontal px-1 roboto-regular">
           <li>
             <NavLink to="/data-analysis" className={navLinkStyles}>
               Data Analysis & Visualization
@@ -75,9 +75,9 @@ const Navbar = () => {
           </li>
         </ul>
       </div>
-      <div className="navbar-end">
+      <div className="navbar-end roboto-regular">
         <NavLink to="/feedback" className={({ isActive }) => 
-          `btn ${isActive ? "btn-primary" : ""}`
+          `btn ${isActive ? "bg-[#ff5722] text-white border-[#ff5722]" : "bg-orange-600 hover:bg-[#e64a19] hover:border-[#e64a19]"}`
         }>
           Give a Feedback!
         </NavLink>
