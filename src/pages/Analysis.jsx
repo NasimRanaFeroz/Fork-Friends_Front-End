@@ -4,7 +4,6 @@ import Footer from "../components/Footer";
 import { Outlet, NavLink } from "react-router-dom";
 
 function Analysis() {
-  // Style function for NavLink - applies active styles when route is active
   const navLinkStyles = ({ isActive }) => {
     return isActive 
       ? "font-bold bg-[#ff5722] text-primary-content roboto-bold" 
@@ -32,7 +31,7 @@ function Analysis() {
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <ul className="menu bg-base-200 text-md min-h-full w-80 p-4 roboto-regular">
+          <ul className="menu bg-base-200 text-lg min-h-full w-70 p-4 roboto-regular">
             <li>
               <NavLink to="/data-analysis" end className={navLinkStyles}>
                 Business Analysis

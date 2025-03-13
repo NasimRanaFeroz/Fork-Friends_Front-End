@@ -35,7 +35,7 @@ const Navbar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[100] mt-3 w-52 p-2 shadow"
+            className="menu menu-sm dropdown-content text-lg bg-base-100 rounded-box z-[100] mt-3 w-52 p-2 shadow"
           >
             <li>
               <NavLink to="/data-analysis" className={navLinkStyles}>
@@ -54,10 +54,10 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <Link to="/" className="btn btn-ghost bebas-neue-regular text-3xl text-[#ff5722]">Fork & Friends</Link>
+        <Link to="/" className="btn btn-ghost bebas-neue-regular text-4xl text-[#ff5722]">Fork & Friends</Link>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1 roboto-regular">
+        <ul className="menu menu-horizontal px-1 gap-3 roboto-regular text-lg">
           <li>
             <NavLink to="/data-analysis" className={navLinkStyles}>
               Data Analysis & Visualization
@@ -75,7 +75,7 @@ const Navbar = () => {
           </li>
         </ul>
       </div>
-      <div className="navbar-end roboto-regular">
+      <div className="navbar-end roboto-regular text-lg">
         <NavLink to="/feedback" className={({ isActive }) => 
           `btn ${isActive ? "bg-[#ff5722] text-white border-[#ff5722]" : "bg-orange-600 hover:bg-[#e64a19] hover:border-[#e64a19]"}`
         }>

@@ -1,41 +1,89 @@
-import React, { useState, useEffect } from 'react';
-import image1 from '../assets/beauty.png';
-import image2 from '../assets/food.png';
-import image3 from '../assets/restaurant.png';
+import React, { useState, useEffect } from "react";
+import image1 from "../assets/beauty.png";
+import image2 from "../assets/food.png";
+import image3 from "../assets/restaurant.png";
 
 function ImageSlider() {
-    const images = [image2, image3, image1];
-    const [currentIndex, setCurrentIndex] = useState(0);
+  const slides = [
+    {
+      image: image2,
+      title: "Fork & Friends",
+      subtitle: "Eat Together, Share Together",
+      description:
+        "Experience the joy of communal dining with our specially crafted sharing platters. Perfect for friends and family gatherings, our food brings people together around the table for unforgettable moments and conversations.",
+    },
+    {
+      image: image3,
+      title: "Exquisite Dining",
+      subtitle: "Culinary Excellence in Every Bite",
+      description:
+        "Step into our elegant restaurant atmosphere where every detail is designed to enhance your dining experience. Our chefs combine traditional techniques with innovative approaches to create dishes that delight all your senses.",
+    },
+    {
+      image: image1,
+      title: "Beauty in Simplicity",
+      subtitle: "Artfully Crafted Cuisine",
+      description:
+        "We believe in the beauty of simple, quality ingredients prepared with care and expertise. Our minimalist approach highlights natural flavors and textures, creating visually stunning dishes that taste as amazing as they look.",
+    },
+  ];
 
-    const nextSlide = () => {
-        setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
-    };
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            nextSlide();
-        }, 8000);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <div className="relative w-full mx-auto h-159 bg-base-300">
-            <div className="overflow-hidden relative h-full">
-                {images.map((image, index) => (
-                    <div
-                        key={index}
-                        className={`absolute inset-0 transition-opacity duration-1000 ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
-                        style={{ backgroundImage: `url(${image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                    >
-                        <div className="flex items-center justify-center h-full">
-                            <div className="text-white text-4xl font-bold roboto-bold">Femboy Tahmid</div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
+  const nextSlide = () => {
+    setCurrentIndex((prevIndex) =>
+      prevIndex === slides.length - 1 ? 0 : prevIndex + 1
     );
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 8000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="relative w-full h-screen bg-base-300">
+      <div className="overflow-hidden relative h-full flex items-start">
+        {slides.map((slide, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-all duration-1000 ${
+              index === currentIndex
+                ? "opacity-100 translate-x-0"
+                : index < currentIndex
+                ? "opacity-0 -translate-x-full"
+                : "opacity-0 translate-x-full"
+            }`}
+            style={{
+              backgroundImage: `url(${slide.image})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent"></div>
+
+            <div className="flex flex-col gap-6 items-start justify-center h-full w-1/3 ml-20 relative z-10">
+              <div className="flex flex-col gap-2">
+                <p className="text-white text-4xl font-bold bebas-neue">
+                  {slide.title}
+                </p>
+                <p className="text-white text-2xl font-bold bebas-neue">
+                  {slide.subtitle}
+                </p>
+              </div>
+
+              <div className="text-white text-xl font-bold roboto-light">
+                {slide.description}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default ImageSlider;
