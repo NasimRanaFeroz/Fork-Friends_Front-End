@@ -149,7 +149,7 @@ const Feedback = () => {
   return (
     <div>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-b from-base-300 to-base-200 pb-12 px-4 sm:px-6 lg:px-8 flex justify-center items-center">
+      <div className="min-h-screen bg-gradient-to-b from-base-300 to-base-200 pb-12 px-4 sm:px-6 lg:px-8 flex justify-center items-center pt-24">
         <div className="max-w-2xl w-full bg-base-100 rounded-xl shadow-2xl overflow-hidden transition-all duration-300 transform hover:scale-[1.01]">
           {/* Form Header */}
           <div className="bg-gradient-to-r from-orange-600 to-orange-500 p-6">
@@ -305,7 +305,7 @@ const Feedback = () => {
                         required
                       />
                       <label htmlFor="privacy" className="ml-2 block text-sm text-gray-300">
-                        I agree to the <a href="#" className="text-orange-500 hover:text-orange-400">privacy policy</a> and consent to being contacted.
+                        I agree to the <a href="/privacy-policy" className="text-orange-500 hover:text-orange-400">privacy policy</a> and consent to being contacted.
                       </label>
                     </div>
                     

@@ -113,10 +113,9 @@ const Navbar = () => {
               </li>
             </ul>
             
-            {/* Right Section: Feedback Button */}
             <div className="flex-shrink-0">
               <NavLink 
-                to="/feedback" 
+                to="/about-us" 
                 className={({ isActive }) => 
                   `px-5 py-2 rounded-lg font-medium transition-all duration-300 ${
                     isActive 
@@ -124,9 +123,9 @@ const Navbar = () => {
                       : "bg-orange-600 text-white hover:bg-[#e64a19] hover:shadow-lg hover:shadow-orange-500/20"
                   }`
                 }
-                aria-current={location.pathname === "/feedback" ? "page" : undefined}
+                aria-current={location.pathname === "/about-us" ? "page" : undefined}
               >
-                Give Feedback
+                About Us
               </NavLink>
             </div>
           </div>
@@ -201,7 +200,7 @@ const Navbar = () => {
                   className="pt-2"
                 >
                   <NavLink
-                    to="/feedback"
+                    to="/about-us"
                     className={({ isActive }) => 
                       `block py-3 text-center rounded-lg ${
                         isActive 
@@ -211,7 +210,7 @@ const Navbar = () => {
                     }
                     onClick={() => setIsOpen(false)}
                   >
-                    Give Feedback
+                    About Us
                   </NavLink>
                 </motion.li>
               </ul>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom"; // Import Link for navigation
 import image1 from "../assets/beauty.png";
 import image2 from "../assets/food.png";
 import image3 from "../assets/restaurant.png";
@@ -29,6 +30,7 @@ function ImageSlider() {
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showFeedbackButton, setShowFeedbackButton] = useState(false);
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) =>
@@ -41,7 +43,15 @@ function ImageSlider() {
       nextSlide();
     }, 8000);
 
-    return () => clearInterval(interval);
+    // Show feedback button with a delay for the animation
+    const buttonTimer = setTimeout(() => {
+      setShowFeedbackButton(true);
+    }, 1500);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(buttonTimer);
+    };
   }, []);
 
   return (
@@ -82,6 +92,17 @@ function ImageSlider() {
           </div>
         ))}
       </div>
+
+      <Link 
+        to="/feedback"
+        className={`fixed bottom-15 right-4 z-50 bg-[#ff5722] hover:bg-[#e64a19] text-white font-medium py-3 px-6 rounded-full shadow-lg transition-all duration-700 ease-in-out transform ${
+          showFeedbackButton 
+            ? "opacity-100 translate-x-0" 
+            : "opacity-0 translate-x-full"
+        } hover:scale-105`}
+      >
+        Give a Feedback!
+      </Link>
     </div>
   );
 }

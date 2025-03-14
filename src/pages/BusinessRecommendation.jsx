@@ -222,16 +222,13 @@ function BusinessRecommendation() {
             </div>
           </div>
           
-          {/* Chat interface */}
           <div className="md:col-span-2">
             <div className="bg-base-200 rounded-lg shadow-lg overflow-hidden h-[600px] flex flex-col">
-              {/* Header */}
               <div className="bg-[#ff5722] text-white p-4">
                 <h1 className="text-2xl font-bold bebas-neue">Business Recommendation AI</h1>
                 <p className="opacity-90">Powered by collaborative filtering, NLP, and location data</p>
               </div>
               
-              {/* Chat area - with both scrollbars hidden */}
               <div 
                 className="flex-grow overflow-y-auto p-4"
                 style={noScrollbarStyles}

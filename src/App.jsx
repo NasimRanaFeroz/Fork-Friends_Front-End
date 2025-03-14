@@ -11,6 +11,9 @@ import BusinessAnalysis from "./components/BusinessAnalysis";
 import RatingAnalysis from "./components/RatingAnalysis";
 import CheckInAnalysis from "./components/CheckInAnalysis";
 import ComprehensiveAnalysis from "./components/ComprehensiveAnalysis";
+import AboutUs from "./pages/AboutUs";
+import FAQ from "./pages/FAQ";
+import LegalPage from "./pages/LegalPage";
 
 function App() {
   return (
@@ -37,6 +40,10 @@ function App() {
           element={<FriendRecommendation />}
         />
         <Route path="feedback" element={<Feedback />} />
+        <Route path="about-us" element={<AboutUs />} />
+        <Route path="faq" element={<FAQ />} />
+        <Route path="privacy-policy" element={<LegalPage />} />
+        <Route path="*" element={<Home />} />
       </Routes>
     </div>
   );
