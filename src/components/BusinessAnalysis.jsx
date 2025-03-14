@@ -1,19 +1,92 @@
-import React from "react";
+import React, { useState } from "react";
+
+import CommonMerchants from "../components/business/CommonMerchants";
+import MerchantCities from "../components/business/MerchantCities";
+
 
 const BusinessAnalysis = () => {
+  // State to track which analysis is selected
+  const [selectedAnalysis, setSelectedAnalysis] = useState(null);
+
+  const analysisItems = [
+    { id: 1, title: "Top 20 Most Common Merchants in the U.S.", path: "common-merchants" },
+    { id: 2, title: "Top 10 Cities with Most Merchants in the U.S.", path: "merchant-cities" },
+    { id: 3, title: "Top 5 States with Most Merchants in the U.S.", path: "merchant-states" },
+    { id: 4, title: "Top 20 Merchants with Average Ratings", path: "merchant-ratings" },
+    { id: 5, title: "Top 10 Cities with Highest Ratings", path: "highest-rated-cities" },
+    { id: 6, title: "Category Distribution Analysis", path: "category-count" },
+    { id: 7, title: "Top 10 Most Frequent Categories", path: "top-categories" },
+    { id: 8, title: "Top 20 Merchants with Most Five-Star Reviews", path: "five-star-merchants" },
+    { id: 9, title: "Restaurant Types Distribution", path: "restaurant-types" },
+    { id: 10, title: "Review Count by Restaurant Type", path: "restaurant-reviews" },
+    { id: 11, title: "Rating Distribution by Restaurant Type", path: "restaurant-ratings" },
+  ];
+
+  // Function to render the selected analysis component
+  const renderAnalysisComponent = () => {
+    // You'll need to implement this function to return the appropriate component
+    // based on the selectedAnalysis path
+    // For example:
+    switch(selectedAnalysis) {
+      case "common-merchants":
+        return <CommonMerchants />;
+      case "merchant-cities":
+        return <MerchantCities />;
+      // Add cases for all your analysis components
+      default:
+        // For now, just showing a placeholder
+        return (
+          <div className="p-6 bg-white rounded-lg">
+            <button 
+              onClick={() => setSelectedAnalysis(null)}
+              className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Back to Dashboard
+            </button>
+            <h2 className="text-2xl font-bold mb-4">
+              {analysisItems.find(item => item.path === selectedAnalysis)?.title}
+            </h2>
+            <p>Analysis component for {selectedAnalysis} would render here</p>
+          </div>
+        );
+    }
+  };
+
   return (
-    <div className="flex flex-col">
-      <div>1. Identify the 20 most common merchants in the U.S.</div>
-      <div>2. Identify the top 10 cities with the most merchants in the U.S.</div>
-      <div>3. Identify the top 5 states with the most merchants in the U.S.</div>
-      <div>4. Identify the 20 most common merchants in the U.S. and display their average ratings.</div>
-      <div>5. Identify the top 10 cities with the highest ratings.</div>
-      <div>6. Count the number of different categories.</div>
-      <div>7. Identify the top 10 most frequent categories and their count.</div>
-      <div>8. Identify the top 20 merchants that received the most five-star reviews.</div>
-      <div>9. Count the number of restaurant types (Chinese, American, Mexican).</div>
-      <div>10. Count the number of reviews for each restaurant type (Chinese, American, Mexican).</div>
-      <div>11. Analyze the rating distribution for different restaurant types (Chinese, American, Mexican).</div>
+    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      
+      {selectedAnalysis ? (
+        // Render the selected analysis component
+        renderAnalysisComponent()
+      ) : (
+        // Render the grid of analysis cards
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {analysisItems.map((item) => (
+            <div
+              key={item.id}
+              onClick={() => setSelectedAnalysis(item.path)}
+              className="block p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-blue-200 group cursor-pointer"
+            >
+              <div className="flex items-center">
+                <div className="w-10 h-10 flex items-center justify-center bg-blue-600 text-white rounded-full mr-4 group-hover:bg-blue-700 transition-colors">
+                  {item.id}
+                </div>
+                <h2 className="text-lg font-semibold text-gray-700 group-hover:text-blue-700 transition-colors">
+                  {item.title}
+                </h2>
+              </div>
+              <div className="mt-3 flex justify-end">
+                <span className="text-blue-600 group-hover:text-blue-800 transition-colors text-sm font-medium flex items-center">
+                  View Analysis
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
