@@ -10,6 +10,14 @@ function Analysis() {
   const [pageTitle, setPageTitle] = useState("Business Analysis");
 
   useEffect(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }, []);
+
+  useEffect(() => {
     const path = location.pathname;
     if (path === "/data-analysis") setPageTitle("Business Analysis");
     else if (path === "/data-analysis/user-analysis") setPageTitle("User Analysis");

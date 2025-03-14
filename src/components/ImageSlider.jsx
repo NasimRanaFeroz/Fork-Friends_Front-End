@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link } from "react-router-dom";
 import image1 from "../assets/beauty.png";
 import image2 from "../assets/food.png";
 import image3 from "../assets/restaurant.png";
@@ -11,23 +11,23 @@ function ImageSlider() {
       title: "Fork & Friends",
       subtitle: "Eat Together, Share Together",
       description:
-        "Experience the joy of communal dining with our specially crafted sharing platters. Perfect for friends and family gatherings, our food brings people together around the table for unforgettable moments and conversations.",
+        "Our platform celebrates the social essence of dining by connecting people through food. 'Eat Together, Share Together' represents our core mission - creating meaningful connections and memorable experiences around the table. This website serves as your gateway to discovering restaurants that specialize in communal dining experiences, perfect for strengthening bonds with friends and family.",
     },
     {
       image: image3,
-      title: "Exquisite Dining",
-      subtitle: "Culinary Excellence in Every Bite",
+      title: "Smart Recommendations",
+      subtitle: "Data-Driven Dining Choices",
       description:
-        "Step into our elegant restaurant atmosphere where every detail is designed to enhance your dining experience. Our chefs combine traditional techniques with innovative approaches to create dishes that delight all your senses.",
+        "Discover restaurants tailored to your preferences through our advanced recommendation system. We analyze your dining history, ratings, and location to suggest businesses you'll love. Our personalized recommendations use collaborative filtering and natural language processing to understand your unique tastes, ensuring each suggestion matches your dining style and preferences.",
     },
     {
       image: image1,
-      title: "Beauty in Simplicity",
-      subtitle: "Artfully Crafted Cuisine",
+      title: "Connect Through Cuisine",
+      subtitle: "Find Friends Who Share Your Taste",
       description:
-        "We believe in the beauty of simple, quality ingredients prepared with care and expertise. Our minimalist approach highlights natural flavors and textures, creating visually stunning dishes that taste as amazing as they look.",
+        "Our friend recommendation feature connects you with like-minded food enthusiasts. By analyzing review patterns, dining preferences, and social interactions, we identify potential friends with similar culinary interests. Whether you're looking for a dinner companion or expanding your social circle, our platform helps you build connections based on shared food experiences.",
     },
-  ];
+  ];  
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFeedbackButton, setShowFeedbackButton] = useState(false);
@@ -43,7 +43,6 @@ function ImageSlider() {
       nextSlide();
     }, 8000);
 
-    // Show feedback button with a delay for the animation
     const buttonTimer = setTimeout(() => {
       setShowFeedbackButton(true);
     }, 1500);

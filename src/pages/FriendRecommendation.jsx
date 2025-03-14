@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef,useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {
@@ -12,6 +12,15 @@ import {
 } from "react-icons/fi";
 
 function FriendRecommendation() {
+
+useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  }, []);
+
   const [messages, setMessages] = useState([
     {
       id: 1,

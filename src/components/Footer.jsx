@@ -22,7 +22,6 @@ const Footer = () => {
           
           {/* Quick Links */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-            {/* Site Links */}
             <div>
               <h3 className="font-bold mb-4">Explore</h3>
               <ul className="space-y-2">
@@ -32,7 +31,6 @@ const Footer = () => {
               </ul>
             </div>
             
-            {/* Resources */}
             <div>
               <h3 className="font-bold mb-4">Resources</h3>
               <ul className="space-y-2">
@@ -42,12 +40,11 @@ const Footer = () => {
               </ul>
             </div>
             
-            {/* Contact */}
             <div>
               <h3 className="font-bold mb-4">Contact</h3>
               <ul className="space-y-2">
                 <li><Link to="/feedback" className="hover:text-[#ff5722] transition-colors">Give Feedback</Link></li>
-                <li><a href="mailto:contact@forkandfriends.com" className="hover:text-[#ff5722] transition-colors">contact@forkandfriends.com</a></li>
+                <li><a href="mailto:contact@forkandfriends.com" className="hover:text-[#ff5722] transition-colors">feroznasimrana@gmail.com</a></li>
               </ul>
             </div>
           </div>

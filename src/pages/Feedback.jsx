@@ -1,12 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaGithub, FaLinkedin, FaSpinner, FaCheck } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
-import { MdEmail, MdFeedback, MdArrowForward } from "react-icons/md";
+import { MdEmail, MdArrowForward } from "react-icons/md";
 import emailjs from "@emailjs/browser";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 const Feedback = () => {
+
+useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  }, []);
+
   // Form state
   const [formData, setFormData] = useState({
     name: "",
