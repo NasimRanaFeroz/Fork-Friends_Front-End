@@ -1,4 +1,4 @@
-import React, { useState, useRef,useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {
@@ -9,22 +9,24 @@ import {
   FiHeart,
   FiStar,
   FiCoffee,
+  FiChevronDown,
+  FiCheck,
+  FiMapPin,
 } from "react-icons/fi";
 
 function FriendRecommendation() {
-
-useEffect(() => {
+  useEffect(() => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   }, []);
 
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hi there! I'm your Friend Finder AI. I can recommend potential friends based on your interests, dining preferences, and social connections. How can I help you today?",
+      text: "Hi there! I'm your Friend Finder AI. I can recommend potential friends based on your food interests, restaurant preferences, and social connections. How can I help you today?",
       sender: "ai",
       timestamp: new Date(),
       type: "greeting",
@@ -32,100 +34,158 @@ useEffect(() => {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [userProfile] = useState({
-    interests: ["Italian cuisine", "Hiking", "Jazz music", "Photography"],
-    topRatedPlaces: [
-      "Bella Trattoria",
-      "Mountain View Trail",
-      "Blue Note Jazz Club",
-    ],
-    recentActivity: [
-      "Reviewed Bella Trattoria (5★)",
-      "Checked in at Central Park",
-      "Liked The Coffee House",
-    ],
-  });
+
+  // Dropdown state for food types
+  const [interestOptions] = useState([
+    "Italian",
+    "Japanese",
+    "Chinese",
+    "Mexican",
+    "Indian",
+    "Thai",
+    "Mediterranean",
+    "French",
+    "American",
+    "Korean",
+    "Vietnamese",
+    "Middle Eastern",
+    "Vegetarian",
+    "Vegan",
+    "Seafood",
+    "Steakhouse",
+    "Breakfast",
+    "Brunch",
+    "Dinner",
+  ]);
+
+  // Dropdown state for restaurants
+  const [placeOptions] = useState([
+    "Bella Trattoria",
+    "Sakura Sushi",
+    "Spice Garden",
+    "El Mariachi",
+    "Golden Dragon",
+    "Le Petit Bistro",
+    "The Steakhouse",
+    "Ocean Breeze Seafood",
+    "Bob's Kitchen",
+    "Olive & Vine",
+    "Seoul BBQ",
+    "Pho Delicious",
+    "Acropolis Grill",
+    "Burger Joint",
+    "Morning Dew Café",
+    "Pasta Paradise",
+    "Sushi Heaven",
+    "Taco Fiesta",
+    "Curry House",
+  ]);
+
+  const [cityOptions] = useState([
+    "New York, NY",
+    "Los Angeles, CA",
+    "Chicago, IL",
+    "Houston, TX",
+    "Miami, FL",
+  ]);
+
+  // Selected items state
+  const [selectedInterests, setSelectedInterests] = useState([
+    "Italian",
+    "Japanese",
+    "Thai",
+    "Dinner",
+  ]);
+  const [selectedPlaces, setSelectedPlaces] = useState([
+    "Bella Trattoria",
+    "Sakura Sushi",
+    "Bob's Kitchen",
+  ]);
+  const [selectedCity, setSelectedCity] = useState("New York, NY");
+
+  // Dropdown visibility state
+  const [interestsOpen, setInterestsOpen] = useState(false);
+  const [placesOpen, setPlacesOpen] = useState(false);
+  const [cityOpen, setCityOpen] = useState(false);
+
+  // Dropdown refs for click outside handling
+  const interestsRef = useRef(null);
+  const placesRef = useRef(null);
+  const cityRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  const aiResponses = {
-    collaborative: [
-      {
-        text: "Based on your dining preferences, I'd recommend connecting with Alex J. You both gave 5-star reviews to Bella Trattoria and seem to enjoy authentic Italian cuisine. Alex also frequently visits jazz clubs like you!",
-        icon: <FiUsers className="text-blue-500" />,
-        friendDetails: {
-          name: "Alex J.",
-          mutualInterests: ["Italian food", "Jazz music"],
-          compatibility: "87%",
-          photo: "https://randomuser.me/api/portraits/men/32.jpg",
-        },
-      },
-      {
-        text: "You and Taylor M. have very similar taste in restaurants! You've both rated many of the same places within 1 star of each other. Taylor also enjoys photography and has some great hiking photos in their profile.",
-        icon: <FiUsers className="text-blue-500" />,
-        friendDetails: {
-          name: "Taylor M.",
-          mutualInterests: ["Photography", "Hiking", "Fine dining"],
-          compatibility: "92%",
-          photo: "https://randomuser.me/api/portraits/women/45.jpg",
-        },
-      },
-    ],
-    interest: [
-      {
-        text: "I analyzed your reviews and found that Jordan P. writes about Italian cuisine with the same enthusiasm you do! Their reviews mention 'authentic flavors' and 'traditional recipes' just like yours. You two might enjoy discussing culinary experiences.",
-        icon: <FiHeart className="text-red-500" />,
-        friendDetails: {
-          name: "Jordan P.",
-          mutualInterests: ["Italian cuisine", "Cooking", "Food photography"],
-          compatibility: "85%",
-          photo: "https://randomuser.me/api/portraits/men/67.jpg",
-        },
-      },
-      {
-        text: "Based on the language in your reviews and bio, you and Riley S. share a passion for jazz music and photography. Riley frequently mentions composition techniques in their reviews of art venues, similar to your photography comments.",
-        icon: <FiHeart className="text-red-500" />,
-        friendDetails: {
-          name: "Riley S.",
-          mutualInterests: ["Jazz", "Photography", "Art exhibitions"],
-          compatibility: "89%",
-          photo: "https://randomuser.me/api/portraits/women/22.jpg",
-        },
-      },
-    ],
-    graph: [
-      {
-        text: "Through our social network analysis, I found that Jamie L. is connected to two of your current friends (Sarah K. and Michael T.) and shares your interest in hiking. Many people in your extended network speak highly of Jamie.",
-        icon: <FiStar className="text-yellow-500" />,
-        friendDetails: {
-          name: "Jamie L.",
-          mutualInterests: ["Hiking", "Nature photography"],
-          mutualConnections: ["Sarah K.", "Michael T."],
-          compatibility: "94%",
-          photo: "https://randomuser.me/api/portraits/women/63.jpg",
-        },
-      },
-      {
-        text: "Our graph analysis shows that you and Casey B. are just two connections apart in your social network. You share three mutual friends and have both checked in at Blue Note Jazz Club multiple times. Casey also enjoys Italian cuisine!",
-        icon: <FiStar className="text-yellow-500" />,
-        friendDetails: {
-          name: "Casey B.",
-          mutualInterests: ["Jazz music", "Italian food"],
-          mutualConnections: ["Priya R.", "Michael T."],
-          compatibility: "91%",
-          photo: "https://randomuser.me/api/portraits/men/41.jpg",
-        },
-      },
-    ],
-    general: [
-      {
-        text: "I'd be happy to recommend friends based on your interests! Would you prefer recommendations based on similar dining preferences, shared hobbies, or mutual connections?",
-        icon: <FiMessageSquare className="text-gray-500" />,
-      },
-      {
-        text: "I can find potential friends for you! Would you like me to focus on people with similar taste in restaurants, those who enjoy photography like you do, or people connected to your existing friends?",
-        icon: <FiMessageSquare className="text-gray-500" />,
-      },
-    ],
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        interestsRef.current &&
+        !interestsRef.current.contains(event.target)
+      ) {
+        setInterestsOpen(false);
+      }
+      if (placesRef.current && !placesRef.current.contains(event.target)) {
+        setPlacesOpen(false);
+      }
+      if (cityRef.current && !cityRef.current.contains(event.target)) {
+        setCityOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Interest checkbox handlers
+  const handleInterestToggle = (interest) => {
+    if (selectedInterests.includes(interest)) {
+      setSelectedInterests(
+        selectedInterests.filter((item) => item !== interest)
+      );
+    } else {
+      setSelectedInterests([...selectedInterests, interest]);
+    }
+  };
+
+  // Place checkbox handlers
+  const handlePlaceToggle = (place) => {
+    if (selectedPlaces.includes(place)) {
+      setSelectedPlaces(selectedPlaces.filter((item) => item !== place));
+    } else {
+      setSelectedPlaces([...selectedPlaces, place]);
+    }
+  };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  // City selection handler
+  const handleCitySelect = (city) => {
+    setSelectedCity(city);
+    setCityOpen(false);
+  };
+
+  // Select all interests
+  const handleSelectAllInterests = () => {
+    setSelectedInterests([...interestOptions]);
+  };
+
+  // Clear all interests
+  const handleClearInterests = () => {
+    setSelectedInterests([]);
+  };
+
+  // Select all places
+  const handleSelectAllPlaces = () => {
+    setSelectedPlaces([...placeOptions]);
+  };
+
+  // Clear all places
+  const handleClearPlaces = () => {
+    setSelectedPlaces([]);
   };
 
   const handleInputChange = (e) => {
@@ -134,8 +194,7 @@ useEffect(() => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (inputMessage.trim() === "") return;
+    if (!inputMessage.trim()) return;
 
     // Add user message
     const userMessage = {
@@ -147,54 +206,131 @@ useEffect(() => {
 
     setMessages([...messages, userMessage]);
     setInputMessage("");
-
-    // Simulate AI thinking
     setIsTyping(true);
 
-    // Analyze user input to determine response type
-    const userInput = inputMessage.toLowerCase();
-    let responseType = "general"; // default
-
-    if (
-      userInput.includes("similar") ||
-      userInput.includes("taste") ||
-      userInput.includes("restaurant") ||
-      userInput.includes("rating")
-    ) {
-      responseType = "collaborative";
-    } else if (
-      userInput.includes("interest") ||
-      userInput.includes("hobby") ||
-      userInput.includes("passion") ||
-      userInput.includes("like")
-    ) {
-      responseType = "interest";
-    } else if (
-      userInput.includes("mutual") ||
-      userInput.includes("friend") ||
-      userInput.includes("connection") ||
-      userInput.includes("network")
-    ) {
-      responseType = "graph";
-    }
-
-    // Simulate AI response after a delay
+    // Simulate AI thinking and responding
     setTimeout(() => {
-      const responses = aiResponses[responseType];
-      const selectedResponse =
-        responses[Math.floor(Math.random() * responses.length)];
+      const responseCategory = [
+        "collaborative",
+        "interest",
+        "graph",
+        "general",
+      ][Math.floor(Math.random() * 4)];
 
-      const aiMessage = {
-        id: messages.length + 2,
-        text: selectedResponse.text,
-        sender: "ai",
-        timestamp: new Date(),
-        icon: selectedResponse.icon,
-        type: responseType,
-        friendDetails: selectedResponse.friendDetails || null,
+      const aiResponsesData = {
+        collaborative: [
+          {
+            text: `Based on your dining preferences for ${selectedInterests
+              .slice(0, 2)
+              .join(
+                " and "
+              )} cuisine, I'd recommend connecting with Alex J. You both enjoy ${
+              selectedPlaces[0]
+            } and seem to have similar taste in food!`,
+            icon: <FiUsers className="text-blue-500" />,
+            friendDetails: {
+              name: "Alex J.",
+              mutualInterests: selectedInterests.slice(0, 2),
+              compatibility: "87%",
+              photo: "https://randomuser.me/api/portraits/men/32.jpg",
+            },
+          },
+          {
+            text: `You and Taylor M. have very similar taste in restaurants! You've both rated ${selectedPlaces
+              .slice(0, 2)
+              .join(" and ")} highly. Taylor also enjoys ${
+              selectedInterests[0]
+            } cuisine like you.`,
+            icon: <FiUsers className="text-blue-500" />,
+            friendDetails: {
+              name: "Taylor M.",
+              mutualInterests: [selectedInterests[0], "Fine dining"],
+              compatibility: "92%",
+              photo: "https://randomuser.me/api/portraits/women/45.jpg",
+            },
+          },
+        ],
+        interest: [
+          {
+            text: `I analyzed your reviews and found that Jordan P. writes about ${selectedInterests[0]} cuisine with the same enthusiasm you do! They also frequent ${selectedPlaces[0]} just like you.`,
+            icon: <FiHeart className="text-red-500" />,
+            friendDetails: {
+              name: "Jordan P.",
+              mutualInterests: [
+                selectedInterests[0],
+                "Cooking",
+                "Food photography",
+              ],
+              compatibility: "85%",
+              photo: "https://randomuser.me/api/portraits/men/67.jpg",
+            },
+          },
+          {
+            text: `Based on your restaurant preferences, you and Riley S. both love ${selectedPlaces
+              .slice(0, 2)
+              .join(" and ")}. Riley also enjoys ${selectedInterests
+              .slice(0, 2)
+              .join(" and ")} food just like you!`,
+            icon: <FiHeart className="text-red-500" />,
+            friendDetails: {
+              name: "Riley S.",
+              mutualInterests: selectedInterests.slice(0, 2),
+              compatibility: "89%",
+              photo: "https://randomuser.me/api/portraits/women/22.jpg",
+            },
+          },
+        ],
+        graph: [
+          {
+            text: `Through our social network analysis, I found that Jamie L. is connected to two of your current friends and shares your interest in ${selectedInterests[0]} cuisine. They also love ${selectedPlaces[0]}!`,
+            icon: <FiUsers className="text-green-500" />,
+            friendDetails: {
+              name: "Jamie L.",
+              mutualInterests: [selectedInterests[0], "Food blogging"],
+              compatibility: "81%",
+              photo: "https://randomuser.me/api/portraits/women/56.jpg",
+            },
+          },
+          {
+            text: `Morgan B. is a second-degree connection in your network who frequently visits ${
+              selectedPlaces[1]
+            } like you do. They're also a big fan of ${selectedInterests
+              .slice(0, 2)
+              .join(" and ")} cuisine.`,
+            icon: <FiUsers className="text-green-500" />,
+            friendDetails: {
+              name: "Morgan B.",
+              mutualInterests: selectedInterests.slice(0, 2),
+              compatibility: "79%",
+              photo: "https://randomuser.me/api/portraits/men/22.jpg",
+            },
+          },
+        ],
+        general: [
+          {
+            text: `Based on your preferences, I think you'd enjoy meeting people who frequent ${selectedPlaces[0]} and enjoy ${selectedInterests[0]} cuisine. Would you like me to find specific recommendations?`,
+            icon: <FiMessageSquare className="text-purple-500" />,
+          },
+          {
+            text: `I notice you enjoy ${selectedInterests
+              .slice(0, 3)
+              .join(
+                ", "
+              )} cuisine. There's a foodie meetup group in ${selectedCity} that focuses on these cuisines. Would you be interested in connecting with members?`,
+            icon: <FiMessageSquare className="text-purple-500" />,
+          },
+        ],
       };
 
-      setMessages((prevMessages) => [...prevMessages, aiMessage]);
+      const responsePool = aiResponsesData[responseCategory];
+      const aiResponse = {
+        id: messages.length + 2,
+        ...responsePool[Math.floor(Math.random() * responsePool.length)],
+        sender: "ai",
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, aiResponse]);
       setIsTyping(false);
     }, 1500);
   };
@@ -207,16 +343,16 @@ useEffect(() => {
   // Quick suggestion buttons
   const suggestions = [
     "Find friends with similar restaurant tastes",
-    "Recommend people who share my interests",
-    "Suggest friends based on my network",
-    "Who might I enjoy meeting?",
+    "Recommend people who share my food interests",
+    "Suggest friends based on my dining network",
+    "Who might I enjoy dining with?",
   ];
 
   // Custom CSS to hide all scrollbars
   const noScrollbarStyles = {
-    msOverflowStyle: "none", // IE and Edge
-    scrollbarWidth: "none", // Firefox
-    WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
+    msOverflowStyle: "none",
+    scrollbarWidth: "none",
+    WebkitOverflowScrolling: "touch",
   };
 
   return (
@@ -240,87 +376,192 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div className="mb-4">
+              {/* Food Interests dropdown */}
+              <div className="mb-4" ref={interestsRef}>
                 <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
-                  <FiHeart className="mr-2 text-red-500" /> Interests
+                  <FiHeart className="mr-2 text-red-500" /> Food Interests
                 </h3>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {userProfile.interests.map((interest, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 bg-base-300 rounded-full text-xs"
-                    >
-                      {interest}
-                    </span>
-                  ))}
+                <div className="relative mt-2">
+                  <button
+                    className="w-full px-3 py-2 bg-base-300 rounded flex justify-between items-center"
+                    onClick={() => setInterestsOpen(!interestsOpen)}
+                  >
+                    <span className="text-sm">Select food types</span>
+                    <FiChevronDown
+                      className={`transition-transform ${
+                        interestsOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {interestsOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-base-100 border border-base-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                      <div className="sticky top-0 bg-base-100 border-b border-base-300 px-3 py-2 flex justify-between">
+                        <button
+                          className="text-xs text-blue-500 hover:text-blue-700"
+                          onClick={handleSelectAllInterests}
+                        >
+                          Select All
+                        </button>
+                        <button
+                          className="text-xs text-red-500 hover:text-red-700"
+                          onClick={handleClearInterests}
+                        >
+                          Clear All
+                        </button>
+                      </div>
+                      {interestOptions.map((interest) => (
+                        <label
+                          key={interest}
+                          className="flex items-center px-3 py-2 hover:bg-base-200 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedInterests.includes(interest)}
+                            onChange={() => handleInterestToggle(interest)}
+                            className="mr-2"
+                          />
+                          <span className="text-sm">{interest}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
                 </div>
+
+                {/* Display selected interests */}
+                {selectedInterests.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {selectedInterests.map((interest) => (
+                      <span
+                        key={interest}
+                        className="px-2 py-1 bg-base-300 rounded-full text-xs flex items-center"
+                      >
+                        {interest}
+                        <button
+                          className="ml-1 text-xs hover:text-red-500"
+                          onClick={() => handleInterestToggle(interest)}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div className="mb-4">
+              {/* Favorite Restaurants dropdown */}
+              <div className="mb-4" ref={placesRef}>
                 <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
-                  <FiStar className="mr-2 text-yellow-500" /> Top Rated Places
+                  <FiStar className="mr-2 text-yellow-500" /> Favorite
+                  Restaurants
                 </h3>
-                <ul className="mt-1">
-                  {userProfile.topRatedPlaces.map((place, index) => (
-                    <li key={index} className="text-sm py-1 flex items-center">
-                      <span className="w-2 h-2 rounded-full bg-[#ff5722] mr-2"></span>
-                      {place}
-                    </li>
-                  ))}
-                </ul>
+                <div className="relative mt-2">
+                  <button
+                    className="w-full px-3 py-2 bg-base-300 rounded flex justify-between items-center"
+                    onClick={() => setPlacesOpen(!placesOpen)}
+                  >
+                    <span className="text-sm">Select restaurants</span>
+                    <FiChevronDown
+                      className={`transition-transform ${
+                        placesOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {placesOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-base-100 border border-base-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                      <div className="sticky top-0 bg-base-100 border-b border-base-300 px-3 py-2 flex justify-between">
+                        <button
+                          className="text-xs text-blue-500 hover:text-blue-700"
+                          onClick={handleSelectAllPlaces}
+                        >
+                          Select All
+                        </button>
+                        <button
+                          className="text-xs text-red-500 hover:text-red-700"
+                          onClick={handleClearPlaces}
+                        >
+                          Clear All
+                        </button>
+                      </div>
+                      {placeOptions.map((place) => (
+                        <label
+                          key={place}
+                          className="flex items-center px-3 py-2 hover:bg-base-200 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedPlaces.includes(place)}
+                            onChange={() => handlePlaceToggle(place)}
+                            className="mr-2"
+                          />
+                          <span className="text-sm">{place}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Display selected places */}
+                {selectedPlaces.length > 0 && (
+                  <div className="mt-2">
+                    {selectedPlaces.map((place) => (
+                      <div
+                        key={place}
+                        className="text-sm py-1 flex items-center"
+                      >
+                        <span className="w-2 h-2 rounded-full bg-[#ff5722] mr-2"></span>
+                        {place}
+                        <button
+                          className="ml-1 text-xs hover:text-red-500"
+                          onClick={() => handlePlaceToggle(place)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <div>
+              {/* Location dropdown */}
+              <div className="mb-4" ref={cityRef}>
                 <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
-                  <FiCoffee className="mr-2 text-green-500" /> Recent Activity
+                  <FiMapPin className="mr-2 text-blue-500" /> Location
                 </h3>
-                <ul className="mt-1">
-                  {userProfile.recentActivity.map((activity, index) => (
-                    <li key={index} className="text-sm py-1 opacity-70">
-                      {activity}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+                <div className="relative mt-2">
+                  <button
+                    className="w-full px-3 py-2 bg-base-300 rounded flex justify-between items-center"
+                    onClick={() => setCityOpen(!cityOpen)}
+                  >
+                    <span className="text-sm">{selectedCity}</span>
+                    <FiChevronDown
+                      className={`transition-transform ${
+                        cityOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
 
-            <div className="bg-base-200 rounded-lg shadow-lg p-4 mt-4">
-              <h2 className="text-xl font-bold mb-3">
-                Our Recommendation Methods
-              </h2>
-              <div className="space-y-3">
-                <div className="flex items-start">
-                  <div className="bg-blue-100 p-1 rounded mr-2">
-                    <FiUsers className="text-blue-500" />
-                  </div>
-                  <div className="text-sm">
-                    <strong>Collaborative Filtering</strong>
-                    <p className="opacity-70">
-                      Finding friends with similar ratings and preferences
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="bg-red-100 p-1 rounded mr-2">
-                    <FiHeart className="text-red-500" />
-                  </div>
-                  <div className="text-sm">
-                    <strong>Interest-Based Matching</strong>
-                    <p className="opacity-70">
-                      NLP analysis of your reviews and interests
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="bg-yellow-100 p-1 rounded mr-2">
-                    <FiStar className="text-yellow-500" />
-                  </div>
-                  <div className="text-sm">
-                    <strong>Graph Network Analysis</strong>
-                    <p className="opacity-70">
-                      Finding connections through your social network
-                    </p>
-                  </div>
+                  {cityOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-base-100 border border-base-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                      {cityOptions.map((city) => (
+                        <div
+                          key={city}
+                          className="px-3 py-2 hover:bg-base-200 cursor-pointer flex items-center"
+                          onClick={() => handleCitySelect(city)}
+                        >
+                          <span
+                            className={`mr-2 ${
+                              selectedCity === city ? "visible" : "invisible"
+                            }`}
+                          >
+                            <FiCheck className="text-green-500" />
+                          </span>
+                          <span className="text-sm">{city}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -328,113 +569,73 @@ useEffect(() => {
 
           {/* Chat interface */}
           <div className="md:col-span-2">
-            <div className="bg-base-200 rounded-lg shadow-lg overflow-hidden h-[650px] flex flex-col">
-              {/* Header */}
-              <div className="bg-[#ff5722] text-white p-4">
-                <h1 className="text-2xl font-bold bebas-neue">
-                  Friend Recommendation AI
-                </h1>
-                <p className="opacity-90">
-                  Find friends based on shared interests and preferences
-                </p>
+            <div className="bg-base-200 rounded-lg shadow-lg flex flex-col h-[70vh]">
+              {/* Chat header */}
+              <div className="px-4 py-3 border-b border-base-300 flex items-center">
+                <div className="w-10 h-10 rounded-full bg-[#ff5722] flex items-center justify-center text-white text-xl font-bold">
+                  <FiMessageSquare />
+                </div>
+                <div className="ml-3">
+                  <h2 className="font-bold">Friend Recommendation AI</h2>
+                  <p className="text-xs opacity-70">
+                    Connecting food lovers since 2025
+                  </p>
+                </div>
               </div>
 
-              {/* Chat area - with scrollbars hidden */}
+              {/* Messages container */}
               <div
-                className="flex-grow overflow-y-auto p-4"
+                className="flex-grow p-4 overflow-y-auto"
                 style={noScrollbarStyles}
               >
-                <style jsx>{`
-                  div::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
-
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex mb-4 ${
+                    className={`mb-4 flex ${
                       message.sender === "user"
                         ? "justify-end"
                         : "justify-start"
                     }`}
                   >
+                    {message.sender === "ai" && (
+                      <div className="w-8 h-8 rounded-full bg-[#ff5722] flex items-center justify-center text-white text-sm font-bold mr-2 flex-shrink-0">
+                        {message.icon || <FiMessageSquare />}
+                      </div>
+                    )}
                     <div
-                      className={`max-w-[85%] rounded-lg p-3 ${
+                      className={`max-w-[80%] rounded-lg p-3 ${
                         message.sender === "user"
-                          ? "bg-[#ff5722] text-white rounded-br-none"
-                          : "bg-base-300 rounded-bl-none"
+                          ? "bg-[#ff5722] text-white"
+                          : "bg-base-300"
                       }`}
                     >
-                      <div className="flex items-center mb-1">
-                        {message.sender === "ai" ? (
-                          <>
-                            <FiMessageSquare className="mr-2" />
-                            <span className="font-bold">Friend Finder AI</span>
-                          </>
-                        ) : (
-                          <>
-                            <FiUser className="mr-2" />
-                            <span className="font-bold">You</span>
-                          </>
-                        )}
-                        <span className="text-xs opacity-70 ml-2">
-                          {formatTime(message.timestamp)}
-                        </span>
-                      </div>
-
-                      {message.sender === "ai" &&
-                        message.icon &&
-                        message.type !== "greeting" &&
-                        message.type !== "general" && (
-                          <div className="flex items-center mb-2 text-sm">
-                            <div className="mr-2">{message.icon}</div>
-                            <span className="opacity-70">
-                              {message.type === "collaborative" &&
-                                "Collaborative Filtering Match"}
-                              {message.type === "interest" &&
-                                "Interest-Based Match"}
-                              {message.type === "graph" &&
-                                "Social Network Match"}
-                            </span>
-                          </div>
-                        )}
-
-                      <p>{message.text}</p>
-
-                      {/* Friend card for recommendations */}
+                      <div className="text-sm">{message.text}</div>
                       {message.friendDetails && (
-                        <div className="mt-3 bg-base-100 rounded-lg p-3 shadow-sm">
+                        <div className="mt-2 p-2 bg-base-100 rounded-md">
                           <div className="flex items-center">
                             <img
                               src={message.friendDetails.photo}
                               alt={message.friendDetails.name}
-                              className="w-12 h-12 rounded-full object-cover"
+                              className="w-10 h-10 rounded-full object-cover"
                             />
-                            <div className="ml-3">
-                              <div className="font-bold">
+                            <div className="ml-2">
+                              <div className="font-bold text-sm">
                                 {message.friendDetails.name}
                               </div>
-                              <div className="text-xs flex items-center">
-                                <span className="text-green-500 font-semibold">
-                                  {message.friendDetails.compatibility}
-                                </span>
-                                <span className="mx-1 opacity-70">
-                                  compatibility match
-                                </span>
+                              <div className="text-xs opacity-70">
+                                {message.friendDetails.compatibility} match
                               </div>
                             </div>
                           </div>
-
                           <div className="mt-2">
-                            <div className="text-xs font-semibold opacity-70 uppercase">
-                              Mutual Interests
+                            <div className="text-xs font-semibold">
+                              Mutual Interests:
                             </div>
-                            <div className="mt-1 flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1 mt-1">
                               {message.friendDetails.mutualInterests.map(
-                                (interest, index) => (
+                                (interest) => (
                                   <span
-                                    key={index}
+                                    key={interest}
                                     className="px-2 py-0.5 bg-base-300 rounded-full text-xs"
                                   >
                                     {interest}
@@ -443,125 +644,82 @@ useEffect(() => {
                               )}
                             </div>
                           </div>
-
-                          {message.friendDetails.mutualConnections && (
-                            <div className="mt-2">
-                              <div className="text-xs font-semibold opacity-70 uppercase">
-                                Mutual Connections
-                              </div>
-                              <div className="text-sm mt-1">
-                                {message.friendDetails.mutualConnections.join(
-                                  ", "
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="mt-3 flex justify-end">
-                            <button className="btn btn-sm btn-outline">
-                              View Profile
-                            </button>
-                            <button className="btn btn-sm bg-[#ff5722] text-white ml-2 border-none hover:bg-[#e64a19]">
-                              Connect
-                            </button>
-                          </div>
                         </div>
                       )}
+                      <div className="text-right text-xs mt-1 opacity-70">
+                        {formatTime(message.timestamp)}
+                      </div>
                     </div>
                   </div>
                 ))}
-
-                {/* Typing indicator */}
                 {isTyping && (
-                  <div className="flex mb-4 justify-start">
-                    <div className="bg-base-300 rounded-lg rounded-bl-none p-3">
+                  <div className="flex items-center mb-4">
+                    <div className="w-8 h-8 rounded-full bg-[#ff5722] flex items-center justify-center text-white text-sm font-bold mr-2">
+                      <FiMessageSquare />
+                    </div>
+                    <div className="bg-base-300 px-4 py-2 rounded-lg">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"></div>
+                        <div className="w-2 h-2 rounded-full bg-base-content animate-bounce"></div>
                         <div
-                          className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"
+                          className="w-2 h-2 rounded-full bg-base-content animate-bounce"
                           style={{ animationDelay: "0.2s" }}
                         ></div>
                         <div
-                          className="w-2 h-2 rounded-full bg-gray-500 animate-bounce"
+                          className="w-2 h-2 rounded-full bg-base-content animate-bounce"
                           style={{ animationDelay: "0.4s" }}
                         ></div>
                       </div>
                     </div>
                   </div>
                 )}
-
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Quick suggestions - with scrollbar hidden */}
+              {/* Suggestion chips */}
               <div
-                className="px-4 py-2 bg-base-300/50 flex overflow-x-auto gap-2"
+                className="px-4 py-2 border-t border-base-300 flex items-center overflow-x-auto"
                 style={noScrollbarStyles}
               >
-                <style jsx>{`
-                  div::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
-
-                {suggestions.map((suggestion, index) => (
-                  <button
-                    key={index}
-                    className="px-3 py-1 bg-base-100 rounded-full text-sm whitespace-nowrap hover:bg-base-300 transition-colors"
-                    onClick={() => {
-                      setInputMessage(suggestion);
-                    }}
-                  >
-                    {suggestion}
-                  </button>
-                ))}
+                <span className="text-xs font-semibold mr-2 whitespace-nowrap">
+                  Try asking:
+                </span>
+                <div className="flex space-x-2">
+                  {suggestions.map((suggestion, index) => (
+                    <button
+                      key={index}
+                      className="px-3 py-1 bg-base-300 hover:bg-base-100 rounded-full text-xs whitespace-nowrap"
+                      onClick={() => {
+                        setInputMessage(suggestion);
+                      }}
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Input area */}
-              <form
-                onSubmit={handleSubmit}
-                className="border-t border-base-300 p-4 bg-base-100"
-              >
-                <div className="flex">
+              <div className="px-4 py-3 border-t border-base-300">
+                <form onSubmit={handleSubmit} className="flex items-center">
                   <input
                     type="text"
                     value={inputMessage}
                     onChange={handleInputChange}
-                    placeholder="Ask for friend recommendations..."
-                    className="flex-grow input input-bordered focus:outline-none focus:border-[#ff5722]"
+                    placeholder="Ask about friend recommendations..."
+                    className="flex-grow px-4 py-2 bg-base-300 rounded-l-lg focus:outline-none"
                   />
                   <button
                     type="submit"
-                    className="ml-2 btn bg-[#ff5722] hover:bg-[#e64a19] text-white"
-                    disabled={inputMessage.trim() === ""}
+                    className="px-4 py-2 bg-[#ff5722] text-white rounded-r-lg"
                   >
                     <FiSend />
-                    <span className="ml-1 hidden sm:inline">Send</span>
                   </button>
-                </div>
-                <p className="text-xs mt-2 opacity-70">
-                  Ask for recommendations based on shared interests, dining
-                  preferences, or mutual connections.
-                </p>
-              </form>
-            </div>
-
-            {/* Data sources info */}
-            <div className="mt-4 bg-base-200 p-4 rounded-lg shadow text-sm">
-              <h3 className="font-bold mb-1">
-                How We Find Your Perfect Friends
-              </h3>
-              <p>
-                We use collaborative filtering to match users with similar
-                ratings, NLP analysis of reviews to find shared interests, and
-                graph neural networks to analyze social connections. All
-                recommendations are personalized based on your unique profile.{" "}
-              </p>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
-
       <Footer />
     </div>
   );

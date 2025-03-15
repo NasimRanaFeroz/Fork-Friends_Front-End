@@ -79,7 +79,7 @@ function Analysis() {
               className="drawer-overlay"
             ></label>
             
-            <div className="bg-base-200 w-80 min-h-full flex flex-col p-0">
+            <div className="bg-base-200 w-65 min-h-full flex flex-col p-0">
               {/* Sidebar header */}
               <div className="p-4 border-b border-base-300">
                 <h2 className="text-xl font-bold bebas-neue">Data Analysis</h2>

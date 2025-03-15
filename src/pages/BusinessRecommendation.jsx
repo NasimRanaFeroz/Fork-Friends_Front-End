@@ -3,12 +3,13 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { 
   FiSend, FiUser, FiMessageSquare, FiBriefcase, 
-  FiMapPin, FiTrendingUp, FiTarget, FiDollarSign 
+  FiMapPin, FiTrendingUp, FiTarget, FiDollarSign,
+  FiChevronDown, FiCheck, FiHeart
 } from 'react-icons/fi';
 
 function BusinessRecommendation() {
 
-useEffect(() => {
+  useEffect(() => {
     window.scrollTo({
       top: 0,
       left: 0,
@@ -27,21 +28,116 @@ useEffect(() => {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [userProfile] = useState({
-    preferences: ['Italian cuisine', 'Coffee shops', 'Coworking spaces'],
-    location: 'Downtown Seattle',
-    pastVisits: ['Starbucks Reserve', 'Pike Place Market', 'Capitol Hill Restaurants']
-  });
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+  
+  const [preferenceOptions] = useState([
+    "Italian cuisine", 
+    "Japanese cuisine", 
+    "Chinese cuisine", 
+    "Mexican cuisine", 
+    "Indian cuisine",
+    "Coffee shops",
+    "Coworking spaces",
+    "Fine dining",
+    "Fast food",
+    "Bakeries",
+    "Bars & Pubs",
+    "Cafés",
+    "Food trucks",
+    "Vegan restaurants",
+    "Seafood restaurants",
+    "Steakhouses",
+    "Breakfast spots",
+    "Dessert shops",
+    "Bookstores",
+    "Retail shops"
+  ]);
+  
+  const [locationOptions] = useState([
+    "Downtown Seattle",
+    "Capitol Hill",
+    "Ballard",
+    "Fremont",
+    "University District",
+    "South Lake Union",
+    "West Seattle",
+    "Queen Anne",
+    "Belltown",
+    "Pioneer Square",
+    "International District",
+    "Wallingford",
+    "Greenwood",
+    "Northgate",
+    "Columbia City"
+  ]);
+
+  const [selectedPreferences, setSelectedPreferences] = useState([
+    "Italian cuisine", "Coffee shops", "Coworking spaces"
+  ]);
+  const [selectedLocation, setSelectedLocation] = useState("Downtown Seattle");
+
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
+  const [locationOpen, setLocationOpen] = useState(false);
+
+  const preferencesRef = useRef(null);
+  const locationRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (preferencesRef.current && !preferencesRef.current.contains(event.target)) {
+        setPreferencesOpen(false);
+      }
+      if (locationRef.current && !locationRef.current.contains(event.target)) {
+        setLocationOpen(false);
+      }
+    }
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Preference checkbox handlers
+  const handlePreferenceToggle = (preference) => {
+    if (selectedPreferences.includes(preference)) {
+      setSelectedPreferences(selectedPreferences.filter(item => item !== preference));
+    } else {
+      setSelectedPreferences([...selectedPreferences, preference]);
+    }
+  };
+
+  // Select all preferences
+  const handleSelectAllPreferences = () => {
+    setSelectedPreferences([...preferenceOptions]);
+  };
+
+  // Clear all preferences
+  const handleClearPreferences = () => {
+    setSelectedPreferences([]);
+  };
+
+  // Location selection handler
+  const handleLocationSelect = (location) => {
+    setSelectedLocation(location);
+    setLocationOpen(false);
+  };
 
   const aiResponses = {
     profile: [
       {
-        text: "Based on your preference for Italian cuisine, I recommend 'Trattoria Bella Italia'. Their pasta dishes have received excellent ratings from users with similar taste profiles.",
+        text: `Based on your preference for ${selectedPreferences[0] || "Italian cuisine"}, I recommend 'Trattoria Bella Italia'. Their dishes have received excellent ratings from users with similar taste profiles.`,
         icon: <FiTarget className="text-green-500" />
       },
       {
-        text: "Since you enjoy coffee shops, 'Analog Coffee' might be perfect for you. Users who visited the same places as you rated it 4.8/5 stars.",
+        text: `Since you enjoy ${selectedPreferences[1] || "coffee shops"}, 'Analog Coffee' might be perfect for you. Users who visited the same places as you rated it 4.8/5 stars.`,
         icon: <FiTarget className="text-green-500" />
       }
     ],
@@ -51,17 +147,17 @@ useEffect(() => {
         icon: <FiTrendingUp className="text-blue-500" />
       },
       {
-        text: "Your reviews suggest you value 'authentic flavors'. 'Sichuan Home' has been praised by users for maintaining traditional cooking techniques.",
+        text: `Your reviews suggest you value 'authentic flavors'. ${selectedPreferences.includes("Japanese cuisine") ? "'Sushi Kashiba'" : "'Sichuan Home'"} has been praised by users for maintaining traditional cooking techniques.`,
         icon: <FiTrendingUp className="text-blue-500" />
       }
     ],
     location: [
       {
-        text: "There's a highly-rated business near your location: 'Urban Coworking'. It's just 0.3 miles from Downtown Seattle and offers private meeting rooms.",
+        text: `There's a highly-rated business near your location: 'Urban Coworking'. It's just 0.3 miles from ${selectedLocation} and offers private meeting rooms.`,
         icon: <FiMapPin className="text-red-500" />
       },
       {
-        text: "Within walking distance from you is 'The Market Grill', a seafood restaurant with fresh daily catches from Pike Place Market.",
+        text: `Within walking distance from ${selectedLocation} is 'The Market Grill', a seafood restaurant with fresh daily catches from Pike Place Market.`,
         icon: <FiMapPin className="text-red-500" />
       }
     ],
@@ -157,34 +253,115 @@ useEffect(() => {
           {/* User profile sidebar */}
           <div className="hidden md:block">
             <div className="bg-base-200 rounded-lg shadow-lg p-4">
-              <h2 className="text-xl font-bold mb-3 flex items-center">
-                <FiUser className="mr-2" /> Your Profile
-              </h2>
-              <div className="mb-4">
-                <h3 className="font-semibold text-sm uppercase opacity-70">Preferences</h3>
-                <ul className="mt-1">
-                  {userProfile.preferences.map((pref, index) => (
-                    <li key={index} className="text-sm py-1 flex items-center">
-                      <span className="w-2 h-2 rounded-full bg-[#ff5722] mr-2"></span>
-                      {pref}
-                    </li>
-                  ))}
-                </ul>
+              <div className="flex items-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-[#ff5722] flex items-center justify-center text-white text-2xl font-bold">
+                  <FiUser />
+                </div>
+                <div className="ml-4">
+                  <h2 className="text-xl font-bold">Your Profile</h2>
+                  <p className="text-sm opacity-70">
+                    Business recommendation data
+                  </p>
+                </div>
               </div>
-              <div className="mb-4">
-                <h3 className="font-semibold text-sm uppercase opacity-70">Location</h3>
-                <p className="text-sm py-1 flex items-center">
-                  <FiMapPin className="mr-2 text-red-500" />
-                  {userProfile.location}
-                </p>
+
+              {/* Business Preferences dropdown */}
+              <div className="mb-4" ref={preferencesRef}>
+                <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
+                  <FiHeart className="mr-2 text-red-500" /> Business Preferences
+                </h3>
+                <div className="relative mt-2">
+                  <button 
+                    className="w-full px-3 py-2 bg-base-300 rounded flex justify-between items-center"
+                    onClick={() => setPreferencesOpen(!preferencesOpen)}
+                  >
+                    <span className="text-sm">Select preferences</span>
+                    <FiChevronDown className={`transition-transform ${preferencesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {preferencesOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-base-100 border border-base-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                      <div className="sticky top-0 bg-base-100 border-b border-base-300 px-3 py-2 flex justify-between">
+                        <button 
+                          className="text-xs text-blue-500 hover:text-blue-700"
+                          onClick={handleSelectAllPreferences}
+                        >
+                          Select All
+                        </button>
+                        <button 
+                          className="text-xs text-red-500 hover:text-red-700"
+                          onClick={handleClearPreferences}
+                        >
+                          Clear All
+                        </button>
+                      </div>
+                      {preferenceOptions.map((preference) => (
+                        <label key={preference} className="flex items-center px-3 py-2 hover:bg-base-200 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedPreferences.includes(preference)}
+                            onChange={() => handlePreferenceToggle(preference)}
+                            className="mr-2"
+                          />
+                          <span className="text-sm">{preference}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Display selected preferences */}
+                {selectedPreferences.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {selectedPreferences.map((preference) => (
+                      <span
+                        key={preference}
+                        className="px-2 py-1 bg-base-300 rounded-full text-xs flex items-center"
+                      >
+                        {preference}
+                        <button 
+                          className="ml-1 text-xs hover:text-red-500"
+                          onClick={() => handlePreferenceToggle(preference)}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-              <div>
-                <h3 className="font-semibold text-sm uppercase opacity-70">Recent Visits</h3>
-                <ul className="mt-1">
-                  {userProfile.pastVisits.map((visit, index) => (
-                    <li key={index} className="text-sm py-1">{visit}</li>
-                  ))}
-                </ul>
+
+              {/* Location dropdown */}
+              <div className="mb-4" ref={locationRef}>
+                <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
+                  <FiMapPin className="mr-2 text-blue-500" /> Location
+                </h3>
+                <div className="relative mt-2">
+                  <button 
+                    className="w-full px-3 py-2 bg-base-300 rounded flex justify-between items-center"
+                    onClick={() => setLocationOpen(!locationOpen)}
+                  >
+                    <span className="text-sm">{selectedLocation}</span>
+                    <FiChevronDown className={`transition-transform ${locationOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {locationOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-base-100 border border-base-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                      {locationOptions.map((location) => (
+                        <div 
+                          key={location} 
+                          className="px-3 py-2 hover:bg-base-200 cursor-pointer flex items-center"
+                          onClick={() => handleLocationSelect(location)}
+                        >
+                          <span className={`mr-2 ${selectedLocation === location ? 'visible' : 'invisible'}`}>
+                            <FiCheck className="text-green-500" />
+                          </span>
+                          <span className="text-sm">{location}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             
@@ -359,12 +536,6 @@ useEffect(() => {
                   Try asking for recommendations based on location, preferences, or business insights.
                 </p>
               </form>
-            </div>
-            
-            {/* Data sources info */}
-            <div className="mt-4 bg-base-200 p-4 rounded-lg shadow text-sm">
-              <h3 className="font-bold mb-1">Data Sources & Methods</h3>
-              <p>Recommendations are generated using collaborative filtering, matrix factorization (SVD/ALS), and natural language processing of reviews. Location data uses Haversine formula for proximity calculations. [[8]](#__8)</p>
             </div>
           </div>
         </div>
