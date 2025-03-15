@@ -2,6 +2,15 @@ import React, { useState } from "react";
 
 import CommonMerchants from "../components/business/CommonMerchants";
 import MerchantCities from "../components/business/MerchantCities";
+import MerchantStates from "../components/business/MerchantStates";
+import MerchantRatings from "../components/business/MerchantRatings";
+import HighestRatedCities from "../components/business/HighestRatedCities";
+import CategoryCount from "../components/business/CategoryCount";
+import TopCategories from "../components/business/TopCategories";
+import FiveStarMerchants from "../components/business/FiveStarMerchants";
+import RestaurantTypes from "../components/business/RestaurantTypes";
+import RestaurantReviews from "../components/business/RestaurantReviews";
+import RestaurantRatings from "../components/business/RestaurantRatings"; 
 
 
 const BusinessAnalysis = () => {
@@ -32,6 +41,24 @@ const BusinessAnalysis = () => {
         return <CommonMerchants />;
       case "merchant-cities":
         return <MerchantCities />;
+      case "merchant-states":
+        return <MerchantStates />;
+      case "merchant-ratings":
+        return <MerchantRatings />;
+      case "highest-rated-cities":
+        return <HighestRatedCities />;
+      case "category-count":
+        return <CategoryCount />;
+      case "top-categories":
+        return <TopCategories />;
+      case "five-star-merchants":
+        return <FiveStarMerchants />;
+      case "restaurant-types":
+        return <RestaurantTypes />;
+      case "restaurant-reviews":
+        return <RestaurantReviews />;
+      case "restaurant-ratings":
+        return <RestaurantRatings />;
       // Add cases for all your analysis components
       default:
         // For now, just showing a placeholder

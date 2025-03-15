@@ -1,0 +1,319 @@
+import React, { useEffect, useState, useRef } from 'react';
+import * as d3 from 'd3';
+
+const CommonWords = () => {
+  const [commonWords, setCommonWords] = useState([]);
+  const [metadata, setMetadata] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:5001/api/review/top-20-common-words');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        
+        const data = await response.json();
+        setCommonWords(data.results);
+        setMetadata(data.metadata);
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (commonWords.length > 0 && chartRef.current) {
+      createBarChart();
+    }
+  }, [commonWords]);
+
+  const createBarChart = () => {
+    // Clear previous chart if any
+    d3.select(chartRef.current).selectAll('*').remove();
+
+    const margin = { top: 40, right: 30, bottom: 120, left: 100 };
+    const width = 800 - margin.left - margin.right;
+    const height = 500 - margin.top - margin.bottom;
+
+    // Create SVG
+    const svg = d3.select(chartRef.current)
+      .append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+    // X axis
+    const x = d3.scaleBand()
+      .range([0, width])
+      .domain(commonWords.map(d => d._id))
+      .padding(0.2);
+    
+    svg.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .selectAll('text')
+      .attr('transform', 'translate(-10,0)rotate(-45)')
+      .style('text-anchor', 'end')
+      .style('font-size', '14px')
+      .style('fill', '#4B5563')
+      .style('font-weight', 'bold');
+
+    // Add X axis label
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', height + margin.bottom - 30)
+      .attr('text-anchor', 'middle')
+      .style('font-size', '16px')
+      .style('fill', '#1F2937')
+      .style('font-weight', 'bold')
+      .text('Words');
+
+    // Y axis
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(commonWords, d => d.count) * 1.1]) // Add 10% padding at the top
+      .range([height, 0]);
+    
+    svg.append('g')
+      .call(d3.axisLeft(y).tickFormat(d => d3.format(',')(d))) // Format numbers with commas
+      .selectAll('text')
+      .style('font-size', '14px')
+      .style('fill', '#4B5563');
+
+    // Add Y axis label
+    svg.append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', -margin.left + 20)
+      .attr('x', -(height / 2))
+      .attr('text-anchor', 'middle')
+      .style('font-size', '16px')
+      .style('fill', '#1F2937')
+      .style('font-weight', 'bold')
+      .text('Frequency');
+
+    // Add title
+    svg.append('text')
+      .attr('x', width / 2)
+      .attr('y', -15)
+      .attr('text-anchor', 'middle')
+      .style('font-size', '18px')
+      .style('font-weight', 'bold')
+      .style('fill', '#1F2937')
+      .text('Top 20 Most Common Words in Reviews');
+
+    // Add grid lines
+    svg.append('g')
+      .attr('class', 'grid')
+      .call(d3.axisLeft(y)
+        .tickSize(-width)
+        .tickFormat('')
+      )
+      .style('stroke', '#E5E7EB')
+      .style('stroke-opacity', '0.7')
+      .style('shape-rendering', 'crispEdges');
+
+    // Create a color scale
+    const colorScale = d3.scaleSequential()
+      .domain([0, commonWords.length - 1])
+      .interpolator(d3.interpolateInferno);
+
+    // Bars with animation
+    svg.selectAll('bar')
+      .data(commonWords)
+      .enter()
+      .append('rect')
+      .attr('x', d => x(d._id))
+      .attr('width', x.bandwidth())
+      .attr('fill', (d, i) => colorScale(i))
+      .attr('y', height) // Start from the bottom for animation
+      .attr('height', 0) // Start with height 0 for animation
+      .transition() // Add transition
+      .duration(800)
+      .delay((d, i) => i * 100) // Stagger the animations
+      .attr('y', d => y(d.count))
+      .attr('height', d => height - y(d.count));
+
+    // Add interactive elements after the animation
+    setTimeout(() => {
+      svg.selectAll('rect')
+        .on('mouseover', function(event, d) {
+          // Highlight the bar
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('opacity', 0.8)
+            .attr('stroke', '#000')
+            .attr('stroke-width', 2);
+          
+          // Add tooltip
+          const tooltip = svg.append('g')
+            .attr('class', 'tooltip')
+            .attr('id', 'tooltip');
+          
+          // Add background for tooltip
+          tooltip.append('rect')
+            .attr('x', x(d._id) + x.bandwidth() / 2 - 70)
+            .attr('y', y(d.count) - 40)
+            .attr('width', 140)
+            .attr('height', 30)
+            .attr('fill', 'rgba(0,0,0,0.7)')
+            .attr('rx', 5);
+          
+          // Add text for tooltip
+          tooltip.append('text')
+            .attr('x', x(d._id) + x.bandwidth() / 2)
+            .attr('y', y(d.count) - 20)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '14px')
+            .style('fill', 'white')
+            .text(`${d.count.toLocaleString()}`);
+        })
+        .on('mouseout', function() {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr('opacity', 1)
+            .attr('stroke', 'none');
+          
+          d3.select('#tooltip').remove();
+        });
+        
+      // Add count labels on top of each bar
+      svg.selectAll('.count-label')
+        .data(commonWords)
+        .enter()
+        .append('text')
+        .attr('class', 'count-label')
+        .attr('x', d => x(d._id) + x.bandwidth() / 2)
+        .attr('y', d => y(d.count) - 5)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '0px') // Start with size 0 for animation
+        .style('fill', '#fff')
+        .style('font-weight', 'bold')
+        .text(d => d3.format(',')(d.count))
+        .transition()
+        .delay((d, i) => 1000 + i * 50)
+        .duration(500)
+        .style('font-size', '10px'); // Animate to final size
+    }, commonWords.length * 100 + 800);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600 mb-4"></div>
+        <p className="text-indigo-600 text-xl font-semibold animate-pulse">Loading data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md motion-safe:animate-fadeIn" role="alert">
+        <p className="font-bold">Error</p>
+        <p>{error}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8 bg-gradient-to-br from-gray-50 to-indigo-50">
+      <h1 className="text-4xl font-bold text-center mb-8 text-indigo-800 motion-safe:animate-bounce">
+        Top 20 Most Common Words in Reviews
+      </h1>
+      
+      {metadata && (
+        <div className="bg-white p-6 mb-8 rounded-lg shadow-lg transform transition duration-500 motion-safe:hover:scale-[1.01]">
+          <h2 className="text-2xl font-semibold mb-4 text-indigo-700">Analysis Metadata</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-4 rounded-lg shadow-md text-white transform transition duration-300 hover:scale-105">
+              <p className="text-indigo-100 text-sm uppercase tracking-wider">Sample Size</p>
+              <p className="text-2xl font-bold">{metadata.sampleSize.toLocaleString()}</p>
+            </div>
+            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-lg shadow-md text-white transform transition duration-300 hover:scale-105">
+              <p className="text-pink-100 text-sm uppercase tracking-wider">Processed At</p>
+              <p className="text-lg font-medium">{new Date(metadata.processedAt).toLocaleString()}</p>
+            </div>
+            <div className="bg-gradient-to-r from-pink-500 to-indigo-500 p-4 rounded-lg shadow-md text-white transform transition duration-300 hover:scale-105">
+              <p className="text-indigo-100 text-sm uppercase tracking-wider">Execution Time</p>
+              <p className="text-2xl font-bold">{(metadata.executionTimeMs / 1000).toFixed(2)} seconds</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Table with animation */}
+        <div className="bg-white rounded-xl shadow-xl overflow-hidden transform transition duration-500 motion-safe:hover:shadow-2xl">
+          <div className="bg-indigo-600 text-white p-4">
+            <h2 className="text-xl font-bold">Word Frequency Table</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Rank
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Word
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Count
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Percentage
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {commonWords.map((word, index) => (
+                  <tr 
+                    key={word._id} 
+                    className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-indigo-50 transition-colors duration-150`}
+                  >
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {index + 1}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-700 font-semibold">
+                      {word._id}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
+                      {word.count.toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {metadata && ((word.count / metadata.sampleSize) * 100).toFixed(2)}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Chart with animation */}
+        <div className="bg-white rounded-xl shadow-xl p-6 transform transition duration-500 motion-safe:hover:shadow-2xl">
+          <div ref={chartRef} className="w-full overflow-x-auto"></div>
+        </div>
+      </div>
+      
+      {/* Add Tailwind animations config */}
+      <div className="hidden">
+        {/* This div is just for Tailwind to detect these classes */}
+        <div className="animate-pulse animate-bounce animate-spin"></div>
+      </div>
+    </div>
+  );
+};
+
+export default CommonWords;

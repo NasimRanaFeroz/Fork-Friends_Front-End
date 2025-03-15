@@ -1,4 +1,11 @@
 import React, { useState } from 'react';
+import YearlyJoins from './user/YearlyJoins';
+import TopReviewers from './user/TopReviewers';
+import MostPopular from './user/MostPopular';
+import EliteUser from './user/EliteUser';
+import SilentActive from './user/SilentActive';
+
+
 
 const UserAnalysis = () => {
   // State to track which analysis is selected
@@ -15,34 +22,25 @@ const UserAnalysis = () => {
 
   // Function to render the selected analysis component
   const renderAnalysisComponent = () => {
-    // You'll need to implement this function to return the appropriate component
-    // based on the selectedAnalysis path
-    // For example:
-    // switch(selectedAnalysis) {
-    //   case "users-per-year":
-    //     return <UsersPerYear />;
-    //   case "top-reviewers":
-    //     return <TopReviewers />;
-    //   // Add cases for all your analysis components
-    //   default:
-    //     return null;
-    // }
+
+    switch(selectedAnalysis) {
+      case "users-per-year":
+        return <YearlyJoins />;
+      case "top-reviewers":
+        return <TopReviewers />;
+      case "popular-users":
+        return <MostPopular />;
+      case "elite-ratio":
+        return <EliteUser />;
+      case "silent-users":
+        return <SilentActive />;
+      case "yearly-stats":
+        return null;
+      // Add cases for all your analysis components
+      default:
+        return null;
+    }
     
-    // For now, just showing a placeholder
-    return (
-      <div className="p-6 bg-white rounded-lg">
-        <button 
-          onClick={() => setSelectedAnalysis(null)}
-          className="mb-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-        >
-          Back to User Analysis
-        </button>
-        <h2 className="text-2xl font-bold mb-4">
-          {analysisItems.find(item => item.path === selectedAnalysis)?.title}
-        </h2>
-        <p>Analysis component for {selectedAnalysis} would render here</p>
-      </div>
-    );
   };
 
   return (

@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import CountUsefulFunnyCool from './review/CountUsefulFunnyCool';
+import CountPerYear from './review/CountPerYear';
+import PositiveWords from './review/PositiveWords';
+import NegativeWords from './review/NegativeWords';
+import RankUsers from './review/RankUsers';
+import WordAssociation from './review/WordAssociation';
+import WordCloud from './review/WordCloud';
+import CommonWords from './review/CommonWords';
 
 const ReviewAnalysis = () => {
   // State to track which analysis is selected
@@ -17,34 +25,28 @@ const ReviewAnalysis = () => {
 
   // Function to render the selected analysis component
   const renderAnalysisComponent = () => {
-    // You'll need to implement this function to return the appropriate component
-    // based on the selectedAnalysis path
-    // For example:
-    // switch(selectedAnalysis) {
-    //   case "reviews-per-year":
-    //     return <ReviewsPerYear />;
-    //   case "review-attributes":
-    //     return <ReviewAttributes />;
-    //   // Add cases for all your analysis components
-    //   default:
-    //     return null;
-    // }
+   
+    switch(selectedAnalysis) {
+      case "reviews-per-year":
+        return <CountPerYear />;
+      case "review-attributes":
+        return <CountUsefulFunnyCool />;
+      case "user-rankings":
+        return <RankUsers />;
+      case "common-words":
+        return <CommonWords />;
+      case "positive-words":
+        return <PositiveWords />;
+      case "negative-words":
+        return <NegativeWords />;
+      case "word-cloud":
+        return <WordCloud />;
+      case "word-association":
+        return <WordAssociation/>;
+      default:
+        return null;
+    }
     
-    // For now, just showing a placeholder
-    return (
-      <div className="p-6 bg-white rounded-lg">
-        <button 
-          onClick={() => setSelectedAnalysis(null)}
-          className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          Back to Review Analysis
-        </button>
-        <h2 className="text-2xl font-bold mb-4">
-          {analysisItems.find(item => item.path === selectedAnalysis)?.title}
-        </h2>
-        <p>Analysis component for {selectedAnalysis} would render here</p>
-      </div>
-    );
   };
 
   return (
