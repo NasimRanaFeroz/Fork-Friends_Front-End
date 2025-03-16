@@ -15,14 +15,14 @@ const WordAssociationGraph = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
-  
+
+
   // Fetch data from API
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5001/api/review/word-association-graph');
+        const response = await fetch('http://192.168.37.177:5001/api/review/word-association-graph');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -34,33 +34,33 @@ const WordAssociationGraph = ({ onBack }) => {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, []);
 
   // Process data for D3 visualization
   useEffect(() => {
     if (!data || !svgRef.current) return;
-    
+
     // Clear previous visualization
     d3.select(svgRef.current).selectAll("*").remove();
-    
+
     // Also remove any existing tooltips
     d3.select(containerRef.current).selectAll(".tooltip").remove();
-    
+
     createForceGraph();
   }, [data, selectedWord]);
 
   const createForceGraph = () => {
     if (!data) return;
-    
+
     const width = containerRef.current.clientWidth;
     const height = 600;
-    
+
     // Process data to create nodes and links
     const nodes = [];
     const links = [];
-    
+
     // Add main words as nodes
     data.results.forEach(item => {
       // Only include the selected word or all words if none selected
@@ -68,19 +68,19 @@ const WordAssociationGraph = ({ onBack }) => {
         // If we have a selected word, only include it as a main node
         return;
       }
-      
+
       nodes.push({
         id: item.word,
         group: 1,
         radius: 15, // Larger radius for better visibility
         count: d3.sum(item.associations.map(a => a.count))
       });
-      
+
       // Add associations as nodes and create links
       item.associations.forEach(assoc => {
         // Skip very common words with low counts to reduce clutter
         if (["the", "and", "for", "with", "was", "that"].includes(assoc.word) && assoc.count < 50) return;
-        
+
         // Check if this association node already exists
         const existingNode = nodes.find(n => n.id === assoc.word);
         if (!existingNode) {
@@ -91,7 +91,7 @@ const WordAssociationGraph = ({ onBack }) => {
             count: assoc.count
           });
         }
-        
+
         links.push({
           source: item.word,
           target: assoc.word,
@@ -99,27 +99,27 @@ const WordAssociationGraph = ({ onBack }) => {
         });
       });
     });
-    
+
     // Create SVG
     const svg = d3.select(svgRef.current)
       .attr("width", width)
       .attr("height", height)
       .attr("viewBox", [0, 0, width, height])
       .attr("class", "bg-gray-50 rounded-lg");
-    
+
     // Create a tooltip
     const tooltip = d3.select(containerRef.current)
       .append("div")
       .attr("class", "tooltip absolute hidden bg-black text-white p-2 rounded text-sm pointer-events-none z-10")
       .style("opacity", 0);
-    
+
     // Create a force simulation
     const simulation = d3.forceSimulation(nodes)
       .force("link", d3.forceLink(links).id(d => d.id).distance(150)) // Increased distance
       .force("charge", d3.forceManyBody().strength(-300)) // Stronger repulsion
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collision", d3.forceCollide().radius(d => d.radius * 2.5)); // Prevent overlap
-    
+
     // Create links
     const link = svg.append("g")
       .attr("class", "links")
@@ -129,7 +129,7 @@ const WordAssociationGraph = ({ onBack }) => {
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", d => Math.sqrt(d.value) / 1.5);
-    
+
     // Create node groups
     const nodeGroup = svg.append("g")
       .attr("class", "nodes")
@@ -142,7 +142,7 @@ const WordAssociationGraph = ({ onBack }) => {
           .duration(200)
           .style("opacity", 0.9)
           .style("display", "block");
-        
+
         tooltip.html(`
           <div>
             <strong>${d.id}</strong><br/>
@@ -162,14 +162,14 @@ const WordAssociationGraph = ({ onBack }) => {
         // Toggle selection
         setSelectedWord(selectedWord === d.id ? null : d.id);
       });
-    
+
     // Add circles to node groups
     nodeGroup.append("circle")
       .attr("r", d => d.radius)
       .attr("fill", d => d.group === 1 ? "#ff6b6b" : "#4ecdc4")
       .attr("stroke", "#fff")
       .attr("stroke-width", 1.5);
-    
+
     // Add text labels directly to node groups
     // This ensures text and circles move together
     nodeGroup.append("text")
@@ -180,7 +180,7 @@ const WordAssociationGraph = ({ onBack }) => {
       .attr("dy", d => d.group === 1 ? d.radius + 15 : d.radius + 12) // Position below circle
       .attr("pointer-events", "none")
       .attr("font-weight", d => d.group === 1 ? "bold" : "normal");
-    
+
     // Update positions on each tick of the simulation
     simulation.on("tick", () => {
       link
@@ -188,7 +188,7 @@ const WordAssociationGraph = ({ onBack }) => {
         .attr("y1", d => d.source.y)
         .attr("x2", d => d.target.x)
         .attr("y2", d => d.target.y);
-      
+
       // Keep nodes within bounds
       nodeGroup.attr("transform", d => {
         d.x = Math.max(d.radius, Math.min(width - d.radius, d.x));
@@ -196,7 +196,7 @@ const WordAssociationGraph = ({ onBack }) => {
         return `translate(${d.x},${d.y})`;
       });
     });
-    
+
     // Drag functionality
     function drag(simulation) {
       function dragstarted(event) {
@@ -204,18 +204,18 @@ const WordAssociationGraph = ({ onBack }) => {
         event.subject.fx = event.subject.x;
         event.subject.fy = event.subject.y;
       }
-      
+
       function dragged(event) {
         event.subject.fx = event.x;
         event.subject.fy = event.y;
       }
-      
+
       function dragended(event) {
         if (!event.active) simulation.alphaTarget(0);
         event.subject.fx = null;
         event.subject.fy = null;
       }
-      
+
       return d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
@@ -226,7 +226,7 @@ const WordAssociationGraph = ({ onBack }) => {
   // Word selector dropdown
   const renderWordSelector = () => {
     if (!data) return null;
-    
+
     return (
       <div className="mb-4">
         <label htmlFor="word-select" className="block text-sm font-medium text-gray-700 mb-1">
@@ -261,17 +261,17 @@ const WordAssociationGraph = ({ onBack }) => {
   // Bar chart for top associations
   const renderBarChart = () => {
     if (!selectedWord || !data) return null;
-    
+
     const wordData = data.results.find(item => item.word === selectedWord);
     if (!wordData) return null;
-    
+
     // Take top 10 associations
     const topAssociations = [...wordData.associations]
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
-    
+
     const maxCount = topAssociations[0].count;
-    
+
     return (
       <div className="mt-6 bg-white p-4 rounded-lg shadow">
         <h2 className="text-lg font-semibold mb-4">Top 10 Associations for "{selectedWord}"</h2>
@@ -282,7 +282,7 @@ const WordAssociationGraph = ({ onBack }) => {
                 {assoc.word}
               </div>
               <div className="flex-1 h-6 bg-gray-200 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-blue-500 rounded-full flex items-center justify-end pr-2"
                   style={{ width: `${Math.max(5, (assoc.count / maxCount) * 100)}%` }}
                 >
@@ -308,10 +308,10 @@ const WordAssociationGraph = ({ onBack }) => {
   // Detailed association table
   const renderAssociationTable = () => {
     if (!selectedWord || !data) return null;
-    
+
     const wordData = data.results.find(item => item.word === selectedWord);
     if (!wordData) return null;
-    
+
     return (
       <div className="mt-4 bg-white p-4 rounded-lg shadow">
         <h2 className="text-lg font-semibold mb-2">All Associations for "{selectedWord}"</h2>
@@ -341,43 +341,43 @@ const WordAssociationGraph = ({ onBack }) => {
 
   return (
     <div className="p-4 relative" ref={containerRef} >
-      <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
 
-     
+
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Word Association Graph</h1>
-      
+
       {loading && (
         <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading data...</p>
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading data...</p>
+          </div>
         </div>
-      </div>
       )}
-     
-      
+
+
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           <p>Error: {error}</p>
         </div>
       )}
-      
+
       {data && (
         <div>
           <div className="mb-4 bg-white p-4 rounded-lg shadow">
@@ -386,18 +386,18 @@ const WordAssociationGraph = ({ onBack }) => {
             <p className="text-sm text-gray-700">Processed At: <span className="font-medium">{new Date(data.metadata.processedAt).toLocaleString()}</span></p>
             <p className="text-sm text-gray-700">Execution Time: <span className="font-medium">{data.metadata.executionTimeMs.toLocaleString()}ms</span></p>
           </div>
-          
+
           {/* Word selector dropdown */}
           {renderWordSelector()}
-          
+
           <div className="mb-4">
             <p className="text-sm text-gray-600 mb-2">
-              {selectedWord ? 
-                `Showing associations for "${selectedWord}". Click on it again to show all words.` : 
+              {selectedWord ?
+                `Showing associations for "${selectedWord}". Click on it again to show all words.` :
                 'Click on any word to focus on its associations.'}
             </p>
             {selectedWord && (
-              <button 
+              <button
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm"
                 onClick={() => setSelectedWord(null)}
               >
@@ -405,14 +405,14 @@ const WordAssociationGraph = ({ onBack }) => {
               </button>
             )}
           </div>
-          
+
           <div className="bg-white p-4 rounded-lg shadow">
             <svg ref={svgRef}></svg>
           </div>
-          
+
           {/* Bar chart for selected word */}
           {selectedWord && renderBarChart()}
-          
+
           {/* Association table for selected word */}
           {selectedWord && renderAssociationTable()}
         </div>

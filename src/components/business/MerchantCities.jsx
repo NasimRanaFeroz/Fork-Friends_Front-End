@@ -7,7 +7,7 @@ const MerchantCities = ({ onBack }) => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const barChartRef = useRef();
   const lineChartRef = useRef();
 
@@ -20,7 +20,7 @@ const MerchantCities = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/business/top-cities');
+        const response = await axios.get('http://192.168.37.177:5001/api/business/top-cities');
         setCities(response.data);
         setLoading(false);
       } catch (err) {
@@ -43,32 +43,32 @@ const MerchantCities = ({ onBack }) => {
   const drawBarChart = () => {
     // Clear previous chart
     d3.select(barChartRef.current).selectAll("*").remove();
-    
+
     // Sort cities by count in descending order
     const sortedCities = [...cities].sort((a, b) => b.count - a.count);
-    
+
     const margin = { top: 50, right: 30, bottom: 120, left: 80 };
     const width = 800 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
-    
+
     const svg = d3.select(barChartRef.current)
       .append('svg')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
-    
+
     // X scale
     const x = d3.scaleBand()
       .domain(sortedCities.map(d => `${d.city}, ${d.state}`))
       .range([0, width])
       .padding(0.3);
-    
+
     // Y scale
     const y = d3.scaleLinear()
       .domain([0, d3.max(sortedCities, d => d.count) * 1.1])
       .range([height, 0]);
-    
+
     // Add X axis
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
@@ -79,7 +79,7 @@ const MerchantCities = ({ onBack }) => {
       .style("font-size", "12px")
       .style("fill", "#000000")
       .style("font-weight", "500");
-    
+
     // Add Y axis with improved visibility
     svg.append('g')
       .call(d3.axisLeft(y))
@@ -87,7 +87,7 @@ const MerchantCities = ({ onBack }) => {
       .style("font-size", "12px")
       .style("fill", "#000000")
       .style("font-weight", "500");
-    
+
     // Add Y axis label
     svg.append('text')
       .attr('transform', 'rotate(-90)')
@@ -98,7 +98,7 @@ const MerchantCities = ({ onBack }) => {
       .style('font-size', '14px')
       .style('font-weight', 'bold')
       .style('fill', '#000000');
-    
+
     // Add X axis label
     svg.append('text')
       .attr('x', width / 2)
@@ -108,7 +108,7 @@ const MerchantCities = ({ onBack }) => {
       .style('font-size', '14px')
       .style('font-weight', 'bold')
       .style('fill', '#000000');
-    
+
     // Add title
     svg.append('text')
       .attr('x', width / 2)
@@ -118,12 +118,12 @@ const MerchantCities = ({ onBack }) => {
       .style('font-size', '18px')
       .style('font-weight', 'bold')
       .style('fill', '#000000');
-    
+
     // Create a color scale
     const colorScale = d3.scaleLinear()
       .domain([d3.min(sortedCities, d => d.count), d3.max(sortedCities, d => d.count)])
       .range(['#60a5fa', '#2563eb']);
-    
+
     // Add bars
     svg.selectAll('.bar')
       .data(sortedCities)
@@ -136,9 +136,9 @@ const MerchantCities = ({ onBack }) => {
       .attr('height', d => height - y(d.count))
       .attr('fill', d => colorScale(d.count))
       .attr('rx', 4) // Rounded corners
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this).attr('opacity', 0.8);
-        
+
         svg.append('text')
           .attr('class', 'tooltip')
           .attr('x', x(`${d.city}, ${d.state}`) + x.bandwidth() / 2)
@@ -149,11 +149,11 @@ const MerchantCities = ({ onBack }) => {
           .style('fill', '#000000')
           .text(`${d.count}`);
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).attr('opacity', 1);
         svg.selectAll('.tooltip').remove();
       });
-    
+
     // Add count labels on top of bars
     svg.selectAll('.label')
       .data(sortedCities)
@@ -172,35 +172,35 @@ const MerchantCities = ({ onBack }) => {
   const drawLineChart = () => {
     // Clear previous chart
     d3.select(lineChartRef.current).selectAll("*").remove();
-    
+
     // Sort cities by count
     const sortedCities = [...cities].sort((a, b) => b.count - a.count);
-    
+
     const margin = { top: 50, right: 150, bottom: 120, left: 80 };
     const width = 800 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
-    
+
     const svg = d3.select(lineChartRef.current)
       .append('svg')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
-    
+
     // X scale
     const x = d3.scalePoint()
       .domain(sortedCities.map(d => `${d.city}, ${d.state}`))
       .range([0, width]);
-    
+
     // Y scales for count and rating
     const yCount = d3.scaleLinear()
       .domain([0, d3.max(sortedCities, d => d.count) * 1.1])
       .range([height, 0]);
-    
+
     const yRating = d3.scaleLinear()
       .domain([0, 5])
       .range([height, 0]);
-    
+
     // X axis
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
@@ -211,7 +211,7 @@ const MerchantCities = ({ onBack }) => {
       .style("font-size", "12px")
       .style("fill", "#000000")
       .style("font-weight", "500");
-    
+
     // Y axis for count with improved visibility
     svg.append('g')
       .call(d3.axisLeft(yCount))
@@ -219,7 +219,7 @@ const MerchantCities = ({ onBack }) => {
       .style("font-size", "12px")
       .style("fill", "#000000")
       .style("font-weight", "500");
-    
+
     // Y axis for rating with improved visibility
     svg.append('g')
       .attr('transform', `translate(${width}, 0)`)
@@ -228,7 +228,7 @@ const MerchantCities = ({ onBack }) => {
       .style("font-size", "12px")
       .style("fill", "#000000")
       .style("font-weight", "500");
-    
+
     // Add Y axis label for count
     svg.append('text')
       .attr('transform', 'rotate(-90)')
@@ -239,7 +239,7 @@ const MerchantCities = ({ onBack }) => {
       .style('font-size', '14px')
       .style('font-weight', 'bold')
       .style('fill', '#2563eb');
-    
+
     // Add Y axis label for rating
     svg.append('text')
       .attr('transform', 'rotate(-90)')
@@ -250,7 +250,7 @@ const MerchantCities = ({ onBack }) => {
       .style('font-size', '14px')
       .style('font-weight', 'bold')
       .style('fill', '#dc2626');
-    
+
     // Add X axis label
     svg.append('text')
       .attr('x', width / 2)
@@ -260,7 +260,7 @@ const MerchantCities = ({ onBack }) => {
       .style('font-size', '14px')
       .style('font-weight', 'bold')
       .style('fill', '#000000');
-    
+
     // Add title
     svg.append('text')
       .attr('x', width / 2)
@@ -270,33 +270,33 @@ const MerchantCities = ({ onBack }) => {
       .style('font-size', '18px')
       .style('font-weight', 'bold')
       .style('fill', '#000000');
-    
+
     // Line for count
     const countLine = d3.line()
       .x(d => x(`${d.city}, ${d.state}`))
       .y(d => yCount(d.count))
       .curve(d3.curveMonotoneX);
-    
+
     svg.append('path')
       .datum(sortedCities)
       .attr('fill', 'none')
       .attr('stroke', '#2563eb')
       .attr('stroke-width', 3)
       .attr('d', countLine);
-    
+
     // Line for rating
     const ratingLine = d3.line()
       .x(d => x(`${d.city}, ${d.state}`))
       .y(d => yRating(d.averageRating))
       .curve(d3.curveMonotoneX);
-    
+
     svg.append('path')
       .datum(sortedCities)
       .attr('fill', 'none')
       .attr('stroke', '#dc2626')
       .attr('stroke-width', 3)
       .attr('d', ratingLine);
-    
+
     // Add dots for count
     svg.selectAll('.dot-count')
       .data(sortedCities)
@@ -307,9 +307,9 @@ const MerchantCities = ({ onBack }) => {
       .attr('cy', d => yCount(d.count))
       .attr('r', 6)
       .attr('fill', '#2563eb')
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this).attr('r', 8);
-        
+
         svg.append('text')
           .attr('class', 'tooltip')
           .attr('x', x(`${d.city}, ${d.state}`))
@@ -320,11 +320,11 @@ const MerchantCities = ({ onBack }) => {
           .style('fill', '#000000')
           .text(`Count: ${d.count}`);
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).attr('r', 6);
         svg.selectAll('.tooltip').remove();
       });
-    
+
     // Add dots for rating
     svg.selectAll('.dot-rating')
       .data(sortedCities)
@@ -335,9 +335,9 @@ const MerchantCities = ({ onBack }) => {
       .attr('cy', d => yRating(d.averageRating))
       .attr('r', 6)
       .attr('fill', '#dc2626')
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this).attr('r', 8);
-        
+
         svg.append('text')
           .attr('class', 'tooltip')
           .attr('x', x(`${d.city}, ${d.state}`))
@@ -348,11 +348,11 @@ const MerchantCities = ({ onBack }) => {
           .style('fill', '#000000')
           .text(`Rating: ${d.averageRating}`);
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).attr('r', 6);
         svg.selectAll('.tooltip').remove();
       });
-    
+
     // Add legend
     const legend = svg.append('g')
       .attr('transform', `translate(${width - 5}, -60)`);
@@ -377,7 +377,7 @@ const MerchantCities = ({ onBack }) => {
       .style('font-weight', '500')
       .attr('alignment-baseline', 'middle');
   };
-  
+
 
   if (loading) {
     return (
@@ -389,11 +389,11 @@ const MerchantCities = ({ onBack }) => {
       </div>
     );
   }
-  
+
 
   return (
     <div className="max-w-7xl mx-auto p-5 font-sans relative">
-      <button 
+      <button
         onClick={handleGoBack}
         className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
         ref={el => {
@@ -410,18 +410,18 @@ const MerchantCities = ({ onBack }) => {
         <IoArrowBack className="text-gray-700 text-lg" />
         <span className="text-gray-700 font-medium">Back</span>
       </button>
-      
-      
-      
+
+
+
       {error && <p className="text-center text-red-600 font-bold">{error}</p>}
-      
+
       {!error && (
         <>
           <div className="mb-10 p-6 border border-gray-200 rounded-lg bg-white shadow-md">
             <h2 className="text-xl text-center font-semibold text-gray-700 mb-4">Merchant Count by City</h2>
             <div ref={barChartRef} className="flex justify-center overflow-x-auto"></div>
           </div>
-          
+
           <div className="mb-10 p-6 border border-gray-200 rounded-lg bg-white shadow-md">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">Merchant Count vs Rating by City</h2>
             <div ref={lineChartRef} className="flex justify-center overflow-x-auto"></div>

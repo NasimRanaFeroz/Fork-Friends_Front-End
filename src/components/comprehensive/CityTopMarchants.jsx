@@ -14,13 +14,13 @@ const CityTopMerchants = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/comprehensive/city-top-merchants');
+        const response = await axios.get('http://192.168.37.177:5001/api/comprehensive/city-top-merchants');
         setMerchantData(response.data);
         setLoading(false);
       } catch (err) {
@@ -41,8 +41,8 @@ const CityTopMerchants = ({ onBack }) => {
 
   const sortData = () => {
     let sortedData = [...merchantData];
-    
-    switch(sortBy) {
+
+    switch (sortBy) {
       case 'rating':
         sortedData.sort((a, b) => b.topMerchants[0].overallRating - a.topMerchants[0].overallRating);
         break;
@@ -55,7 +55,7 @@ const CityTopMerchants = ({ onBack }) => {
       default:
         break;
     }
-    
+
     return sortedData;
   };
 
@@ -64,12 +64,12 @@ const CityTopMerchants = ({ onBack }) => {
     d3.select(chartRef.current).selectAll('*').remove();
 
     const sortedData = sortData();
-    
+
     // Set dimensions
     const margin = { top: 60, right: 120, bottom: 150, left: 60 };
     const width = 1000 - margin.left - margin.right;
     const height = 600 - margin.top - margin.bottom;
-    
+
     // Create SVG
     const svg = d3.select(chartRef.current)
       .append('svg')
@@ -77,7 +77,7 @@ const CityTopMerchants = ({ onBack }) => {
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
-    
+
     // Add background
     svg.append('rect')
       .attr('width', width)
@@ -85,18 +85,18 @@ const CityTopMerchants = ({ onBack }) => {
       .attr('fill', '#f0f4ff')
       .attr('rx', 8)
       .attr('ry', 8);
-    
+
     // X scale - use scaleBand for categorical data
     const x = d3.scaleBand()
       .domain(sortedData.map(d => d.city))
       .range([0, width])
       .padding(0.3);
-    
+
     // Y scale
     const y = d3.scaleLinear()
       .domain([0, 5.5]) // Rating scale 0-5 with some padding
       .range([height, 0]);
-    
+
     // Add gridlines
     svg.selectAll('grid-lines')
       .data([0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5])
@@ -108,7 +108,7 @@ const CityTopMerchants = ({ onBack }) => {
       .attr('y2', d => y(d))
       .attr('stroke', '#e2e8f0')
       .attr('stroke-width', 1);
-    
+
     // Add X axis
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
@@ -119,7 +119,7 @@ const CityTopMerchants = ({ onBack }) => {
       .style('font-size', '12px')
       .style('font-family', 'Arial')
       .style('fill', '#4a5568');
-    
+
     // Add Y axis
     svg.append('g')
       .call(d3.axisLeft(y).ticks(10))
@@ -127,7 +127,7 @@ const CityTopMerchants = ({ onBack }) => {
       .style('font-size', '12px')
       .style('font-family', 'Arial')
       .style('fill', '#4a5568');
-    
+
     // Y axis label
     svg.append('text')
       .attr('transform', 'rotate(-90)')
@@ -139,7 +139,7 @@ const CityTopMerchants = ({ onBack }) => {
       .style('font-size', '14px')
       .style('font-weight', 'bold')
       .style('font-family', 'Arial');
-    
+
     // Add title
     svg.append('text')
       .attr('x', width / 2)
@@ -150,12 +150,12 @@ const CityTopMerchants = ({ onBack }) => {
       .style('font-size', '24px')
       .style('font-weight', 'bold')
       .style('font-family', 'Arial');
-    
+
     // Create color scale based on ratings
     const colorScale = d3.scaleLinear()
       .domain([1, 5])
       .range(['#cbd5e0', '#4c51bf']);
-    
+
     // Create tooltip
     const tooltip = d3.select(chartRef.current)
       .append('div')
@@ -171,7 +171,7 @@ const CityTopMerchants = ({ onBack }) => {
       .style('font-family', 'Arial')
       .style('font-size', '14px')
       .style('z-index', 10);
-    
+
     // Add bars with animation
     svg.selectAll('.bar')
       .data(sortedData)
@@ -185,16 +185,16 @@ const CityTopMerchants = ({ onBack }) => {
       .attr('fill', d => colorScale(d.topMerchants[0].overallRating))
       .attr('rx', 4) // Rounded corners
       .attr('ry', 4)
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this)
           .transition()
           .duration(300)
           .attr('fill', '#667eea');
-        
+
         tooltip.transition()
           .duration(200)
           .style('opacity', 0.9);
-        
+
         tooltip.html(`
           <div style="font-weight: bold; margin-bottom: 8px; font-size: 16px;">${d.city}, ${d.state}</div>
           <div style="margin-bottom: 4px;"><b>Merchant:</b> ${d.topMerchants[0].name}</div>
@@ -204,12 +204,12 @@ const CityTopMerchants = ({ onBack }) => {
           .style('left', (event.pageX + 10) + 'px')
           .style('top', (event.pageY - 28) + 'px');
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this)
           .transition()
           .duration(300)
           .attr('fill', d => colorScale(d.topMerchants[0].overallRating));
-        
+
         tooltip.transition()
           .duration(500)
           .style('opacity', 0);
@@ -220,7 +220,7 @@ const CityTopMerchants = ({ onBack }) => {
       .attr('y', d => y(d.topMerchants[0].overallRating))
       .attr('height', d => height - y(d.topMerchants[0].overallRating))
       .ease(d3.easeBounce);
-    
+
     // Add rating labels with animation
     svg.selectAll('.rating-label')
       .data(sortedData)
@@ -240,7 +240,7 @@ const CityTopMerchants = ({ onBack }) => {
       .delay((d, i) => i * 50 + 400)
       .attr('y', d => y(d.topMerchants[0].overallRating) + 20)
       .style('font-size', '12px');
-    
+
     // Add legend
     const legendData = [
       { label: '5.0 ⭐⭐⭐⭐⭐', value: 5 },
@@ -249,10 +249,10 @@ const CityTopMerchants = ({ onBack }) => {
       { label: '2.0 ⭐⭐', value: 2 },
       { label: '1.0 ⭐', value: 1 }
     ];
-    
+
     const legend = svg.append('g')
       .attr('transform', `translate(${width + 20}, 20)`);
-    
+
     legend.selectAll('rect')
       .data(legendData)
       .enter()
@@ -263,7 +263,7 @@ const CityTopMerchants = ({ onBack }) => {
       .attr('fill', d => colorScale(d.value))
       .attr('rx', 2)
       .attr('ry', 2);
-    
+
     legend.selectAll('text')
       .data(legendData)
       .enter()
@@ -274,7 +274,7 @@ const CityTopMerchants = ({ onBack }) => {
       .style('font-size', '12px')
       .style('font-family', 'Arial')
       .style('fill', '#4a5568');
-    
+
     // Add legend title
     legend.append('text')
       .attr('x', 0)
@@ -294,71 +294,71 @@ const CityTopMerchants = ({ onBack }) => {
     for (let i = 0; i < fullStars; i++) {
       stars.push(<span key={`full-${i}`} className="text-yellow-500">★</span>);
     }
-    
+
     if (halfStar) {
       stars.push(<span key="half" className="text-yellow-500">★</span>);
     }
-    
+
     const emptyStars = 5 - stars.length;
     for (let i = 0; i < emptyStars; i++) {
       stars.push(<span key={`empty-${i}`} className="text-gray-300">☆</span>);
     }
-    
+
     return stars;
   };
 
   return (
     <div className="max-w-7xl mx-auto p-5 font-sans relative">
-      <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back</span>
-</button>
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back</span>
+      </button>
 
       <h1 className="text-3xl font-bold text-center mb-8 text-indigo-800">Top Merchants by City</h1>
-      
+
       {loading && (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
         </div>
       )}
-      
+
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
           <strong className="font-bold">Error!</strong>
           <span className="block sm:inline"> {error}</span>
         </div>
       )}
-      
+
       {!loading && !error && (
         <>
           <div className="mb-6 flex justify-end space-x-4">
             <div className="inline-flex rounded-md shadow-sm">
-              <button 
+              <button
                 onClick={() => setSortBy('rating')}
                 className={`px-4 py-2 text-sm font-medium rounded-l-lg ${sortBy === 'rating' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
               >
                 Sort by Rating
               </button>
-              <button 
+              <button
                 onClick={() => setSortBy('reviews')}
                 className={`px-4 py-2 text-sm font-medium ${sortBy === 'reviews' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
               >
                 Sort by Reviews
               </button>
-              <button 
+              <button
                 onClick={() => setSortBy('alphabetical')}
                 className={`px-4 py-2 text-sm font-medium rounded-r-lg ${sortBy === 'alphabetical' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'}`}
               >
@@ -366,11 +366,11 @@ const CityTopMerchants = ({ onBack }) => {
               </button>
             </div>
           </div>
-          
+
           <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
             <div ref={chartRef} className="mt-4 overflow-x-auto"></div>
           </div>
-          
+
           <div className="mt-12">
             <h2 className="text-2xl font-semibold mb-4 text-indigo-700">Detailed Merchant Data</h2>
             <div className="overflow-x-auto bg-white rounded-lg shadow">

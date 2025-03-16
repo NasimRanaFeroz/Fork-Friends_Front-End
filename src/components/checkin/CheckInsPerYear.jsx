@@ -13,12 +13,12 @@ const CheckInsPerYear = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/checkin/checkins-per-year');
+        const response = await fetch('http://192.168.37.177:5001/api/checkin/checkins-per-year');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -265,23 +265,23 @@ const CheckInsPerYear = ({ onBack }) => {
 
   return (
     <div className="max-w-7xl mx-auto p-5 font-sans relative">
-<button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white p-4 rounded-lg shadow-md">

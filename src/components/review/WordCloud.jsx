@@ -13,22 +13,22 @@ const WordCloud = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5001/api/review/word-cloud-analysis');
+        const response = await fetch('http://192.168.37.177:5001/api/review/word-cloud-analysis');
         const data = await response.json();
-        
+
         if (data && data.results) {
           console.log("Data received:", data.results);
           setWordData(data.results);
         } else {
           throw new Error('Invalid data structure received from API');
         }
-        
+
         setLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -107,7 +107,7 @@ const WordCloud = ({ onBack }) => {
     svg.selectAll(".domain")
       .style("stroke", "#000000")
       .style("stroke-width", "2px");
-    
+
     svg.selectAll(".tick line")
       .style("stroke", "#000000")
       .style("stroke-width", "1px");
@@ -189,14 +189,14 @@ const WordCloud = ({ onBack }) => {
 
     // Add hover effects
     svg.selectAll(".bar")
-      .on("mouseover", function(event, d) {
+      .on("mouseover", function (event, d) {
         d3.select(this)
           .transition()
           .duration(200)
           .style("filter", "brightness(1.2)")
           .attr("stroke", "#000000")
           .attr("stroke-width", 2);
-        
+
         // Highlight the corresponding label
         svg.selectAll(".label")
           .filter(label => label.text === d.text)
@@ -205,13 +205,13 @@ const WordCloud = ({ onBack }) => {
           .style("font-size", "14px")
           .style("fill", "#000000");
       })
-      .on("mouseout", function(event, d) {
+      .on("mouseout", function (event, d) {
         d3.select(this)
           .transition()
           .duration(200)
           .style("filter", "none")
           .attr("stroke-width", 0);
-        
+
         // Reset label
         svg.selectAll(".label")
           .filter(label => label.text === d.text)
@@ -269,26 +269,26 @@ const WordCloud = ({ onBack }) => {
 
   return (
     <div className="container mx-auto px-4 py-8 bg-gray-50 relative">
-      <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
 
       <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Word Cloud Analysis</h1>
-      
+
       {/* Word Cloud Section */}
       <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
         <div ref={wordCloudRef} className="flex flex-wrap gap-3 justify-center p-6 bg-gray-50 rounded-lg min-h-[200px]">

@@ -13,12 +13,12 @@ const PositiveWords = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/review/top-10-positive-words');
+        const response = await fetch('http://192.168.37.177:5001/api/review/top-10-positive-words');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -79,21 +79,21 @@ const PositiveWords = ({ onBack }) => {
       .range([0, height])
       .domain(words.map(d => d._id))
       .padding(0.3);
-    
+
     // Add Y axis with enhanced text visibility
     const yAxis = svg.append("g")
       .call(d3.axisLeft(y));
-    
+
     yAxis.selectAll("text")
       .style("font-size", "16px")
       .style("font-weight", "600")
       .style("fill", "#1F2937")
       .attr("dy", "0.32em");
-    
+
     yAxis.selectAll("line")
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
-    
+
     yAxis.selectAll("path")
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
@@ -102,22 +102,22 @@ const PositiveWords = ({ onBack }) => {
     const x = d3.scaleLinear()
       .domain([0, d3.max(words, d => d.count) * 1.1])
       .range([0, width]);
-    
+
     // Add X axis with enhanced text visibility
     const xAxis = svg.append("g")
       .attr("transform", `translate(0,${height})`)
       .call(d3.axisBottom(x).ticks(5).tickFormat(d => d3.format(",")(d)));
-    
+
     xAxis.selectAll("text")
       .style("font-size", "14px")
       .style("font-weight", "600")
       .style("fill", "#1F2937")
       .attr("dy", "1em");
-    
+
     xAxis.selectAll("line")
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
-    
+
     xAxis.selectAll("path")
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
@@ -146,7 +146,7 @@ const PositiveWords = ({ onBack }) => {
       .attr("ry", 6)
       .style("filter", d => activeWord === d._id ? "drop-shadow(0 0 10px rgba(79, 70, 229, 0.7))" : "none")
       .style("opacity", d => activeWord === d._id || activeWord === null ? 1 : 0.5)
-      .on("mouseover", function(event, d) {
+      .on("mouseover", function (event, d) {
         setActiveWord(d._id);
         d3.select(this)
           .transition()
@@ -154,7 +154,7 @@ const PositiveWords = ({ onBack }) => {
           .attr("height", y.bandwidth() * 1.1)
           .attr("y", d => y(d._id) - (y.bandwidth() * 0.05));
       })
-      .on("mouseout", function() {
+      .on("mouseout", function () {
         setActiveWord(null);
         d3.select(this)
           .transition()
@@ -271,8 +271,8 @@ const PositiveWords = ({ onBack }) => {
               <p className="text-gray-600 mt-1">{error}</p>
             </div>
           </div>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md transition-colors duration-300"
           >
             Try Again
@@ -284,23 +284,23 @@ const PositiveWords = ({ onBack }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8 relative">
-      <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
 
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500 hover:shadow-2xl">
@@ -369,20 +369,18 @@ const PositiveWords = ({ onBack }) => {
                     const percentage = ((word.count / totalCount) * 100).toFixed(2);
                     const maxCount = Math.max(...words.map(w => w.count));
                     const widthPercentage = (word.count / maxCount) * 100;
-                    
+
                     return (
-                      <tr 
-                        key={word._id} 
-                        className={`hover:bg-indigo-50 transition-colors duration-150 ${
-                          activeWord === word._id ? 'bg-indigo-50' : ''
-                        }`}
+                      <tr
+                        key={word._id}
+                        className={`hover:bg-indigo-50 transition-colors duration-150 ${activeWord === word._id ? 'bg-indigo-50' : ''
+                          }`}
                         onMouseEnter={() => setActiveWord(word._id)}
                         onMouseLeave={() => setActiveWord(null)}
                       >
                         <td className="py-4 px-6 whitespace-nowrap">
-                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${
-                            index < 3 ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-800'
-                          } font-bold text-sm`}>
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${index < 3 ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-800'
+                            } font-bold text-sm`}>
                             {index + 1}
                           </span>
                         </td>
@@ -397,7 +395,7 @@ const PositiveWords = ({ onBack }) => {
                         </td>
                         <td className="py-4 px-6 whitespace-nowrap">
                           <div className="w-full bg-gray-200 rounded-full h-2.5">
-                            <div 
+                            <div
                               className="bg-gradient-to-r from-indigo-600 to-purple-600 h-2.5 rounded-full transition-all duration-500 ease-out"
                               style={{ width: `${widthPercentage}%` }}
                             ></div>
@@ -414,7 +412,7 @@ const PositiveWords = ({ onBack }) => {
           {/* Footer */}
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
             <p className="text-sm text-gray-500 text-center">
-              Data refreshed on {new Date().toLocaleDateString()} | 
+              Data refreshed on {new Date().toLocaleDateString()} |
               <span className="text-indigo-600 ml-1">Word Frequency Analysis Tool</span>
             </p>
           </div>

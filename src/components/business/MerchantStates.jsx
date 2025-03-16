@@ -26,7 +26,7 @@ const MerchantStates = ({ onBack }) => {
         setLoading(true);
         // Fetch state data
         const response = await axios.get(
-          "http://localhost:5001/api/business/top-states"
+          "http://192.168.37.177:5001/api/business/top-states"
         );
         setStates(response.data);
         console.log(response.data);

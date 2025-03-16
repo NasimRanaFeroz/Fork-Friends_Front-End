@@ -14,12 +14,12 @@ const TopReviewers = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/user/top-reviewers');
+        const response = await axios.get('http://192.168.37.177:5001/api/user/top-reviewers');
         const sortedData = response.data.sort((a, b) => b.review_count - a.review_count);
         setData(sortedData);
         setLoading(false);
@@ -140,7 +140,7 @@ const TopReviewers = ({ onBack }) => {
 
     // Hover effects
     svg.selectAll('.bar')
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this)
           .transition()
           .duration(300)
@@ -174,7 +174,7 @@ const TopReviewers = ({ onBack }) => {
           .attr('fill', 'white')
           .text(`Reviews: ${d3.format(",")(d.review_count)}`);
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this)
           .transition()
           .duration(300)
@@ -186,60 +186,60 @@ const TopReviewers = ({ onBack }) => {
   };
 
   return (
-    <div className="top-reviewers-container" style={{ 
-      maxWidth: '850px', 
-      margin: '0 auto', 
+    <div className="top-reviewers-container" style={{
+      maxWidth: '850px',
+      margin: '0 auto',
       padding: '20px',
       backgroundColor: 'white',
       borderRadius: '8px',
       position: 'relative',
       boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
     }}>
-      <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
-<h1 className="text-3xl font-bold text-center text-gray-800">Top Review Analysis</h1>
-        
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
+      <h1 className="text-3xl font-bold text-center text-gray-800">Top Review Analysis</h1>
 
-       {loading && (
+
+      {loading && (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
       )}
-      
+
       {error && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
           <p className="font-bold">Error</p>
           <p>{error}</p>
         </div>
       )}
-      
+
       {!loading && !error && (
         <>
           <div style={{ overflowX: 'auto' }}>
             <svg ref={svgRef}></svg>
           </div>
-          
+
           <div style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
             <p>This chart displays our top reviewers based on the total number of reviews submitted.</p>
           </div>
         </>
       )}
-      
+
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }

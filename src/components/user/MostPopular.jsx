@@ -16,7 +16,7 @@ const MultiChartVisualization = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
+
 
   // Generate trend data for line chart
   const generateTrendData = (baseValue) => {
@@ -30,7 +30,7 @@ const MultiChartVisualization = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/user/most-popular');
+        const response = await axios.get('http://192.168.37.177:5001/api/user/most-popular');
         const sortedData = response.data
           .sort((a, b) => b.fans - a.fans)
           .slice(0, 6) // Take top 6 for better visualization
@@ -38,7 +38,7 @@ const MultiChartVisualization = ({ onBack }) => {
             ...item,
             trendData: generateTrendData(item.fans)
           }));
-          console.log(sortedData)
+        console.log(sortedData)
         setData(sortedData);
         setLoading(false);
       } catch (err) {
@@ -167,9 +167,9 @@ const MultiChartVisualization = ({ onBack }) => {
       .duration(1000)
       .delay((d, i) => 800 + i * 100)
       .style("opacity", 1)
-      .tween("text", function(d) {
+      .tween("text", function (d) {
         const i = d3.interpolate(0, d.fans);
-        return function(t) {
+        return function (t) {
           d3.select(this).text(d3.format(",.0f")(i(t)));
         };
       });
@@ -186,7 +186,7 @@ const MultiChartVisualization = ({ onBack }) => {
       .attr('width', width)
       .attr('height', height)
       .append('g')
-      .attr('transform', `translate(${width/2},${height/2})`);
+      .attr('transform', `translate(${width / 2},${height / 2})`);
 
     // Create color scale with more distinct colors
     const color = d3.scaleOrdinal()
@@ -248,28 +248,28 @@ const MultiChartVisualization = ({ onBack }) => {
       .delay((d, i) => i * 120)
       .attr('transform', 'scale(1)')
       .style('opacity', 1)
-      .attrTween('d', function(d) {
+      .attrTween('d', function (d) {
         const interpolate = d3.interpolate(
-          {startAngle: d.startAngle, endAngle: d.startAngle},
-          {startAngle: d.startAngle, endAngle: d.endAngle}
+          { startAngle: d.startAngle, endAngle: d.startAngle },
+          { startAngle: d.startAngle, endAngle: d.endAngle }
         );
-        return function(t) {
+        return function (t) {
           return arc(interpolate(t));
         };
       });
 
     // Add hover effects to pie slices
     sliceGroups.selectAll('path')
-      .on('mouseover', function() {
+      .on('mouseover', function () {
         d3.select(this)
           .transition()
           .duration(200)
-          .attr('transform', function(d) {
+          .attr('transform', function (d) {
             const centroid = arc.centroid(d);
             return `translate(${centroid[0] * 0.05}, ${centroid[1] * 0.05}) scale(1.05)`;
           });
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this)
           .transition()
           .duration(200)
@@ -287,13 +287,13 @@ const MultiChartVisualization = ({ onBack }) => {
     const labelData = pie(data).map(d => {
       const midAngle = d.startAngle + (d.endAngle - d.startAngle) / 2;
       const pos = outerArc.centroid(d);
-      
+
       // Adjust label positions based on angle for better readability
       // Increase the multiplier to push labels further out
       const x = radius * 0.95 * (midAngle < Math.PI ? 1 : -1);
       // Add slight vertical adjustment based on position to prevent overlap
       const y = pos[1] + (midAngle > Math.PI / 2 && midAngle < Math.PI * 1.5 ? -5 : 5);
-      
+
       return {
         x: x,
         y: y,
@@ -336,7 +336,7 @@ const MultiChartVisualization = ({ onBack }) => {
       .style('font-size', '10px')
       .style('fill', '#636e72')
       .style('opacity', 0)
-      .text(d => `(${d3.format('.1%')(d.data.fans/d3.sum(data, d => d.fans))})`)
+      .text(d => `(${d3.format('.1%')(d.data.fans / d3.sum(data, d => d.fans))})`)
       .transition()
       .duration(600)
       .delay((d, i) => 1000 + i * 120)
@@ -355,10 +355,10 @@ const MultiChartVisualization = ({ onBack }) => {
       .style('stroke', '#2d3436')
       .style('stroke-width', '1px')
       .style('opacity', 0)
-      .style('stroke-dasharray', function() {
+      .style('stroke-dasharray', function () {
         return this.getTotalLength();
       })
-      .style('stroke-dashoffset', function() {
+      .style('stroke-dashoffset', function () {
         return this.getTotalLength();
       })
       .transition()
@@ -369,7 +369,7 @@ const MultiChartVisualization = ({ onBack }) => {
 
     // Add center text with total fans count
     const totalFans = d3.sum(data, d => d.fans);
-    
+
     // Add background circle for center text
     svg.append('circle')
       .attr('cx', 0)
@@ -382,7 +382,7 @@ const MultiChartVisualization = ({ onBack }) => {
       .transition()
       .duration(800)
       .style('opacity', 1);
-    
+
     // Add total label
     svg.append('text')
       .attr('text-anchor', 'middle')
@@ -395,7 +395,7 @@ const MultiChartVisualization = ({ onBack }) => {
       .duration(800)
       .delay(200)
       .style('opacity', 1);
-    
+
     // Add total value with counting animation
     svg.append('text')
       .attr('text-anchor', 'middle')
@@ -408,9 +408,9 @@ const MultiChartVisualization = ({ onBack }) => {
       .duration(1000)
       .delay(400)
       .style('opacity', 1)
-      .tween('text', function() {
+      .tween('text', function () {
         const i = d3.interpolate(0, totalFans);
-        return function(t) {
+        return function (t) {
           d3.select(this).text(d3.format(",.0f")(i(t)));
         };
       });
@@ -578,45 +578,45 @@ const MultiChartVisualization = ({ onBack }) => {
   // Return statement with Tailwind CSS classes
   return (
     <div className="max-w-7xl mx-auto p-5 bg-white rounded-xl shadow-lg border border-gray-100 relative">
-      <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
 
       {loading && (
-       <div className="flex items-center justify-center h-96">
-       <div className="text-center">
-         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-         <p className="mt-4 text-gray-600">Loading data...</p>
-       </div>
-     </div>
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading data...</p>
+          </div>
+        </div>
       )}
-      
+
       {error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 my-4">
           <strong>Error:</strong> {error}
         </div>
       )}
-      
+
       {!loading && !error && (
         <div>
           <h2 className="text-center text-2xl font-bold text-gray-800 mb-8">
             User Popularity Analysis Dashboard
           </h2>
-          
+
           {/* Bar Chart Section */}
           <div className="p-5 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 mb-8">
             <h3 className="text-center text-lg font-semibold text-gray-700 mb-4">Fan Distribution</h3>
@@ -624,7 +624,7 @@ const MultiChartVisualization = ({ onBack }) => {
               <svg ref={barChartRef} className="w-full max-w-md"></svg>
             </div>
           </div>
-          
+
           {/* Pie Chart Section */}
           <div className="p-5 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 mb-8">
             <h3 className="text-center text-lg font-semibold text-gray-700 mb-4">Market Share</h3>
@@ -632,7 +632,7 @@ const MultiChartVisualization = ({ onBack }) => {
               <svg ref={pieChartRef} className="w-full max-w-md"></svg>
             </div>
           </div>
-          
+
           {/* Line Chart Section */}
           <div className="p-5 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
             <h3 className="text-center text-lg font-semibold text-gray-700 mb-4">Growth Trends</h3>

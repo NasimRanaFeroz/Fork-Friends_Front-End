@@ -17,12 +17,12 @@ const FiveStarBusinesses = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/rating/top-five-star');
+        const response = await axios.get('http://192.168.37.177:5001/api/rating/top-five-star');
         setBusinesses(response.data);
         setLoading(false);
       } catch (err) {
@@ -109,11 +109,11 @@ const FiveStarBusinesses = ({ onBack }) => {
       .attr('fill', d => colorScale(d.fiveStarCount))
       .attr('rx', 4)
       .attr('ry', 4)
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this).attr('opacity', 0.8);
         setSelectedBusiness(d);
       })
-      .on('mouseout', function() {
+      .on('mouseout', function () {
         d3.select(this).attr('opacity', 1);
         setSelectedBusiness(null);
       })
@@ -172,23 +172,23 @@ const FiveStarBusinesses = ({ onBack }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8 relative">
-      <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -197,7 +197,7 @@ const FiveStarBusinesses = ({ onBack }) => {
         className="max-w-7xl mx-auto"
       >
         <div className="text-center mb-12">
-          <motion.h1 
+          <motion.h1
             className="text-4xl font-extrabold text-indigo-800 mb-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -205,7 +205,7 @@ const FiveStarBusinesses = ({ onBack }) => {
           >
             Top Businesses with Most Five-Star Ratings
           </motion.h1>
-          <motion.p 
+          <motion.p
             className="text-xl text-gray-600 max-w-3xl mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

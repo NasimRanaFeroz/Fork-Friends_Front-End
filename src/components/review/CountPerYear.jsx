@@ -15,7 +15,7 @@ const CountPerYear = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
+
 
   // Fetch data
   useEffect(() => {
@@ -23,7 +23,7 @@ const CountPerYear = ({ onBack }) => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          "http://localhost:5001/api/review/count-by-year"
+          "http://192.168.37.177:5001/api/review/count-by-year"
         );
 
         if (!response.ok) {
@@ -255,17 +255,15 @@ const CountPerYear = ({ onBack }) => {
             `
           <div class="font-bold">${d._id}</div>
           <div>${d3.format(",")(d.count)} reviews</div>
-          ${
-            yearlyData.indexOf(d) > 0
+          ${yearlyData.indexOf(d) > 0
               ? `
             <div class="text-xs mt-1">
-              ${
-                calculateGrowth(
-                  yearlyData[yearlyData.indexOf(d) - 1].count,
-                  d.count
-                ) > 0
-                  ? "+"
-                  : ""
+              ${calculateGrowth(
+                yearlyData[yearlyData.indexOf(d) - 1].count,
+                d.count
+              ) > 0
+                ? "+"
+                : ""
               }
               ${calculateGrowth(
                 yearlyData[yearlyData.indexOf(d) - 1].count,
@@ -274,20 +272,18 @@ const CountPerYear = ({ onBack }) => {
             </div>
           `
               : ""
-          }
+            }
         `
           )
           .style("opacity", 1)
           .style(
             "left",
-            `${
-              event.pageX - chartRef.current.getBoundingClientRect().left + 10
+            `${event.pageX - chartRef.current.getBoundingClientRect().left + 10
             }px`
           )
           .style(
             "top",
-            `${
-              event.pageY - chartRef.current.getBoundingClientRect().top - 40
+            `${event.pageY - chartRef.current.getBoundingClientRect().top - 40
             }px`
           );
       })
@@ -562,17 +558,15 @@ const CountPerYear = ({ onBack }) => {
             `
           <div class="font-bold">${d._id}</div>
           <div>${d3.format(",")(d.count)} reviews</div>
-          ${
-            yearlyData.indexOf(d) > 0
+          ${yearlyData.indexOf(d) > 0
               ? `
             <div class="text-xs mt-1">
-              ${
-                calculateGrowth(
-                  yearlyData[yearlyData.indexOf(d) - 1].count,
-                  d.count
-                ) > 0
-                  ? "+"
-                  : ""
+              ${calculateGrowth(
+                yearlyData[yearlyData.indexOf(d) - 1].count,
+                d.count
+              ) > 0
+                ? "+"
+                : ""
               }
               ${calculateGrowth(
                 yearlyData[yearlyData.indexOf(d) - 1].count,
@@ -581,20 +575,18 @@ const CountPerYear = ({ onBack }) => {
             </div>
           `
               : ""
-          }
+            }
         `
           )
           .style("opacity", 1)
           .style(
             "left",
-            `${
-              event.pageX - chartRef.current.getBoundingClientRect().left + 10
+            `${event.pageX - chartRef.current.getBoundingClientRect().left + 10
             }px`
           )
           .style(
             "top",
-            `${
-              event.pageY - chartRef.current.getBoundingClientRect().top - 40
+            `${event.pageY - chartRef.current.getBoundingClientRect().top - 40
             }px`
           );
       })
@@ -735,28 +727,28 @@ const CountPerYear = ({ onBack }) => {
     );
   }
   <div className="relative">
-        <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
+    <button
+      onClick={handleGoBack}
+      className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+      ref={el => {
+        if (el) {
+          setTimeout(() => {
+            el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+            el.style.opacity = 1;
+            el.style.transform = "translateX(0)";
+          }, 300);
+        }
+      }}
+      aria-label="Back to Business Analysis Dashboard"
+    >
+      <IoArrowBack className="text-gray-700 text-lg" />
+      <span className="text-gray-700 font-medium">Back to Dashboard</span>
+    </button>
 
-      <h1 className="text-3xl font-bold text-indigo-900 mb-6 text-center">
-        Review Volume Analysis (2005-2022)
-      </h1>
-    </div>
+    <h1 className="text-3xl font-bold text-indigo-900 mb-6 text-center">
+      Review Volume Analysis (2005-2022)
+    </h1>
+  </div>
 
   if (error) {
     return (
@@ -768,10 +760,10 @@ const CountPerYear = ({ onBack }) => {
   }
 
   return (
-   
+
     <div className="bg-white p-6 rounded-lg shadow-lg ">
-       
-    
+
+
 
       {/* Stats Cards */}
       <div
@@ -846,11 +838,10 @@ const CountPerYear = ({ onBack }) => {
         <div className="inline-flex rounded-md shadow-sm" role="group">
           <button
             type="button"
-            className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
-              activeChart === "area"
+            className={`px-4 py-2 text-sm font-medium rounded-l-lg ${activeChart === "area"
                 ? "bg-indigo-600 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
-            } border border-gray-200 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:text-indigo-700 transition-all duration-200`}
+              } border border-gray-200 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:text-indigo-700 transition-all duration-200`}
             onClick={() => setActiveChart("area")}
           >
             <svg
@@ -870,11 +861,10 @@ const CountPerYear = ({ onBack }) => {
           </button>
           <button
             type="button"
-            className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
-              activeChart === "bar"
+            className={`px-4 py-2 text-sm font-medium rounded-r-lg ${activeChart === "bar"
                 ? "bg-indigo-600 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
-            } border border-gray-200 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:text-indigo-700 transition-all duration-200`}
+              } border border-gray-200 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:text-indigo-700 transition-all duration-200`}
             onClick={() => setActiveChart("bar")}
           >
             <svg
@@ -958,18 +948,18 @@ const CountPerYear = ({ onBack }) => {
               }
               , there has been a{" "}
               {yearlyData[yearlyData.length - 1].count <
-              yearlyData.reduce(
-                (max, year) => (year.count > max.count ? year : max),
-                yearlyData[0]
-              ).count
+                yearlyData.reduce(
+                  (max, year) => (year.count > max.count ? year : max),
+                  yearlyData[0]
+                ).count
                 ? "decline"
                 : "continued growth"}{" "}
               in review volume, potentially indicating{" "}
               {yearlyData[yearlyData.length - 1].count <
-              yearlyData.reduce(
-                (max, year) => (year.count > max.count ? year : max),
-                yearlyData[0]
-              ).count
+                yearlyData.reduce(
+                  (max, year) => (year.count > max.count ? year : max),
+                  yearlyData[0]
+                ).count
                 ? "market saturation or changing consumer behavior"
                 : "sustained market interest and engagement"}
               .

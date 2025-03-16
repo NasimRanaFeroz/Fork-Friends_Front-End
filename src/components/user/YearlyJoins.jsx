@@ -12,8 +12,8 @@ const YearlyJoins = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
-  
+
+
   const chartRef = useRef();
 
   // Available metrics to display with their colors matching the image
@@ -31,7 +31,7 @@ const YearlyJoins = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/user/yearly-joins');
+        const response = await axios.get('http://192.168.37.177:5001/api/user/yearly-joins');
         // Sort data by year to ensure proper line drawing
         const sortedData = response.data.sort((a, b) => a.year - b.year);
         setUserData(sortedData);
@@ -55,11 +55,11 @@ const YearlyJoins = ({ onBack }) => {
   const drawChart = () => {
     // Clear previous chart
     d3.select(chartRef.current).selectAll("*").remove();
-    
+
     const margin = { top: 60, right: 120, bottom: 60, left: 80 };
     const width = 900 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
-    
+
     // Create SVG container
     const svg = d3.select(chartRef.current)
       .append('svg')
@@ -67,7 +67,7 @@ const YearlyJoins = ({ onBack }) => {
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
-    
+
     // Create tooltip div with styling exactly matching the image
     const tooltip = d3.select(chartRef.current)
       .append('div')
@@ -84,12 +84,12 @@ const YearlyJoins = ({ onBack }) => {
       .style('min-width', '220px')
       .style('line-height', '1.8')
       .style('transition', 'all 0.3s ease');
-    
+
     // X scale - years
     const x = d3.scaleLinear()
       .domain(d3.extent(userData, d => d.year))
       .range([0, width]);
-    
+
     // Add X axis with enhanced styling
     const xAxis = svg.append('g')
       .attr('transform', `translate(0,${height})`)
@@ -97,21 +97,21 @@ const YearlyJoins = ({ onBack }) => {
       .call(d3.axisBottom(x)
         .ticks(userData.length)
         .tickFormat(d3.format('d')));
-    
+
     // Style X axis text
     xAxis.selectAll("text")
       .style("font-size", "12px")
       .style("font-weight", "bold")
       .style("fill", "#555")
       .attr("dy", "1em");
-    
+
     // Style X axis lines
     xAxis.selectAll("line")
       .style("stroke", "#ccc");
-    
+
     xAxis.selectAll("path")
       .style("stroke", "#ccc");
-    
+
     // Add X axis label with animation
     svg.append('text')
       .attr('x', width / 2)
@@ -125,45 +125,45 @@ const YearlyJoins = ({ onBack }) => {
       .transition()
       .duration(1000)
       .style('opacity', 1);
-    
+
     // Find the maximum value for the current metric to set Y scale
     const maxValue = d3.max(userData, d => {
       // For all metrics except the active one, return 0 (to not affect the scale)
-      const values = metrics.map(metric => 
+      const values = metrics.map(metric =>
         metric.id === activeMetric ? d[metric.id] : 0
       );
       return d3.max(values);
     });
-    
+
     // Y scale with some padding at the top
     const y = d3.scaleLinear()
       .domain([0, maxValue * 1.1]) // Add 10% padding at the top
       .range([height, 0]);
-    
+
     // Add Y axis with enhanced styling
     const yAxis = svg.append('g')
       .attr('class', 'y-axis')
       .call(d3.axisLeft(y)
         .ticks(5)
         .tickFormat(d => {
-          if (d >= 1000000) return `${d/1000000}M`;
-          if (d >= 1000) return `${d/1000}K`;
+          if (d >= 1000000) return `${d / 1000000}M`;
+          if (d >= 1000) return `${d / 1000}K`;
           return d;
         }));
-    
+
     // Style Y axis text
     yAxis.selectAll("text")
       .style("font-size", "12px")
       .style("font-weight", "bold")
       .style("fill", "#555");
-    
+
     // Style Y axis lines
     yAxis.selectAll("line")
       .style("stroke", "#ccc");
-    
+
     yAxis.selectAll("path")
       .style("stroke", "#ccc");
-    
+
     // Add Y axis label with animation
     svg.append('text')
       .attr('transform', 'rotate(-90)')
@@ -178,7 +178,7 @@ const YearlyJoins = ({ onBack }) => {
       .transition()
       .duration(1000)
       .style('opacity', 1);
-    
+
     // Add title with animation
     svg.append('text')
       .attr('x', width / 2)
@@ -192,7 +192,7 @@ const YearlyJoins = ({ onBack }) => {
       .transition()
       .duration(1000)
       .style('opacity', 1);
-    
+
     // Add grid lines with animation
     const grid = svg.append('g')
       .attr('class', 'grid')
@@ -202,25 +202,25 @@ const YearlyJoins = ({ onBack }) => {
         .tickSize(-width)
         .tickFormat('')
       );
-    
+
     grid.selectAll("line")
       .style("stroke", "#e5e5e5")
       .style("stroke-dasharray", "3,3");
-    
+
     // Remove the grid's domain line
     grid.selectAll("path").style("stroke-width", 0);
-    
+
     // Animate grid appearance
     grid.transition()
       .duration(1000)
       .style('opacity', 0.7);
-    
+
     // Create line generator
     const line = d3.line()
       .x(d => x(d.year))
       .y(d => y(d[activeMetric]))
       .curve(d3.curveMonotoneX); // Smooth curve
-    
+
     // Add the line path with enhanced animation
     const path = svg.append('path')
       .datum(userData)
@@ -228,7 +228,7 @@ const YearlyJoins = ({ onBack }) => {
       .attr('stroke', metrics.find(m => m.id === activeMetric).color)
       .attr('stroke-width', 3)
       .attr('d', line);
-    
+
     // Animate the line drawing with longer duration
     const pathLength = path.node().getTotalLength();
     path
@@ -239,7 +239,7 @@ const YearlyJoins = ({ onBack }) => {
       .ease(d3.easePolyOut)
       .attr("stroke-dashoffset", 0)
       .on("end", animateDataPoints); // Start data point animation after line is drawn
-    
+
     // Function to animate data points sequentially
     function animateDataPoints() {
       // Add data points with enhanced hover effect
@@ -266,18 +266,18 @@ const YearlyJoins = ({ onBack }) => {
           }
         });
     }
-    
+
     // Function to add hover effects to data points
     function addHoverEffects() {
       svg.selectAll('.data-point')
-        .on('mouseover', function(event, d) {
+        .on('mouseover', function (event, d) {
           // Expand point with animation
           d3.select(this)
             .transition()
             .duration(300)
             .attr('r', 8)
             .attr('stroke-width', 3);
-          
+
           // Add pulse animation
           d3.select(this)
             .append("animate")
@@ -285,13 +285,13 @@ const YearlyJoins = ({ onBack }) => {
             .attr("values", "6;8;6")
             .attr("dur", "1.5s")
             .attr("repeatCount", "indefinite");
-          
+
           // Show tooltip with animation
           tooltip.transition()
             .duration(300)
             .style('opacity', 1)
             .style('transform', 'scale(1)');
-          
+
           // Create tooltip content with colored values exactly matching the image
           // Note: Using the exact color codes from the metrics array
           tooltip.html(`
@@ -324,7 +324,7 @@ const YearlyJoins = ({ onBack }) => {
           `)
             .style('left', `${event.pageX + 10}px`)
             .style('top', `${event.pageY - 10}px`);
-          
+
           // Highlight the year on x-axis
           xAxis.selectAll("text")
             .filter(t => t === d.year)
@@ -333,22 +333,22 @@ const YearlyJoins = ({ onBack }) => {
             .style("font-size", "14px")
             .style("fill", metrics.find(m => m.id === activeMetric).color);
         })
-        .on('mouseout', function(event, d) {
+        .on('mouseout', function (event, d) {
           d3.select(this)
             .transition()
             .duration(300)
             .attr('r', 6)
             .attr('stroke-width', 2);
-          
+
           // Remove pulse animation
           d3.select(this).select("animate").remove();
-          
+
           // Hide tooltip with animation
           tooltip.transition()
             .duration(300)
             .style('opacity', 0)
             .style('transform', 'scale(0.95)');
-          
+
           // Reset x-axis text
           xAxis.selectAll("text")
             .filter(t => t === d.year)
@@ -358,12 +358,12 @@ const YearlyJoins = ({ onBack }) => {
             .style("fill", "#555");
         });
     }
-    
+
     // Create a legend for metric selection with enhanced styling and animations
     const legend = svg.append('g')
       .attr('class', 'legend')
       .attr('transform', `translate(${width + 20}, 0)`);
-    
+
     // Add legend title with animation
     legend.append('text')
       .attr('x', 0)
@@ -376,7 +376,7 @@ const YearlyJoins = ({ onBack }) => {
       .transition()
       .duration(1000)
       .style('opacity', 1);
-    
+
     // Add legend items with sequential animation
     const legendItems = legend.selectAll('.legend-item')
       .data(metrics)
@@ -386,7 +386,7 @@ const YearlyJoins = ({ onBack }) => {
       .attr('transform', (d, i) => `translate(0, ${i * 30 + 10})`)
       .style('cursor', 'pointer')
       .style('opacity', 0)
-      .on('click', function(event, d) {
+      .on('click', function (event, d) {
         // Add click animation
         d3.select(this)
           .transition()
@@ -395,11 +395,11 @@ const YearlyJoins = ({ onBack }) => {
           .transition()
           .duration(300)
           .attr('transform', (d, i) => `translate(0, ${i * 30 + 10})`);
-        
+
         // Update active metric with animation
         const oldMetric = activeMetric;
         const newMetric = d.id;
-        
+
         // Animate the transition between metrics
         if (oldMetric !== newMetric) {
           // Fade out the current line
@@ -410,7 +410,7 @@ const YearlyJoins = ({ onBack }) => {
               // Update the active metric
               setActiveMetric(newMetric);
             });
-          
+
           // Fade out the current data points
           svg.selectAll('.data-point')
             .transition()
@@ -418,13 +418,13 @@ const YearlyJoins = ({ onBack }) => {
             .style('opacity', 0);
         }
       });
-    
+
     // Animate legend items sequentially
     legendItems.transition()
       .delay((d, i) => 1000 + i * 100)
       .duration(500)
       .style('opacity', 1);
-    
+
     // Add colored rectangles
     legendItems.append('rect')
       .attr('width', 18)
@@ -433,7 +433,7 @@ const YearlyJoins = ({ onBack }) => {
       .style('fill', d => d.color)
       .style('stroke', d => d.id === activeMetric ? '#333' : 'none')
       .style('stroke-width', d => d.id === activeMetric ? 2 : 0);
-    
+
     // Add labels
     legendItems.append('text')
       .attr('x', 24)
@@ -443,30 +443,30 @@ const YearlyJoins = ({ onBack }) => {
       .style('font-weight', d => d.id === activeMetric ? 'bold' : 'normal')
       .style('fill', '#333')
       .text(d => d.label);
-    
+
     // Add hover effects to legend items
     legendItems
-      .on('mouseover', function(event, d) {
+      .on('mouseover', function (event, d) {
         d3.select(this).select('rect')
           .transition()
           .duration(200)
           .style('stroke', '#333')
           .style('stroke-width', 2);
-        
+
         d3.select(this).select('text')
           .transition()
           .duration(200)
           .style('font-weight', 'bold')
           .style('fill', d.color);
       })
-      .on('mouseout', function(event, d) {
+      .on('mouseout', function (event, d) {
         if (d.id !== activeMetric) {
           d3.select(this).select('rect')
             .transition()
             .duration(200)
             .style('stroke', 'none')
             .style('stroke-width', 0);
-          
+
           d3.select(this).select('text')
             .transition()
             .duration(200)
@@ -474,7 +474,7 @@ const YearlyJoins = ({ onBack }) => {
             .style('fill', '#333');
         }
       });
-    
+
     // Add a note about clicking legend items with animation
     svg.append('text')
       .attr('x', width)
@@ -493,39 +493,39 @@ const YearlyJoins = ({ onBack }) => {
 
   return (
     <div className="max-w-7xl mx-auto p-5 bg-gray-50 font-sans relative">
-      <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
 
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Yearly User Growth Analysis</h1>
-      
+
       {loading && (
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
       )}
-      
+
       {error && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
           <p className="font-bold">Error</p>
           <p>{error}</p>
         </div>
       )}
-      
+
       {!loading && !error && (
         <div className="border border-gray-200 rounded-lg bg-white shadow-lg p-6">
           <div className="mb-4">
@@ -534,7 +534,7 @@ const YearlyJoins = ({ onBack }) => {
             </p>
           </div>
           <div ref={chartRef} className="flex justify-center overflow-hidden"></div>
-          
+
           <div className="mt-8">
             <h3 className="text-xl font-semibold mb-4 text-gray-800">Summary Statistics</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -550,7 +550,7 @@ const YearlyJoins = ({ onBack }) => {
                       {userData[userData.length - 1].totalUsers.toLocaleString()}
                     </p>
                   </div>
-                  
+
                   <div className="bg-green-50 p-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
                     <p className="text-sm text-gray-600">Total Reviews</p>
                     <p className="text-2xl font-bold text-green-700 animate-fadeIn">
@@ -561,7 +561,7 @@ const YearlyJoins = ({ onBack }) => {
                       {(d3.sum(userData, d => d.totalReviews) / d3.sum(userData, d => d.totalUsers)).toFixed(1)}
                     </p>
                   </div>
-                  
+
                   <div className="bg-purple-50 p-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md">
                     <p className="text-sm text-gray-600">Elite Users Percentage</p>
                     <p className="text-2xl font-bold text-purple-700 animate-fadeIn">
@@ -578,7 +578,7 @@ const YearlyJoins = ({ onBack }) => {
           </div>
         </div>
       )}
-      
+
       {/* Add CSS animations */}
       <style jsx>{`
         @keyframes fadeIn {

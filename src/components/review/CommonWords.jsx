@@ -13,18 +13,18 @@ const CommonWords = ({ onBack }) => {
   const handleGoBack = () => {
     if (onBack) onBack();
   };
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5001/api/review/top-20-common-words');
-        
+        const response = await fetch('http://192.168.37.177:5001/api/review/top-20-common-words');
+
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
-        
+
         const data = await response.json();
         setCommonWords(data.results);
         setMetadata(data.metadata);
@@ -65,7 +65,7 @@ const CommonWords = ({ onBack }) => {
       .range([0, width])
       .domain(commonWords.map(d => d._id))
       .padding(0.2);
-    
+
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
       .call(d3.axisBottom(x))
@@ -90,7 +90,7 @@ const CommonWords = ({ onBack }) => {
     const y = d3.scaleLinear()
       .domain([0, d3.max(commonWords, d => d.count) * 1.1]) // Add 10% padding at the top
       .range([height, 0]);
-    
+
     svg.append('g')
       .call(d3.axisLeft(y).tickFormat(d => d3.format(',')(d))) // Format numbers with commas
       .selectAll('text')
@@ -153,7 +153,7 @@ const CommonWords = ({ onBack }) => {
     // Add interactive elements after the animation
     setTimeout(() => {
       svg.selectAll('rect')
-        .on('mouseover', function(event, d) {
+        .on('mouseover', function (event, d) {
           // Highlight the bar
           d3.select(this)
             .transition()
@@ -161,12 +161,12 @@ const CommonWords = ({ onBack }) => {
             .attr('opacity', 0.8)
             .attr('stroke', '#000')
             .attr('stroke-width', 2);
-          
+
           // Add tooltip
           const tooltip = svg.append('g')
             .attr('class', 'tooltip')
             .attr('id', 'tooltip');
-          
+
           // Add background for tooltip
           tooltip.append('rect')
             .attr('x', x(d._id) + x.bandwidth() / 2 - 70)
@@ -175,7 +175,7 @@ const CommonWords = ({ onBack }) => {
             .attr('height', 30)
             .attr('fill', 'rgba(0,0,0,0.7)')
             .attr('rx', 5);
-          
+
           // Add text for tooltip
           tooltip.append('text')
             .attr('x', x(d._id) + x.bandwidth() / 2)
@@ -185,16 +185,16 @@ const CommonWords = ({ onBack }) => {
             .style('fill', 'white')
             .text(`${d.count.toLocaleString()}`);
         })
-        .on('mouseout', function() {
+        .on('mouseout', function () {
           d3.select(this)
             .transition()
             .duration(200)
             .attr('opacity', 1)
             .attr('stroke', 'none');
-          
+
           d3.select('#tooltip').remove();
         });
-        
+
       // Add count labels on top of each bar
       svg.selectAll('.count-label')
         .data(commonWords)
@@ -215,7 +215,7 @@ const CommonWords = ({ onBack }) => {
     }, commonWords.length * 100 + 800);
   };
 
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -238,28 +238,28 @@ const CommonWords = ({ onBack }) => {
 
   return (
     <div className="container mx-auto px-4 py-8 bg-gradient-to-br from-gray-50 to-indigo-50 relative">
-      <button 
-  onClick={handleGoBack}
-  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-  ref={el => {
-    if (el) {
-      setTimeout(() => {
-        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-        el.style.opacity = 1;
-        el.style.transform = "translateX(0)";
-      }, 300);
-    }
-  }}
-  aria-label="Back to Business Analysis Dashboard"
->
-  <IoArrowBack className="text-gray-700 text-lg" />
-  <span className="text-gray-700 font-medium">Back to Dashboard</span>
-</button>
+      <button
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
 
       <h1 className="text-4xl font-bold text-center mb-8 text-indigo-800 motion-safe:animate-bounce">
         Top 20 Most Common Words in Reviews
       </h1>
-      
+
       {metadata && (
         <div className="bg-white p-6 mb-8 rounded-lg shadow-lg transform transition duration-500 motion-safe:hover:scale-[1.01]">
           <h2 className="text-2xl font-semibold mb-4 text-indigo-700">Analysis Metadata</h2>
@@ -306,8 +306,8 @@ const CommonWords = ({ onBack }) => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {commonWords.map((word, index) => (
-                  <tr 
-                    key={word._id} 
+                  <tr
+                    key={word._id}
                     className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-indigo-50 transition-colors duration-150`}
                   >
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -334,7 +334,7 @@ const CommonWords = ({ onBack }) => {
           <div ref={chartRef} className="w-full overflow-x-auto"></div>
         </div>
       </div>
-      
+
       {/* Add Tailwind animations config */}
       <div className="hidden">
         {/* This div is just for Tailwind to detect these classes */}

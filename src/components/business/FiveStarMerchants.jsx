@@ -49,14 +49,14 @@ const FiveStarMerchants = ({ onBack }) => {
     const fetchMerchants = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5001/api/business/top-rated-merchants');
+        const response = await axios.get('http://192.168.37.177:5001/api/business/top-rated-merchants');
         setMerchants(response.data);
-        
+
         // Set the map center to the first merchant's location
         if (response.data.length > 0) {
           setCenter([response.data[0].latitude, response.data[0].longitude]);
         }
-        
+
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch merchant data');
@@ -79,16 +79,16 @@ const FiveStarMerchants = ({ onBack }) => {
   // Helper function to parse and format hours
   const formatHours = (hoursString) => {
     if (hoursString === "0:0-0:0") return "Closed";
-    
+
     const [start, end] = hoursString.split('-');
-    
+
     const formatTime = (timeStr) => {
       const [hours, minutes] = timeStr.split(':').map(Number);
       const period = hours >= 12 ? 'PM' : 'AM';
       const formattedHours = hours % 12 || 12;
       return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
     };
-    
+
     return `${formatTime(start)} - ${formatTime(end)}`;
   };
 
@@ -112,7 +112,7 @@ const FiveStarMerchants = ({ onBack }) => {
   // Get positive attributes for current merchant
   const getPositiveAttributes = (merchant) => {
     if (!merchant.attributes) return [];
-    
+
     return Object.entries(merchant.attributes)
       .filter(([, value]) => isAttributeTrue(value))
       .map(([key]) => formatAttributeName(key))
@@ -133,7 +133,7 @@ const FiveStarMerchants = ({ onBack }) => {
 
   return (
     <div className="p-6 relative">
-      <button 
+      <button
         onClick={handleGoBack}
         className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
         ref={el => {
@@ -151,18 +151,17 @@ const FiveStarMerchants = ({ onBack }) => {
         <span className="text-gray-700 font-medium">Back</span>
       </button>
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8 mt-10">Top-Rated Merchants</h1>
-      
+
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left side - List of merchants */}
         <div className="lg:w-1/2">
           {merchants.map((merchant, index) => (
-            <div 
+            <div
               key={merchant.business_id}
-              className={`mb-4 p-4 rounded-lg cursor-pointer transition-colors duration-200 ${
-                activeIndex === index 
-                  ? 'bg-blue-50 border-l-4 border-blue-500 shadow-md' 
+              className={`mb-4 p-4 rounded-lg cursor-pointer transition-colors duration-200 ${activeIndex === index
+                  ? 'bg-blue-50 border-l-4 border-blue-500 shadow-md'
                   : 'bg-white hover:bg-gray-50 border border-gray-200'
-              }`}
+                }`}
               onClick={() => setActiveIndex(index)}
             >
               <div className="flex justify-between items-start">
@@ -175,9 +174,9 @@ const FiveStarMerchants = ({ onBack }) => {
                   <span className="ml-2 text-sm text-gray-600">({merchant.review_count} reviews)</span>
                 </div>
               </div>
-              
+
               <p className="text-gray-600 mt-2">{merchant.address}, {merchant.city}, {merchant.state} {merchant.postal_code}</p>
-              
+
               <div className="mt-3 flex flex-wrap gap-2">
                 {merchant.categories.split(', ').map((category, i) => (
                   <span key={i} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
@@ -185,7 +184,7 @@ const FiveStarMerchants = ({ onBack }) => {
                   </span>
                 ))}
               </div>
-              
+
               {activeIndex === index && (
                 <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                   {merchant.hours && Object.entries(merchant.hours).map(([day, hours]) => (
@@ -199,16 +198,16 @@ const FiveStarMerchants = ({ onBack }) => {
             </div>
           ))}
         </div>
-        
+
         {/* Right side - Map and details */}
         <div className="lg:w-1/2">
           {/* Leaflet Map integration */}
           {merchants.length > 0 && (
             <div style={mapContainerStyle}>
-              <MapContainer 
+              <MapContainer
                 key={mapKey}
-                center={center} 
-                zoom={15} 
+                center={center}
+                zoom={15}
                 style={{ height: '100%', width: '100%' }}
               >
                 <TileLayer
@@ -227,11 +226,11 @@ const FiveStarMerchants = ({ onBack }) => {
               </MapContainer>
             </div>
           )}
-          
+
           {/* Detailed information about the selected merchant */}
           <div className="bg-white rounded-lg shadow-md p-5 mt-6">
             <h3 className="text-xl font-bold mb-4 text-gray-800">{merchants[activeIndex].name} Details</h3>
-            
+
             <div className="space-y-4">
               <div>
                 <h4 className="font-medium text-gray-800 mb-1">Business Attributes:</h4>
@@ -246,23 +245,23 @@ const FiveStarMerchants = ({ onBack }) => {
                   ))}
                 </div>
               </div>
-              
+
               <div>
                 <h4 className="font-medium text-gray-800 mb-1">Price Range:</h4>
                 <div className="flex">
-                  {merchants[activeIndex].attributes?.RestaurantsPriceRange2 && 
+                  {merchants[activeIndex].attributes?.RestaurantsPriceRange2 &&
                     [...Array(parseInt(merchants[activeIndex].attributes.RestaurantsPriceRange2.replace(/['"]/g, '')) || 1)].map((_, i) => (
                       <span key={i} className="text-green-600 mr-1 font-bold">$</span>
                     ))
                   }
                 </div>
               </div>
-              
+
               <div>
                 <h4 className="font-medium text-gray-800 mb-1">Categories:</h4>
                 <p className="text-gray-700">{merchants[activeIndex].categories}</p>
               </div>
-              
+
               <div>
                 <h4 className="font-medium text-gray-800 mb-1">Address:</h4>
                 <p className="text-gray-700">
@@ -270,9 +269,9 @@ const FiveStarMerchants = ({ onBack }) => {
                   {merchants[activeIndex].city}, {merchants[activeIndex].state} {merchants[activeIndex].postal_code}
                 </p>
               </div>
-              
+
               <div>
-                <button 
+                <button
                   className="mt-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
                   onClick={() => {
                     // Open in OpenStreetMap

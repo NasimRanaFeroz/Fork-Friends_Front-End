@@ -91,17 +91,17 @@ function FriendRecommendation() {
 
   // Selected items state
   const [selectedInterests, setSelectedInterests] = useState([
-    "Italian",
-    "Japanese",
-    "Thai",
-    "Dinner",
+    // "Chinese",
+    // "Thai",
   ]);
   const [selectedPlaces, setSelectedPlaces] = useState([
-    "Bella Trattoria",
-    "Sakura Sushi",
-    "Bob's Kitchen",
+    // "Bella Trattoria",
+    // "Sakura Sushi",
+    // "Bob's Kitchen",
   ]);
-  const [selectedCity, setSelectedCity] = useState("New York, NY");
+  const [selectedCity, setSelectedCity] = useState(
+    // "New York, NY"
+  );
 
   // Dropdown visibility state
   const [interestsOpen, setInterestsOpen] = useState(false);
@@ -192,7 +192,27 @@ function FriendRecommendation() {
     setInputMessage(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const fetchRestaurantData = async (query) => {
+    console.log("Fetching restaurant data for query:", query);
+    try {
+      const url = `http://192.168.37.49:5000/api/simple-query?q=${encodeURIComponent(query)}`;
+      console.log(url);
+      const response = await fetch(url);
+      console.log(response);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching restaurant data:', error);
+      return {
+        status: "error",
+        response: "Sorry, I couldn't fetch restaurant information at the moment."
+      };
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
@@ -208,132 +228,165 @@ function FriendRecommendation() {
     setInputMessage("");
     setIsTyping(true);
 
-    // Simulate AI thinking and responding
-    setTimeout(() => {
-      const responseCategory = [
-        "collaborative",
-        "interest",
-        "graph",
-        "general",
-      ][Math.floor(Math.random() * 4)];
+    if (inputMessage) {
+      // Call the restaurant API
+      const apiResponse = await fetchRestaurantData(inputMessage);
 
-      const aiResponsesData = {
-        collaborative: [
-          {
-            text: `Based on your dining preferences for ${selectedInterests
-              .slice(0, 2)
-              .join(
-                " and "
-              )} cuisine, I'd recommend connecting with Alex J. You both enjoy ${
-              selectedPlaces[0]
-            } and seem to have similar taste in food!`,
-            icon: <FiUsers className="text-blue-500" />,
-            friendDetails: {
-              name: "Alex J.",
-              mutualInterests: selectedInterests.slice(0, 2),
-              compatibility: "87%",
-              photo: "https://randomuser.me/api/portraits/men/32.jpg",
-            },
-          },
-          {
-            text: `You and Taylor M. have very similar taste in restaurants! You've both rated ${selectedPlaces
-              .slice(0, 2)
-              .join(" and ")} highly. Taylor also enjoys ${
-              selectedInterests[0]
-            } cuisine like you.`,
-            icon: <FiUsers className="text-blue-500" />,
-            friendDetails: {
-              name: "Taylor M.",
-              mutualInterests: [selectedInterests[0], "Fine dining"],
-              compatibility: "92%",
-              photo: "https://randomuser.me/api/portraits/women/45.jpg",
-            },
-          },
-        ],
-        interest: [
-          {
-            text: `I analyzed your reviews and found that Jordan P. writes about ${selectedInterests[0]} cuisine with the same enthusiasm you do! They also frequent ${selectedPlaces[0]} just like you.`,
-            icon: <FiHeart className="text-red-500" />,
-            friendDetails: {
-              name: "Jordan P.",
-              mutualInterests: [
-                selectedInterests[0],
-                "Cooking",
-                "Food photography",
-              ],
-              compatibility: "85%",
-              photo: "https://randomuser.me/api/portraits/men/67.jpg",
-            },
-          },
-          {
-            text: `Based on your restaurant preferences, you and Riley S. both love ${selectedPlaces
-              .slice(0, 2)
-              .join(" and ")}. Riley also enjoys ${selectedInterests
-              .slice(0, 2)
-              .join(" and ")} food just like you!`,
-            icon: <FiHeart className="text-red-500" />,
-            friendDetails: {
-              name: "Riley S.",
-              mutualInterests: selectedInterests.slice(0, 2),
-              compatibility: "89%",
-              photo: "https://randomuser.me/api/portraits/women/22.jpg",
-            },
-          },
-        ],
-        graph: [
-          {
-            text: `Through our social network analysis, I found that Jamie L. is connected to two of your current friends and shares your interest in ${selectedInterests[0]} cuisine. They also love ${selectedPlaces[0]}!`,
-            icon: <FiUsers className="text-green-500" />,
-            friendDetails: {
-              name: "Jamie L.",
-              mutualInterests: [selectedInterests[0], "Food blogging"],
-              compatibility: "81%",
-              photo: "https://randomuser.me/api/portraits/women/56.jpg",
-            },
-          },
-          {
-            text: `Morgan B. is a second-degree connection in your network who frequently visits ${
-              selectedPlaces[1]
-            } like you do. They're also a big fan of ${selectedInterests
-              .slice(0, 2)
-              .join(" and ")} cuisine.`,
-            icon: <FiUsers className="text-green-500" />,
-            friendDetails: {
-              name: "Morgan B.",
-              mutualInterests: selectedInterests.slice(0, 2),
-              compatibility: "79%",
-              photo: "https://randomuser.me/api/portraits/men/22.jpg",
-            },
-          },
-        ],
-        general: [
-          {
-            text: `Based on your preferences, I think you'd enjoy meeting people who frequent ${selectedPlaces[0]} and enjoy ${selectedInterests[0]} cuisine. Would you like me to find specific recommendations?`,
-            icon: <FiMessageSquare className="text-purple-500" />,
-          },
-          {
-            text: `I notice you enjoy ${selectedInterests
-              .slice(0, 3)
-              .join(
-                ", "
-              )} cuisine. There's a foodie meetup group in ${selectedCity} that focuses on these cuisines. Would you be interested in connecting with members?`,
-            icon: <FiMessageSquare className="text-purple-500" />,
-          },
-        ],
-      };
+      if (apiResponse.status === "success") {
+        const aiResponse = {
+          id: messages.length + 2,
+          text: apiResponse.response,
+          sender: "ai",
+          timestamp: new Date(),
+          icon: <FiCoffee className="text-orange-500" />,
+        };
 
-      const responsePool = aiResponsesData[responseCategory];
-      const aiResponse = {
-        id: messages.length + 2,
-        ...responsePool[Math.floor(Math.random() * responsePool.length)],
-        sender: "ai",
-        timestamp: new Date(),
-      };
+        setMessages((prev) => [...prev, aiResponse]);
+      } else {
+        // Handle error response
+        const aiResponse = {
+          id: messages.length + 2,
+          text: "Sorry, I couldn't find information about that restaurant query right now.",
+          sender: "ai",
+          timestamp: new Date(),
+          icon: <FiMessageSquare className="text-purple-500" />,
+        };
 
-      setMessages((prev) => [...prev, aiResponse]);
+        setMessages((prev) => [...prev, aiResponse]);
+      }
+
       setIsTyping(false);
-    }, 1500);
+    } else {
+      // Use the existing simulation logic for non-restaurant queries
+      setTimeout(() => {
+        const responseCategory = [
+          "collaborative",
+          "interest",
+          "graph",
+          "general",
+        ][Math.floor(Math.random() * 4)];
+
+
+
+
+        const aiResponsesData = {
+          collaborative: [
+            {
+              text: `Based on your dining preferences for ${selectedInterests
+                .slice(0, 2)
+                .join(
+                  " and "
+                )} cuisine, I'd recommend connecting with Alex J. You both enjoy ${selectedPlaces[0]
+                } and seem to have similar taste in food!`,
+              icon: <FiUsers className="text-blue-500" />,
+              friendDetails: {
+                name: "Alex J.",
+                mutualInterests: selectedInterests.slice(0, 2),
+                compatibility: "87%",
+                photo: "https://randomuser.me/api/portraits/men/32.jpg",
+              },
+            },
+            {
+              text: `You and Taylor M. have very similar taste in restaurants! You've both rated ${selectedPlaces
+                .slice(0, 2)
+                .join(" and ")} highly. Taylor also enjoys ${selectedInterests[0]
+                } cuisine like you.`,
+              icon: <FiUsers className="text-blue-500" />,
+              friendDetails: {
+                name: "Taylor M.",
+                mutualInterests: [selectedInterests[0], "Fine dining"],
+                compatibility: "92%",
+                photo: "https://randomuser.me/api/portraits/women/45.jpg",
+              },
+            },
+          ],
+          interest: [
+            {
+              text: `I analyzed your reviews and found that Jordan P. writes about ${selectedInterests[0]} cuisine with the same enthusiasm you do! They also frequent ${selectedPlaces[0]} just like you.`,
+              icon: <FiHeart className="text-red-500" />,
+              friendDetails: {
+                name: "Jordan P.",
+                mutualInterests: [
+                  selectedInterests[0],
+                  "Cooking",
+                  "Food photography",
+                ],
+                compatibility: "85%",
+                photo: "https://randomuser.me/api/portraits/men/67.jpg",
+              },
+            },
+            {
+              text: `Based on your restaurant preferences, you and Riley S. both love ${selectedPlaces
+                .slice(0, 2)
+                .join(" and ")}. Riley also enjoys ${selectedInterests
+                  .slice(0, 2)
+                  .join(" and ")} food just like you!`,
+              icon: <FiHeart className="text-red-500" />,
+              friendDetails: {
+                name: "Riley S.",
+                mutualInterests: selectedInterests.slice(0, 2),
+                compatibility: "89%",
+                photo: "https://randomuser.me/api/portraits/women/22.jpg",
+              },
+            },
+          ],
+          graph: [
+            {
+              text: `Through our social network analysis, I found that Jamie L. is connected to two of your current friends and shares your interest in ${selectedInterests[0]} cuisine. They also love ${selectedPlaces[0]}!`,
+              icon: <FiUsers className="text-green-500" />,
+              friendDetails: {
+                name: "Jamie L.",
+                mutualInterests: [selectedInterests[0], "Food blogging"],
+                compatibility: "81%",
+                photo: "https://randomuser.me/api/portraits/women/56.jpg",
+              },
+            },
+            {
+              text: `Morgan B. is a second-degree connection in your network who frequently visits ${selectedPlaces[1]
+                } like you do. They're also a big fan of ${selectedInterests
+                  .slice(0, 2)
+                  .join(" and ")} cuisine.`,
+              icon: <FiUsers className="text-green-500" />,
+              friendDetails: {
+                name: "Morgan B.",
+                mutualInterests: selectedInterests.slice(0, 2),
+                compatibility: "79%",
+                photo: "https://randomuser.me/api/portraits/men/22.jpg",
+              },
+            },
+          ],
+          general: [
+            {
+              text: `Based on your preferences, I think you'd enjoy meeting people who frequent ${selectedPlaces[0]} and enjoy ${selectedInterests[0]} cuisine. Would you like me to find specific recommendations?`,
+              icon: <FiMessageSquare className="text-purple-500" />,
+            },
+            {
+              text: `I notice you enjoy ${selectedInterests
+                .slice(0, 3)
+                .join(
+                  ", "
+                )} cuisine. There's a foodie meetup group in ${selectedCity} that focuses on these cuisines. Would you be interested in connecting with members?`,
+              icon: <FiMessageSquare className="text-purple-500" />,
+            },
+          ],
+        };
+
+        const responsePool = aiResponsesData[responseCategory];
+        const aiResponse = {
+          id: messages.length + 2,
+          ...responsePool[Math.floor(Math.random() * responsePool.length)],
+          sender: "ai",
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => [...prev, aiResponse]);
+        setIsTyping(false);
+
+
+      }, 1500);
+    }
   };
+
 
   // Format timestamp
   const formatTime = (date) => {
@@ -342,10 +395,9 @@ function FriendRecommendation() {
 
   // Quick suggestion buttons
   const suggestions = [
-    "Find friends with similar restaurant tastes",
-    "Recommend people who share my food interests",
-    "Suggest friends based on my dining network",
-    "Who might I enjoy dining with?",
+    "Suggest a friend who likes Chinese foods",
+    "Recommend friends",
+    "Find a buddy",
   ];
 
   // Custom CSS to hide all scrollbars
@@ -388,9 +440,8 @@ function FriendRecommendation() {
                   >
                     <span className="text-sm">Select food types</span>
                     <FiChevronDown
-                      className={`transition-transform ${
-                        interestsOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform ${interestsOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -462,9 +513,8 @@ function FriendRecommendation() {
                   >
                     <span className="text-sm">Select restaurants</span>
                     <FiChevronDown
-                      className={`transition-transform ${
-                        placesOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform ${placesOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -536,9 +586,8 @@ function FriendRecommendation() {
                   >
                     <span className="text-sm">{selectedCity}</span>
                     <FiChevronDown
-                      className={`transition-transform ${
-                        cityOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform ${cityOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -551,9 +600,8 @@ function FriendRecommendation() {
                           onClick={() => handleCitySelect(city)}
                         >
                           <span
-                            className={`mr-2 ${
-                              selectedCity === city ? "visible" : "invisible"
-                            }`}
+                            className={`mr-2 ${selectedCity === city ? "visible" : "invisible"
+                              }`}
                           >
                             <FiCheck className="text-green-500" />
                           </span>
@@ -591,11 +639,10 @@ function FriendRecommendation() {
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`mb-4 flex ${
-                      message.sender === "user"
-                        ? "justify-end"
-                        : "justify-start"
-                    }`}
+                    className={`mb-4 flex ${message.sender === "user"
+                      ? "justify-end"
+                      : "justify-start"
+                      }`}
                   >
                     {message.sender === "ai" && (
                       <div className="w-8 h-8 rounded-full bg-[#ff5722] flex items-center justify-center text-white text-sm font-bold mr-2 flex-shrink-0">
@@ -603,13 +650,12 @@ function FriendRecommendation() {
                       </div>
                     )}
                     <div
-                      className={`max-w-[80%] rounded-lg p-3 ${
-                        message.sender === "user"
-                          ? "bg-[#ff5722] text-white"
-                          : "bg-base-300"
-                      }`}
+                      className={`max-w-[80%] rounded-lg p-3 ${message.sender === "user"
+                        ? "bg-[#ff5722] text-white"
+                        : "bg-base-300"
+                        }`}
                     >
-                      <div className="text-sm">{message.text}</div>
+                      <div className="text-sm">{message.text.split(/(?=### )/g)}</div>
                       {message.friendDetails && (
                         <div className="mt-2 p-2 bg-base-100 rounded-md">
                           <div className="flex items-center">
