@@ -18,11 +18,11 @@ const RatingAnalysis = () => {
  
     switch(selectedAnalysis) {
       case "rating-distribution":
-        return <Distribution />;
+        return <Distribution onBack={() => setSelectedAnalysis(null)} />;
       case "weekly-ratings":
-        return <WeeklyRatings/>;
+        return <WeeklyRatings onBack={() => setSelectedAnalysis(null)} />;
       case "five-star-businesses":
-        return <FiveStarBusinesses />;
+        return <FiveStarBusinesses onBack={() => setSelectedAnalysis(null)} />;
       default:
         return null;
     }

@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { IoArrowBack } from "react-icons/io5";
 
-const CategoryCount = () => {
+const CategoryCount = ({ onBack }) => {
   const [categoryStats, setCategoryStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
 
   useEffect(() => {
     const fetchCategoryStats = async () => {
@@ -25,10 +30,10 @@ const CategoryCount = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-96">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-3 text-gray-600">Loading category statistics...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading data...</p>
         </div>
       </div>
     );
@@ -48,23 +53,59 @@ const CategoryCount = () => {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Business Category Statistics</h1>
+    <div className="p-6 relative">
+      {/* Back button with animation - updated to include text */}
+      <button 
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back</span>
+      </button>
       
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8 mt-10">Total Unique Business Categories</h1>
+      
+      <div className="bg-white rounded-lg shadow-md p-6 opacity-0 transform translate-y-4"
+           ref={el => {
+             if (el) {
+               setTimeout(() => {
+                 el.style.transition = "opacity 0.7s, transform 0.7s";
+                 el.style.opacity = 1;
+                 el.style.transform = "translateY(0)";
+               }, 400);
+             }
+           }}>
         <div className="flex flex-col items-center">
           <div className="text-5xl font-bold text-blue-600 mb-2">
             {categoryStats?.totalUniqueCategories.toLocaleString()}
           </div>
-          <div className="text-lg text-gray-600">Total Unique Business Categories</div>
+      
           
           {/* Visual representation */}
           <div className="mt-8 w-full max-w-md">
             <div className="relative pt-1">
               <div className="overflow-hidden h-6 mb-4 text-xs flex rounded-full bg-blue-200">
                 <div 
-                  style={{ width: '100%' }} 
-                  className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500 transition-all duration-500"
+                  style={{ width: '0%' }} 
+                  className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
+                  ref={el => {
+                    if (el) {
+                      setTimeout(() => {
+                        el.style.transition = "width 1.5s ease-out";
+                        el.style.width = "100%";
+                      }, 600);
+                    }
+                  }}
                 >
                   {categoryStats?.totalUniqueCategories.toLocaleString()}
                 </div>
@@ -73,7 +114,15 @@ const CategoryCount = () => {
           </div>
           
           {/* Additional context */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg text-sm text-gray-700 max-w-md">
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg text-sm text-gray-700 max-w-md opacity-0"
+               ref={el => {
+                 if (el) {
+                   setTimeout(() => {
+                     el.style.transition = "opacity 0.7s";
+                     el.style.opacity = 1;
+                   }, 1000);
+                 }
+               }}>
             <p className="mb-2">
               <span className="font-semibold">Did you know?</span> Our database contains {categoryStats?.totalUniqueCategories.toLocaleString()} unique business categories, 
               representing the diverse range of businesses in our dataset.
@@ -86,7 +135,16 @@ const CategoryCount = () => {
       </div>
       
       {/* Additional card with icon */}
-      <div className="mt-6 bg-white rounded-lg shadow-md p-6">
+      <div className="mt-6 bg-white rounded-lg shadow-md p-6 opacity-0 transform translate-y-4"
+           ref={el => {
+             if (el) {
+               setTimeout(() => {
+                 el.style.transition = "opacity 0.7s, transform 0.7s";
+                 el.style.opacity = 1;
+                 el.style.transform = "translateY(0)";
+               }, 600);
+             }
+           }}>
         <div className="flex items-center">
           <div className="p-3 rounded-full bg-blue-100 text-blue-600">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">

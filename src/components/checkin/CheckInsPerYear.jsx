@@ -1,12 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { IoArrowBack } from "react-icons/io5";
 
-const CheckInsPerYear = () => {
+
+const CheckInsPerYear = ({ onBack }) => {
   const lineChartRef = useRef(null);
   const barChartRef = useRef(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -240,7 +247,10 @@ const CheckInsPerYear = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-lg text-gray-600">Loading...</div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading data...</p>
+        </div>
       </div>
     );
   }
@@ -254,7 +264,25 @@ const CheckInsPerYear = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="max-w-7xl mx-auto p-5 font-sans relative">
+<button 
+  onClick={handleGoBack}
+  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+  ref={el => {
+    if (el) {
+      setTimeout(() => {
+        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+        el.style.opacity = 1;
+        el.style.transform = "translateX(0)";
+      }, 300);
+    }
+  }}
+  aria-label="Back to Business Analysis Dashboard"
+>
+  <IoArrowBack className="text-gray-700 text-lg" />
+  <span className="text-gray-700 font-medium">Back to Dashboard</span>
+</button>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white p-4 rounded-lg shadow-md">
           <div ref={lineChartRef}></div>

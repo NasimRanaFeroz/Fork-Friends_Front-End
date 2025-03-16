@@ -21,7 +21,7 @@ const ComprehensiveAnalysis = () => {
     // For example:
     switch(selectedAnalysis) {
       case "top-merchants-by-city":
-        return <CityTopMerchants/>;
+        return <CityTopMerchants onBack={() => setSelectedAnalysis(null)} />;
       default:
         return null;
     }

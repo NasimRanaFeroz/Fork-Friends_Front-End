@@ -1,14 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import * as d3 from 'd3';
+import { IoArrowBack } from "react-icons/io5";
 
-const MerchantCities = () => {
+const MerchantCities = ({ onBack }) => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
   const barChartRef = useRef();
   const lineChartRef = useRef();
+
+  // Added handleGoBack function
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -371,18 +377,48 @@ const MerchantCities = () => {
       .style('font-weight', '500')
       .attr('alignment-baseline', 'middle');
   };
+  
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading data...</p>
+        </div>
+      </div>
+    );
+  }
+  
 
   return (
-    <div className="max-w-7xl mx-auto p-5 font-sans">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Top Merchant Cities Analysis</h1>
+    <div className="max-w-7xl mx-auto p-5 font-sans relative">
+      <button 
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back</span>
+      </button>
       
-      {loading && <p className="text-center text-gray-600">Loading data...</p>}
+      
+      
       {error && <p className="text-center text-red-600 font-bold">{error}</p>}
       
-      {!loading && !error && (
+      {!error && (
         <>
           <div className="mb-10 p-6 border border-gray-200 rounded-lg bg-white shadow-md">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">Merchant Count by City</h2>
+            <h2 className="text-xl text-center font-semibold text-gray-700 mb-4">Merchant Count by City</h2>
             <div ref={barChartRef} className="flex justify-center overflow-x-auto"></div>
           </div>
           

@@ -3,15 +3,11 @@ import React, { useState } from "react";
 import CommonMerchants from "../components/business/CommonMerchants";
 import MerchantCities from "../components/business/MerchantCities";
 import MerchantStates from "../components/business/MerchantStates";
-import MerchantRatings from "../components/business/MerchantRatings";
+// import MerchantRatings from "../components/business/MerchantRatings";
 import HighestRatedCities from "../components/business/HighestRatedCities";
 import CategoryCount from "../components/business/CategoryCount";
-import TopCategories from "../components/business/TopCategories";
 import FiveStarMerchants from "../components/business/FiveStarMerchants";
-import RestaurantTypes from "../components/business/RestaurantTypes";
 import RestaurantReviews from "../components/business/RestaurantReviews";
-import RestaurantRatings from "../components/business/RestaurantRatings"; 
-
 
 const BusinessAnalysis = () => {
   // State to track which analysis is selected
@@ -21,14 +17,11 @@ const BusinessAnalysis = () => {
     { id: 1, title: "Top 20 Most Common Merchants in the U.S.", path: "common-merchants" },
     { id: 2, title: "Top 10 Cities with Most Merchants in the U.S.", path: "merchant-cities" },
     { id: 3, title: "Top 5 States with Most Merchants in the U.S.", path: "merchant-states" },
-    { id: 4, title: "Top 20 Merchants with Average Ratings", path: "merchant-ratings" },
-    { id: 5, title: "Top 10 Cities with Highest Ratings", path: "highest-rated-cities" },
-    { id: 6, title: "Category Distribution Analysis", path: "category-count" },
-    { id: 7, title: "Top 10 Most Frequent Categories", path: "top-categories" },
-    { id: 8, title: "Top 20 Merchants with Most Five-Star Reviews", path: "five-star-merchants" },
-    { id: 9, title: "Restaurant Types Distribution", path: "restaurant-types" },
-    { id: 10, title: "Review Count by Restaurant Type", path: "restaurant-reviews" },
-    { id: 11, title: "Rating Distribution by Restaurant Type", path: "restaurant-ratings" },
+    { id: 4, title: "Top 10 Cities with Highest Ratings", path: "highest-rated-cities" },
+    { id: 5, title: "Category Distribution Analysis", path: "category-count" },
+    // { id: 6, title: "Top 10 Most Frequent Categories", path: "top-categories" },
+    { id: 6, title: "Top 20 Merchants with Most Five-Star Reviews", path: "five-star-merchants" },
+    { id: 7, title: "Review Count by Restaurant Type", path: "restaurant-reviews" },
   ];
 
   // Function to render the selected analysis component
@@ -38,27 +31,19 @@ const BusinessAnalysis = () => {
     // For example:
     switch(selectedAnalysis) {
       case "common-merchants":
-        return <CommonMerchants />;
+        return <CommonMerchants onBack={() => setSelectedAnalysis(null)} />;
       case "merchant-cities":
-        return <MerchantCities />;
+        return <MerchantCities onBack={() => setSelectedAnalysis(null)}/>;
       case "merchant-states":
-        return <MerchantStates />;
-      case "merchant-ratings":
-        return <MerchantRatings />;
+        return <MerchantStates onBack={() => setSelectedAnalysis(null)}/>;
       case "highest-rated-cities":
-        return <HighestRatedCities />;
+        return <HighestRatedCities onBack={() => setSelectedAnalysis(null)}/>;
       case "category-count":
-        return <CategoryCount />;
-      case "top-categories":
-        return <TopCategories />;
+        return <CategoryCount onBack={() => setSelectedAnalysis(null)}/>;
       case "five-star-merchants":
-        return <FiveStarMerchants />;
-      case "restaurant-types":
-        return <RestaurantTypes />;
+        return <FiveStarMerchants onBack={() => setSelectedAnalysis(null)}/>;
       case "restaurant-reviews":
-        return <RestaurantReviews />;
-      case "restaurant-ratings":
-        return <RestaurantRatings />;
+        return <RestaurantReviews onBack={() => setSelectedAnalysis(null)}/>;
       // Add cases for all your analysis components
       default:
         // For now, just showing a placeholder

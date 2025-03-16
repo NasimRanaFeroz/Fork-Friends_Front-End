@@ -1,12 +1,19 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as d3 from 'd3';
+import { IoArrowBack } from "react-icons/io5";
 
-const WordCloud = () => {
+
+const WordCloud = ({ onBack }) => {
   const [wordData, setWordData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const barChartRef = useRef(null);
   const wordCloudRef = useRef(null);
+
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -231,12 +238,16 @@ const WordCloud = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [wordData]);
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      <span className="ml-3 text-xl">Loading...</span>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading data...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) return (
     <div className="container mx-auto px-4 py-8">
@@ -257,12 +268,29 @@ const WordCloud = () => {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-gray-50">
+    <div className="container mx-auto px-4 py-8 bg-gray-50 relative">
+      <button 
+  onClick={handleGoBack}
+  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+  ref={el => {
+    if (el) {
+      setTimeout(() => {
+        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+        el.style.opacity = 1;
+        el.style.transform = "translateX(0)";
+      }, 300);
+    }
+  }}
+  aria-label="Back to Business Analysis Dashboard"
+>
+  <IoArrowBack className="text-gray-700 text-lg" />
+  <span className="text-gray-700 font-medium">Back to Dashboard</span>
+</button>
+
       <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Word Cloud Analysis</h1>
       
       {/* Word Cloud Section */}
       <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Word Frequency Visualization</h2>
         <div ref={wordCloudRef} className="flex flex-wrap gap-3 justify-center p-6 bg-gray-50 rounded-lg min-h-[200px]">
           {wordData.map((word, index) => (
             <div

@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as d3 from 'd3';
 import { motion } from 'framer-motion';
+import { IoArrowBack } from "react-icons/io5";
 
-const SilentActive = () => {
+
+const SilentActive = ({ onBack }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,6 +14,11 @@ const SilentActive = () => {
   
   const chartRef = useRef(null);
   const tooltipRef = useRef(null);
+
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -701,14 +708,32 @@ const SilentActive = () => {
   };
 
     return (
-    <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-5 font-sans text-center relative">
+<button 
+  onClick={handleGoBack}
+  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+  ref={el => {
+    if (el) {
+      setTimeout(() => {
+        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+        el.style.opacity = 1;
+        el.style.transform = "translateX(0)";
+      }, 300);
+    }
+  }}
+  aria-label="Back to Business Analysis Dashboard"
+>
+  <IoArrowBack className="text-gray-700 text-lg" />
+  <span className="text-gray-700 font-medium">Back to Dashboard</span>
+</button>
+
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="mb-8"
       >
-        <h1 className="text-3xl font-bold text-gray-800">User Activity Analysis</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Most Popular User Analysis</h1>
         <p className="text-gray-600 mt-2">
           Tracking the proportion of active and silent users over time
         </p>

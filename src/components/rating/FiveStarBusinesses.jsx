@@ -2,14 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import * as d3 from 'd3';
 import { motion } from 'framer-motion';
+import { IoArrowBack } from "react-icons/io5";
 
-const FiveStarBusinesses = () => {
+
+
+const FiveStarBusinesses = ({ onBack }) => {
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const chartRef = useRef(null);
 
+
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -142,19 +150,11 @@ const FiveStarBusinesses = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-indigo-50 to-blue-100">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360]
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
-        ></motion.div>
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading data...</p>
+        </div>
       </div>
     );
   }
@@ -171,7 +171,25 @@ const FiveStarBusinesses = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8 relative">
+      <button 
+  onClick={handleGoBack}
+  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+  ref={el => {
+    if (el) {
+      setTimeout(() => {
+        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+        el.style.opacity = 1;
+        el.style.transform = "translateX(0)";
+      }, 300);
+    }
+  }}
+  aria-label="Back to Business Analysis Dashboard"
+>
+  <IoArrowBack className="text-gray-700 text-lg" />
+  <span className="text-gray-700 font-medium">Back to Dashboard</span>
+</button>
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

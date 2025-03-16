@@ -1,12 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
+import { IoArrowBack } from "react-icons/io5";
 
-const NegativeWords = () => {
+
+const NegativeWords = ({ onBack }) => {
   const [words, setWords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeWord, setActiveWord] = useState(null);
   const chartRef = useRef(null);
+
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -242,12 +249,11 @@ const NegativeWords = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-br from-red-50 to-orange-50">
-        <div className="relative w-24 h-24">
-          <div className="absolute top-0 left-0 w-full h-full border-8 border-red-200 rounded-full animate-ping"></div>
-          <div className="absolute top-0 left-0 w-full h-full border-8 border-t-red-600 rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading data...</p>
         </div>
-        <p className="mt-6 text-red-700 font-medium animate-pulse">Loading word data...</p>
       </div>
     );
   }
@@ -277,7 +283,25 @@ const NegativeWords = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 py-12 px-4 sm:px-6 lg:px-8 relative">
+      <button 
+  onClick={handleGoBack}
+  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+  ref={el => {
+    if (el) {
+      setTimeout(() => {
+        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+        el.style.opacity = 1;
+        el.style.transform = "translateX(0)";
+      }, 300);
+    }
+  }}
+  aria-label="Back to Business Analysis Dashboard"
+>
+  <IoArrowBack className="text-gray-700 text-lg" />
+  <span className="text-gray-700 font-medium">Back to Dashboard</span>
+</button>
+
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500 hover:shadow-2xl">
           {/* Header */}

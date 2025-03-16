@@ -4,6 +4,8 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+import { IoArrowBack } from "react-icons/io5";
+
 // Fix for default marker icons in Leaflet with webpack
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -18,12 +20,19 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const FiveStarMerchants = () => {
+// FIXED: The onBack prop should be received as a parameter to the component, not to the handleGoBack function
+const FiveStarMerchants = ({ onBack }) => {
   const [merchants, setMerchants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [mapKey, setMapKey] = useState(0);
+
+  // FIXED: Corrected handleGoBack function
+  const handleGoBack = () => {
+    // Call the onBack prop to return to the parent component
+    if (onBack) onBack();
+  };
 
   // Map container style
   const mapContainerStyle = {
@@ -123,8 +132,25 @@ const FiveStarMerchants = () => {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Top-Rated Merchants</h1>
+    <div className="p-6 relative">
+      <button 
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back</span>
+      </button>
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8 mt-10">Top-Rated Merchants</h1>
       
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left side - List of merchants */}
@@ -202,7 +228,7 @@ const FiveStarMerchants = () => {
             </div>
           )}
           
-          {/* Detailed information about the selected merchant - FIXED TEXT COLORS */}
+          {/* Detailed information about the selected merchant */}
           <div className="bg-white rounded-lg shadow-md p-5 mt-6">
             <h3 className="text-xl font-bold mb-4 text-gray-800">{merchants[activeIndex].name} Details</h3>
             

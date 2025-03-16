@@ -17,7 +17,7 @@ const UserAnalysis = () => {
     { id: 3, title: "Most Popular Users by Fans", path: "popular-users" },
     { id: 4, title: "Elite to Regular Users Ratio", path: "elite-ratio" },
     { id: 5, title: "Total vs. Silent Users Proportion", path: "silent-users" },
-    { id: 6, title: "Yearly User Statistics", path: "yearly-stats" },
+    // { id: 6, title: "Yearly User Statistics", path: "yearly-stats" },
   ];
 
   // Function to render the selected analysis component
@@ -25,17 +25,17 @@ const UserAnalysis = () => {
 
     switch(selectedAnalysis) {
       case "users-per-year":
-        return <YearlyJoins />;
+        return <YearlyJoins onBack={() => setSelectedAnalysis(null)} />;
       case "top-reviewers":
-        return <TopReviewers />;
+        return <TopReviewers onBack={() => setSelectedAnalysis(null)} />;
       case "popular-users":
-        return <MostPopular />;
+        return <MostPopular onBack={() => setSelectedAnalysis(null)} />;
       case "elite-ratio":
-        return <EliteUser />;
+        return <EliteUser onBack={() => setSelectedAnalysis(null)} />;
       case "silent-users":
-        return <SilentActive />;
-      case "yearly-stats":
-        return null;
+        return <SilentActive onBack={() => setSelectedAnalysis(null)} />;
+      // case "yearly-stats":
+      //   return null;
       // Add cases for all your analysis components
       default:
         return null;

@@ -1,13 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import * as d3 from 'd3';
+import { IoArrowBack } from "react-icons/io5";
 
-const HighestRatedCities = () => {
+const HighestRatedCities = ({ onBack }) => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
   const barChartRef = useRef();
+
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,13 +74,13 @@ const HighestRatedCities = () => {
       .attr("transform", "translate(-10,0)rotate(-45)")
       .style("text-anchor", "end")
       .style("font-size", "12px")
-      .style("fill", "black"); // Set text color to black [[1]](#__1)
+      .style("fill", "black"); // Set text color to black
     
     // Add Y axis with black text
     svg.append('g')
       .call(d3.axisLeft(y).ticks(5).tickFormat(d => d.toFixed(1)))
       .selectAll("text")
-      .style("fill", "black"); // Set text color to black [[0]](#__0)
+      .style("fill", "black"); // Set text color to black
     
     // Add Y axis label with black text
     svg.append('text')
@@ -85,7 +90,7 @@ const HighestRatedCities = () => {
       .attr('text-anchor', 'middle')
       .text('Average Rating')
       .style('font-size', '14px')
-      .style('fill', 'black'); // Set text color to black [[1]](#__1)
+      .style('fill', 'black'); // Set text color to black
     
     // Add title with black text
     svg.append('text')
@@ -95,7 +100,7 @@ const HighestRatedCities = () => {
       .text('Highest Rated Cities by Average Rating')
       .style('font-size', '18px')
       .style('font-weight', 'bold')
-      .style('fill', 'black'); // Set text color to black [[1]](#__1)
+      .style('fill', 'black'); // Set text color to black
     
     // Create a color scale based on rating
     const colorScale = d3.scaleLinear()
@@ -138,7 +143,7 @@ const HighestRatedCities = () => {
           .attr('text-anchor', 'middle')
           .style('font-size', '12px')
           .style('font-weight', 'bold')
-          .style('fill', 'black') // Set text color to black [[1]](#__1)
+          .style('fill', 'black') // Set text color to black
           .text(`${d.city}, ${d.state}`);
         
         // Add rating
@@ -147,7 +152,7 @@ const HighestRatedCities = () => {
           .attr('y', y(d.averageRating) - 30)
           .attr('text-anchor', 'middle')
           .style('font-size', '12px')
-          .style('fill', 'black') // Set text color to black [[1]](#__1)
+          .style('fill', 'black') // Set text color to black
           .text(`Rating: ${d.averageRating.toFixed(1)}`);
         
         // Add business count
@@ -156,7 +161,7 @@ const HighestRatedCities = () => {
           .attr('y', y(d.averageRating) - 10)
           .attr('text-anchor', 'middle')
           .style('font-size', '12px')
-          .style('fill', 'black') // Set text color to black [[1]](#__1)
+          .style('fill', 'black') // Set text color to black
           .text(`Businesses: ${d.businessCount}`);
       })
       .on('mouseout', function() {
@@ -175,7 +180,7 @@ const HighestRatedCities = () => {
       .attr('text-anchor', 'middle')
       .style('font-size', '11px')
       .style('font-weight', 'bold')
-      .style('fill', 'black') // Set text color to black [[1]](#__1)
+      .style('fill', 'black') // Set text color to black
       .text(d => d.averageRating.toFixed(1));
   };
 
@@ -204,8 +209,27 @@ const HighestRatedCities = () => {
   }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Highest Rated Cities</h1>
+    <div className="p-6 relative">
+      {/* Back button with animation */}
+      <button 
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back</span>
+      </button>
+      
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8 mt-10">Highest Rated Cities</h1>
       
       {/* Data Table */}
       <div className="mb-8 overflow-x-auto bg-white rounded-lg shadow">

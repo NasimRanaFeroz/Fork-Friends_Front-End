@@ -1,29 +1,52 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
+import { IoArrowBack } from "react-icons/io5";
 
-const Distribution = () => {
+const Distribution = ({ onBack }) => {
   const pieChartRef = useRef(null);
   const barChartRef = useRef(null);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
   
   useEffect(() => {
-    // Chart data
-    const data = [
-      { _id: 1, count: 1069561, label: "1 Star", percentage: 15.3 },
-      { _id: 2, count: 544240, label: "2 Stars", percentage: 7.8 },
-      { _id: 3, count: 691934, label: "3 Stars", percentage: 9.9 },
-      { _id: 4, count: 1452918, label: "4 Stars", percentage: 20.8 },
-      { _id: 5, count: 3231627, label: "5 Stars", percentage: 46.2 }
-    ];
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:5001/api/rating/distribution');
+        
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        
+        const responseData = await response.json();
+        setData(responseData);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching rating distribution data:', err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
     
-    const totalCount = d3.sum(data, d => d.count);
-    
-    // Render Pie Chart
-    renderPieChart(data, totalCount);
-    
-    // Render Bar Chart
-    renderBarChart(data);
-    
+    fetchData();
   }, []);
+  
+  useEffect(() => {
+    if (data.length > 0 && !loading) {
+      const totalCount = d3.sum(data, d => d.count);
+      
+      // Render Pie Chart
+      renderPieChart(data, totalCount);
+      
+      // Render Bar Chart
+      renderBarChart(data);
+    }
+  }, [data, loading]);
   
   const renderPieChart = (data, totalCount) => {
     if (!pieChartRef.current) return;
@@ -128,7 +151,6 @@ const Distribution = () => {
     }
     
     // Create shorter connecting lines
-    // Modified to use shorter lines that extend just a bit from the pie
     svg.selectAll('allPolylines')
       .data(data_ready)
       .enter()
@@ -342,73 +364,105 @@ const Distribution = () => {
       .style('opacity', 1);
   };
   
+  // Sort data for the table display (highest rating first)
+  const sortedData = [...data].sort((a, b) => b._id - a._id);
+  
   return (
-    <div className="flex flex-col items-center w-full">
+    <div className="max-w-7xl mx-auto p-5 font-sans relative">
+      <button 
+        onClick={handleGoBack}
+        className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+        ref={el => {
+          if (el) {
+            setTimeout(() => {
+              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.opacity = 1;
+              el.style.transform = "translateX(0)";
+            }, 300);
+          }
+        }}
+        aria-label="Back to Business Analysis Dashboard"
+      >
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+      </button>
+
       <h2 className="text-3xl font-bold text-gray-800 mb-6">Rating Distribution</h2>
       
-      {/* Pie Chart */}
-      <div 
-        ref={pieChartRef} 
-        className="relative w-full max-w-3xl h-[500px] mb-12"
-      ></div>
-      
-      {/* Bar Chart */}
-      <div className="w-full max-w-3xl mb-8">
-        <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">Rating Distribution by Count</h3>
-        <div 
-          ref={barChartRef} 
-          className="relative w-full h-[300px]"
-        ></div>
+      {loading ? (
+        <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading data...</p>
+        </div>
       </div>
-      
-      {/* Star rating legend */}
-      <div className="mt-4 grid grid-cols-5 gap-4 w-full max-w-3xl border-t pt-4">
-        {[1, 2, 3, 4, 5].map(rating => (
-          <div key={rating} className="flex justify-center">
-            {Array(rating).fill(0).map((_, i) => (
-              <svg key={i} className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
+      ) : error ? (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{error}</span>
+          <p className="mt-2">Please check your API connection and try again.</p>
+        </div>
+      ) : (
+        <>
+          {/* Pie Chart */}
+          <div 
+            ref={pieChartRef} 
+            className="relative w-full max-w-3xl h-[500px] mb-12"
+          ></div>
+          
+          {/* Bar Chart */}
+          <div className="w-full max-w-3xl mb-8">
+            <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">Rating Distribution by Count</h3>
+            <div 
+              ref={barChartRef} 
+              className="relative w-full h-[300px]"
+            ></div>
+          </div>
+          
+          {/* Star rating legend */}
+          <div className="mt-4 grid grid-cols-5 gap-4 w-full max-w-3xl border-t pt-4">
+            {[1, 2, 3, 4, 5].map(rating => (
+              <div key={rating} className="flex justify-center">
+                {Array(rating).fill(0).map((_, i) => (
+                  <svg key={i} className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
             ))}
           </div>
-        ))}
-      </div>
-      
-      {/* Summary Table */}
-      <div className="w-full max-w-3xl mt-8 overflow-hidden rounded-lg shadow">
-        <table className="min-w-full bg-white">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Rating</th>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Count</th>
-              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Percentage</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {[
-              { _id: 5, count: 3231627, label: "5 Stars", percentage: 46.2 },
-              { _id: 4, count: 1452918, label: "4 Stars", percentage: 20.8 },
-              { _id: 1, count: 1069561, label: "1 Star", percentage: 15.3 },
-              { _id: 3, count: 691934, label: "3 Stars", percentage: 9.9 },
-              { _id: 2, count: 544240, label: "2 Stars", percentage: 7.8 }
-            ].map((item) => (
-              <tr key={item._id} className="hover:bg-gray-50">
-                <td className="py-3 px-4 text-sm text-gray-700">
-                  <div className="flex items-center">
-                    {Array(item._id).fill(0).map((_, i) => (
-                      <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                  </div>
-                </td>
-                <td className="py-3 px-4 text-sm text-gray-700">{d3.format(",")(item.count)}</td>
-                <td className="py-3 px-4 text-sm text-gray-700">{item.percentage}%</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          
+          {/* Summary Table */}
+          <div className="w-full max-w-3xl mt-8 overflow-hidden rounded-lg shadow">
+            <table className="min-w-full bg-white">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Rating</th>
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Count</th>
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Percentage</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {sortedData.map((item) => (
+                  <tr key={item._id} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 text-sm text-gray-700">
+                      <div className="flex items-center">
+                        {Array(item._id).fill(0).map((_, i) => (
+                          <svg key={i} className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{d3.format(",")(item.count)}</td>
+                    <td className="py-3 px-4 text-sm text-gray-700">{item.percentage}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </div>
   );
 };

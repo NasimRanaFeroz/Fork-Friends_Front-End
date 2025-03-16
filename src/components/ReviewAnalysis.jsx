@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import CountUsefulFunnyCool from './review/CountUsefulFunnyCool';
+// import CountUsefulFunnyCool from './review/CountUsefulFunnyCool';
 import CountPerYear from './review/CountPerYear';
 import PositiveWords from './review/PositiveWords';
 import NegativeWords from './review/NegativeWords';
@@ -14,13 +14,13 @@ const ReviewAnalysis = () => {
 
   const analysisItems = [
     { id: 1, title: "Number of Reviews per Year", path: "reviews-per-year" },
-    { id: 2, title: "Useful, Funny, and Cool Reviews Count", path: "review-attributes" },
-    { id: 3, title: "User Rankings by Review Count", path: "user-rankings" },
-    { id: 4, title: "Top 20 Most Common Words in Reviews", path: "common-words" },
-    { id: 5, title: "Top 10 Words from Positive Reviews", path: "positive-words" },
-    { id: 6, title: "Top 10 Words from Negative Reviews", path: "negative-words" },
-    { id: 7, title: "Word Cloud Analysis with POS Filtering", path: "word-cloud" },
-    { id: 8, title: "Word Association Graph", path: "word-association" },
+    // { id: 2, title: "Useful, Funny, and Cool Reviews Count", path: "review-attributes" },
+    { id: 2, title: "User Rankings by Review Count", path: "user-rankings" },
+    { id: 3, title: "Top 20 Most Common Words in Reviews", path: "common-words" },
+    { id: 4, title: "Top 10 Words from Positive Reviews", path: "positive-words" },
+    { id: 5, title: "Top 10 Words from Negative Reviews", path: "negative-words" },
+    { id: 6, title: "Word Cloud Analysis with POS Filtering", path: "word-cloud" },
+    { id: 7, title: "Word Association Graph", path: "word-association" },
   ];
 
   // Function to render the selected analysis component
@@ -28,21 +28,21 @@ const ReviewAnalysis = () => {
    
     switch(selectedAnalysis) {
       case "reviews-per-year":
-        return <CountPerYear />;
-      case "review-attributes":
-        return <CountUsefulFunnyCool />;
+        return <CountPerYear onBack={() => setSelectedAnalysis(null)} />;
+      // case "review-attributes":
+      //   return <CountUsefulFunnyCool onBack={() => setSelectedAnalysis(null)} />;
       case "user-rankings":
-        return <RankUsers />;
+        return <RankUsers onBack={() => setSelectedAnalysis(null)} />;
       case "common-words":
-        return <CommonWords />;
+        return <CommonWords onBack={() => setSelectedAnalysis(null)} />;
       case "positive-words":
-        return <PositiveWords />;
+        return <PositiveWords onBack={() => setSelectedAnalysis(null)} />;
       case "negative-words":
-        return <NegativeWords />;
+        return <NegativeWords onBack={() => setSelectedAnalysis(null)} />;
       case "word-cloud":
-        return <WordCloud />;
+        return <WordCloud onBack={() => setSelectedAnalysis(null)} />;
       case "word-association":
-        return <WordAssociation/>;
+        return <WordAssociation onBack={() => setSelectedAnalysis(null)} />;
       default:
         return null;
     }

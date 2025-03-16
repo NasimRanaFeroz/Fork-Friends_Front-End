@@ -7,9 +7,9 @@ const CheckInAnalysis = () => {
 
   const analysisItems = [
     { id: 1, title: "Check-ins Per Year", path: "checkins-per-year" },
-    { id: 2, title: "Check-ins Per Hour", path: "checkins-per-hour" },
-    { id: 3, title: "Most Popular Cities for Check-ins", path: "popular-checkin-cities" },
-    { id: 4, title: "Businesses Ranked by Check-ins", path: "business-checkin-ranking" },
+    // { id: 2, title: "Check-ins Per Hour", path: "checkins-per-hour" },
+    // { id: 3, title: "Most Popular Cities for Check-ins", path: "popular-checkin-cities" },
+    // { id: 4, title: "Businesses Ranked by Check-ins", path: "business-checkin-ranking" },
   ];
 
   // Function to render the selected analysis component
@@ -17,9 +17,9 @@ const CheckInAnalysis = () => {
   
     switch(selectedAnalysis) {
       case "checkins-per-year":
-        return <CheckInsPerYear />;
+        return <CheckInsPerYear onBack={() => setSelectedAnalysis(null)} />;
       case "checkins-per-hour":
-        return <CheckinsPerHour />;
+        return <CheckinsPerHour onBack={() => setSelectedAnalysis(null)} />;
       // Add cases for all your analysis components
       default:
         return null;

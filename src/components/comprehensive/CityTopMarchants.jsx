@@ -1,13 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import axios from 'axios';
+import { IoArrowBack } from "react-icons/io5";
 
-const CityTopMerchants = () => {
+const CityTopMerchants = ({ onBack }) => {
   const chartRef = useRef(null);
   const [merchantData, setMerchantData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortBy, setSortBy] = useState('rating'); // Options: 'rating', 'reviews', 'alphabetical'
+
+
+  const handleGoBack = () => {
+    if (onBack) onBack();
+  };
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -301,7 +308,25 @@ const CityTopMerchants = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="max-w-7xl mx-auto p-5 font-sans relative">
+      <button 
+  onClick={handleGoBack}
+  className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+  ref={el => {
+    if (el) {
+      setTimeout(() => {
+        el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+        el.style.opacity = 1;
+        el.style.transform = "translateX(0)";
+      }, 300);
+    }
+  }}
+  aria-label="Back to Business Analysis Dashboard"
+>
+  <IoArrowBack className="text-gray-700 text-lg" />
+  <span className="text-gray-700 font-medium">Back</span>
+</button>
+
       <h1 className="text-3xl font-bold text-center mb-8 text-indigo-800">Top Merchants by City</h1>
       
       {loading && (
