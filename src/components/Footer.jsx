@@ -8,9 +8,7 @@ const Footer = () => {
   return (
     <footer className="bg-base-300 pt-8 pb-6">
       <div className="container mx-auto px-4">
-        {/* Main Footer Content */}
         <div className="flex flex-col md:flex-row justify-between mb-8">
-          {/* Brand Section */}
           <div className="mb-6 md:mb-0">
             <Link to="/" className="bebas-neue-regular text-3xl text-[#ff5722]">
               Fork & Friends
@@ -44,25 +42,22 @@ const Footer = () => {
               <h3 className="font-bold mb-4">Contact</h3>
               <ul className="space-y-2">
                 <li><Link to="/feedback" className="hover:text-[#ff5722] transition-colors">Give Feedback</Link></li>
-                <li><a href="mailto:contact@forkandfriends.com" className="hover:text-[#ff5722] transition-colors">feroznasimrana@gmail.com</a></li>
+                <li><a href="mailto:feroznasimrana@gmail.com" className="hover:text-[#ff5722] transition-colors">contact@forkandfriends.com</a></li>
               </ul>
             </div>
           </div>
         </div>
-        
-        {/* Divider */}
+
         <div className="border-t border-base-content/10 my-4"></div>
-        
-        {/* Bottom Section */}
+
         <div className="flex flex-col md:flex-row items-center justify-between">
           <p className="text-sm opacity-75">
             © {currentYear} Fork & Friends Ltd. All rights reserved.
           </p>
-          
-          {/* Social Links */}
+
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a 
-              href="https://github.com/forkandfriends" 
+              href="https://github.com/NasimRanaFeroz" 
               target="_blank" 
               rel="noopener noreferrer"
               className="hover:text-[#ff5722] transition-colors"
@@ -71,7 +66,7 @@ const Footer = () => {
               <FaGithub size={20} />
             </a>
             <a 
-              href="https://linkedin.com/company/forkandfriends" 
+              href="https://linkedin.com/in/nasim-rana-feroz" 
               target="_blank" 
               rel="noopener noreferrer"
               className="hover:text-[#ff5722] transition-colors"
@@ -80,7 +75,7 @@ const Footer = () => {
               <FaLinkedin size={20} />
             </a>
             <a 
-              href="https://twitter.com/forkandfriends" 
+              href="/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="hover:text-[#ff5722] transition-colors"

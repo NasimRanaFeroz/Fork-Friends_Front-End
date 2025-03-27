@@ -5,10 +5,7 @@ import MostPopular from './user/MostPopular';
 import EliteUser from './user/EliteUser';
 import SilentActive from './user/SilentActive';
 
-
-
 const UserAnalysis = () => {
-  // State to track which analysis is selected
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
   const analysisItems = [
@@ -20,7 +17,6 @@ const UserAnalysis = () => {
     // { id: 6, title: "Yearly User Statistics", path: "yearly-stats" },
   ];
 
-  // Function to render the selected analysis component
   const renderAnalysisComponent = () => {
 
     switch(selectedAnalysis) {
@@ -34,13 +30,9 @@ const UserAnalysis = () => {
         return <EliteUser onBack={() => setSelectedAnalysis(null)} />;
       case "silent-users":
         return <SilentActive onBack={() => setSelectedAnalysis(null)} />;
-      // case "yearly-stats":
-      //   return null;
-      // Add cases for all your analysis components
       default:
         return null;
-    }
-    
+    } 
   };
 
   return (
@@ -48,27 +40,25 @@ const UserAnalysis = () => {
      
       
       {selectedAnalysis ? (
-        // Render the selected analysis component
         renderAnalysisComponent()
       ) : (
-        // Render the grid of analysis cards
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {analysisItems.map((item) => (
             <div
               key={item.id}
               onClick={() => setSelectedAnalysis(item.path)}
-              className="block p-6 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-purple-200 group cursor-pointer"
+              className="block p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-amber-100 hover:border-amber-200 group cursor-pointer"
             >
               <div className="flex items-center">
-                <div className="w-10 h-10 flex items-center justify-center bg-purple-600 text-white rounded-full mr-4 group-hover:bg-purple-700 transition-colors">
+                <div className="w-10 h-10 flex items-center justify-center bg-amber-600 text-white rounded-full mr-4 group-hover:bg-amber-700 transition-colors">
                   {item.id}
                 </div>
-                <h2 className="text-lg font-semibold text-gray-700 group-hover:text-purple-700 transition-colors">
+                <h2 className="text-lg font-semibold text-gray-700 group-hover:text-amber-700 transition-colors">
                   {item.title}
                 </h2>
               </div>
               <div className="mt-3 flex justify-end">
-                <span className="text-purple-600 group-hover:text-purple-800 transition-colors text-sm font-medium flex items-center">
+                <span className="text-amber-600 group-hover:text-amber-800 transition-colors text-sm font-medium flex items-center">
                   View Analysis
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

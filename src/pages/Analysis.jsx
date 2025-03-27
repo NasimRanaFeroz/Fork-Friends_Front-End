@@ -71,7 +71,6 @@ function Analysis() {
             </div>
           </div>
           
-          {/* Sidebar */}
           <div className="drawer-side z-40">
             <label
               htmlFor="analysis-drawer"
@@ -80,13 +79,11 @@ function Analysis() {
             ></label>
             
             <div className="bg-base-200 w-65 min-h-full flex flex-col p-0">
-              {/* Sidebar header */}
               <div className="p-4 border-b border-base-300">
                 <h2 className="text-xl font-bold bebas-neue">Data Analysis</h2>
                 <p className="text-sm opacity-75">Explore different analysis views</p>
               </div>
               
-              {/* Navigation links */}
               <ul className="menu p-4 gap-2 flex-grow">
                 <li>
                   <NavLink to="/data-analysis" end className={navLinkStyles}>
@@ -126,11 +123,10 @@ function Analysis() {
                 </li>
               </ul>
               
-              {/* Help section at bottom of sidebar */}
               <div className="p-4 border-t border-base-300 bg-base-300/50">
                 <div className="text-sm">
                   <p className="font-bold">Need help with analytics?</p>
-                  <p className="mt-1 opacity-75">Check our <a href="/documentation" className="text-[#ff5722] hover:underline">documentation</a> or <a href="/contact" className="text-[#ff5722] hover:underline">contact support</a>.</p>
+                  <p className="mt-1 opacity-75">Check our <a href="/" className="text-[#ff5722] hover:underline">documentation</a> or <a href="/feedback" className="text-[#ff5722] hover:underline">contact support</a>.</p>
                 </div>
               </div>
             </div>
