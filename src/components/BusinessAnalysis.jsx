@@ -13,43 +13,70 @@ const BusinessAnalysis = () => {
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
   const analysisItems = [
-    { id: 1, title: "Top 20 Most Common Merchants in the U.S.", path: "common-merchants" },
-    { id: 2, title: "Top 10 Cities with Most Merchants in the U.S.", path: "merchant-cities" },
-    { id: 3, title: "Top 5 States with Most Merchants in the U.S.", path: "merchant-states" },
-    { id: 4, title: "Top 10 Cities with Highest Ratings", path: "highest-rated-cities" },
+    {
+      id: 1,
+      title: "Top 20 Most Common Merchants in the U.S.",
+      path: "common-merchants",
+    },
+    {
+      id: 2,
+      title: "Top 10 Cities with Most Merchants in the U.S.",
+      path: "merchant-cities",
+    },
+    {
+      id: 3,
+      title: "Top 5 States with Most Merchants in the U.S.",
+      path: "merchant-states",
+    },
+    {
+      id: 4,
+      title: "Top 10 Cities with Highest Ratings",
+      path: "highest-rated-cities",
+    },
     { id: 5, title: "Category Distribution Analysis", path: "category-count" },
     // { id: 6, title: "Top 10 Most Frequent Categories", path: "top-categories" },
-    { id: 6, title: "Top 20 Merchants with Most Five-Star Reviews", path: "five-star-merchants" },
-    { id: 7, title: "Review Count by Restaurant Type", path: "restaurant-reviews" },
+    {
+      id: 6,
+      title: "Top 20 Merchants with Most Five-Star Reviews",
+      path: "five-star-merchants",
+    },
+    {
+      id: 7,
+      title: "Review Count by Restaurant Type",
+      path: "restaurant-reviews",
+    },
   ];
 
   const renderAnalysisComponent = () => {
-    switch(selectedAnalysis) {
+    switch (selectedAnalysis) {
       case "common-merchants":
         return <CommonMerchants onBack={() => setSelectedAnalysis(null)} />;
       case "merchant-cities":
-        return <MerchantCities onBack={() => setSelectedAnalysis(null)}/>;
+        return <MerchantCities onBack={() => setSelectedAnalysis(null)} />;
       case "merchant-states":
-        return <MerchantStates onBack={() => setSelectedAnalysis(null)}/>;
+        return <MerchantStates onBack={() => setSelectedAnalysis(null)} />;
       case "highest-rated-cities":
-        return <HighestRatedCities onBack={() => setSelectedAnalysis(null)}/>;
+        return <HighestRatedCities onBack={() => setSelectedAnalysis(null)} />;
       case "category-count":
-        return <CategoryCount onBack={() => setSelectedAnalysis(null)}/>;
+        return <CategoryCount onBack={() => setSelectedAnalysis(null)} />;
       case "five-star-merchants":
-        return <FiveStarMerchants onBack={() => setSelectedAnalysis(null)}/>;
+        return <FiveStarMerchants onBack={() => setSelectedAnalysis(null)} />;
       case "restaurant-reviews":
-        return <RestaurantReviews onBack={() => setSelectedAnalysis(null)}/>;
+        return <RestaurantReviews onBack={() => setSelectedAnalysis(null)} />;
       default:
         return (
           <div className="p-6 bg-white rounded-lg">
-            <button 
+            <button
               onClick={() => setSelectedAnalysis(null)}
               className="mb-4 px-4 py-2 bg-amber-600 text-white rounded hover:bg-amber-700"
             >
               Back to Dashboard
             </button>
             <h2 className="text-2xl font-bold mb-4">
-              {analysisItems.find(item => item.path === selectedAnalysis)?.title}
+              {
+                analysisItems.find((item) => item.path === selectedAnalysis)
+                  ?.title
+              }
             </h2>
             <p>Analysis component for {selectedAnalysis} would render here</p>
           </div>
@@ -58,8 +85,7 @@ const BusinessAnalysis = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      
+    <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-amber-50 to-orange-50 shadow-lg rounded-lg">
       {selectedAnalysis ? (
         renderAnalysisComponent()
       ) : (
@@ -68,7 +94,7 @@ const BusinessAnalysis = () => {
             <div
               key={item.id}
               onClick={() => setSelectedAnalysis(item.path)}
-              className="block p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-amber-200 group cursor-pointer"
+              className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-amber-200 group cursor-pointer"
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 flex items-center justify-center bg-amber-600 text-white rounded-full p-4 mr-4 group-hover:bg-amber-700 transition-colors">
@@ -81,8 +107,19 @@ const BusinessAnalysis = () => {
               <div className="mt-3 flex justify-end">
                 <span className="text-amber-600 group-hover:text-amber-800 transition-colors text-sm font-medium flex items-center">
                   View Analysis
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 ml-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </span>
               </div>

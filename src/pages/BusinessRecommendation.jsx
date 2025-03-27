@@ -29,11 +29,11 @@ function BusinessRecommendation() {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+  // useEffect(() => {
+  //   if (messagesEndRef.current) {
+  //     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // }, [messages]);
 
   const [preferenceOptions] = useState([
     "Italian cuisine",
@@ -88,7 +88,6 @@ function BusinessRecommendation() {
   const locationRef = useRef(null);
   const messagesEndRef = useRef(null);
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (preferencesRef.current && !preferencesRef.current.contains(event.target)) {
@@ -105,7 +104,6 @@ function BusinessRecommendation() {
     };
   }, []);
 
-  // Preference checkbox handlers
   const handlePreferenceToggle = (preference) => {
     if (selectedPreferences.includes(preference)) {
       setSelectedPreferences(selectedPreferences.filter(item => item !== preference));
@@ -114,64 +112,18 @@ function BusinessRecommendation() {
     }
   };
 
-  // Select all preferences
   const handleSelectAllPreferences = () => {
     setSelectedPreferences([...preferenceOptions]);
   };
 
-  // Clear all preferences
   const handleClearPreferences = () => {
     setSelectedPreferences([]);
   };
 
-  // Location selection handler
   const handleLocationSelect = (location) => {
     setSelectedLocation(location);
     setLocationOpen(false);
   };
-
-  // const aiResponses = {
-  //   profile: [
-  //     {
-  //       text: `Based on your preference for ${selectedPreferences[0] || "Italian cuisine"}, I recommend 'Trattoria Bella Italia'. Their dishes have received excellent ratings from users with similar taste profiles.`,
-  //       icon: <FiTarget className="text-green-500" />
-  //     },
-  //     {
-  //       text: `Since you enjoy ${selectedPreferences[1] || "coffee shops"}, 'Analog Coffee' might be perfect for you. Users who visited the same places as you rated it 4.8/5 stars.`,
-  //       icon: <FiTarget className="text-green-500" />
-  //     }
-  //   ],
-  //   nlp: [
-  //     {
-  //       text: "I noticed you often mention 'quiet atmosphere' in your reviews. 'The Reading Room Café' is known for its peaceful environment and has great workspaces.",
-  //       icon: <FiTrendingUp className="text-blue-500" />
-  //     },
-  //     {
-  //       text: `Your reviews suggest you value 'authentic flavors'. ${selectedPreferences.includes("Japanese cuisine") ? "'Sushi Kashiba'" : "'Sichuan Home'"} has been praised by users for maintaining traditional cooking techniques.`,
-  //       icon: <FiTrendingUp className="text-blue-500" />
-  //     }
-  //   ],
-  //   location: [
-  //     {
-  //       text: `There's a highly-rated business near your location: 'Urban Coworking'. It's just 0.3 miles from ${selectedLocation} and offers private meeting rooms.`,
-  //       icon: <FiMapPin className="text-red-500" />
-  //     },
-  //     {
-  //       text: `Within walking distance from ${selectedLocation} is 'The Market Grill', a seafood restaurant with fresh daily catches from Pike Place Market.`,
-  //       icon: <FiMapPin className="text-red-500" />
-  //     }
-  //   ],
-  //   business: [
-  //     {
-  //       text: "Based on your business profile, I recommend focusing on weekend promotions. Your customer traffic is 35% lower on Sundays compared to weekdays.",
-  //       icon: <FiBriefcase className="text-purple-500" />
-  //     },
-  //     {
-  //       text: "Your pricing strategy could be optimized. Competitors in your area charge 12% more for similar services while maintaining customer satisfaction.",
-  //       icon: <FiDollarSign className="text-yellow-500" />
-  //     }
-  //   ]
-  // };
 
   const handleInputChange = (e) => {
     setInputMessage(e.target.value);
@@ -183,9 +135,6 @@ function BusinessRecommendation() {
       const url = `http://192.168.37.49:5000/api/simple-query?q=${encodeURIComponent(query)}`;
       console.log(url);
       const response = await fetch(url);
-
-
-
 
       console.log(response);
       if (!response.ok) {
@@ -218,7 +167,6 @@ function BusinessRecommendation() {
     setIsTyping(true);
 
     try {
-      // Call the restaurant API
       const apiResponse = await fetchRestaurantData(inputMessage);
       console.log(apiResponse);
 
@@ -233,7 +181,6 @@ function BusinessRecommendation() {
 
         setMessages(prevMessages => [...prevMessages, aiResponse]);
       } else {
-        // Handle error response
         const aiResponse = {
           id: messages.length + 2,
           text: "Sorry, I couldn't find information about that restaurant query right now.",
@@ -247,7 +194,6 @@ function BusinessRecommendation() {
     } catch (error) {
       console.error("Error handling API response:", error);
 
-      // Fallback response in case of error
       const aiResponse = {
         id: messages.length + 2,
         text: "I'm having trouble connecting to the restaurant database. Please try again later.",
@@ -262,30 +208,20 @@ function BusinessRecommendation() {
     }
   };
 
-
-
-
-
-
-  // Format timestamp
   const formatTime = (date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Quick suggestion buttons
   const suggestions = [
     "Find me the best Italian restaurants in Phoenix",
     "Suggest me some chinese restaurant",
   ];
 
-  // Custom CSS to hide all scrollbars
   const noScrollbarStyles = {
-    msOverflowStyle: 'none',  // IE and Edge
-    scrollbarWidth: 'none',   // Firefox
-    WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
+    msOverflowStyle: 'none',
+    scrollbarWidth: 'none',
+    WebkitOverflowScrolling: 'touch',
   };
-
-
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -293,7 +229,6 @@ function BusinessRecommendation() {
 
       <div className="flex-grow container mx-auto px-4 py-8 max-w-5xl mt-20">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* User profile sidebar */}
           <div className="hidden md:block">
             <div className="bg-base-200 rounded-lg shadow-lg p-4">
               <div className="flex items-center mb-4">
@@ -308,7 +243,6 @@ function BusinessRecommendation() {
                 </div>
               </div>
 
-              {/* Business Preferences dropdown */}
               <div className="mb-4" ref={preferencesRef}>
                 <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
                   <FiHeart className="mr-2 text-red-500" /> Business Preferences
@@ -353,7 +287,6 @@ function BusinessRecommendation() {
                   )}
                 </div>
 
-                {/* Display selected preferences */}
                 {selectedPreferences.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {selectedPreferences.map((preference) => (
@@ -374,7 +307,6 @@ function BusinessRecommendation() {
                 )}
               </div>
 
-              {/* Location dropdown */}
               <div className="mb-4" ref={locationRef}>
                 <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
                   <FiMapPin className="mr-2 text-blue-500" /> Location
@@ -515,7 +447,6 @@ function BusinessRecommendation() {
                   </div>
                 ))}
 
-                {/* Typing indicator */}
                 {isTyping && (
                   <div className="flex mb-4 justify-start">
                     <div className="bg-base-300 rounded-lg rounded-bl-none p-3">
@@ -531,7 +462,6 @@ function BusinessRecommendation() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Quick suggestions with hidden horizontal scrollbar */}
               <div
                 className="px-4 py-2 bg-base-300/50 flex overflow-x-auto gap-2"
                 style={noScrollbarStyles}
@@ -555,7 +485,6 @@ function BusinessRecommendation() {
                 ))}
               </div>
 
-              {/* Input area */}
               <form onSubmit={handleSubmit} className="border-t border-base-300 p-4 bg-base-100">
                 <div className="flex">
                   <input

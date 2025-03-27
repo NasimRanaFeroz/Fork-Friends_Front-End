@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import YearlyJoins from './user/YearlyJoins';
-import TopReviewers from './user/TopReviewers';
-import MostPopular from './user/MostPopular';
-import EliteUser from './user/EliteUser';
-import SilentActive from './user/SilentActive';
+import React, { useState } from "react";
+import YearlyJoins from "./user/YearlyJoins";
+import TopReviewers from "./user/TopReviewers";
+import MostPopular from "./user/MostPopular";
+import EliteUser from "./user/EliteUser";
+import SilentActive from "./user/SilentActive";
 
 const UserAnalysis = () => {
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
@@ -18,8 +18,7 @@ const UserAnalysis = () => {
   ];
 
   const renderAnalysisComponent = () => {
-
-    switch(selectedAnalysis) {
+    switch (selectedAnalysis) {
       case "users-per-year":
         return <YearlyJoins onBack={() => setSelectedAnalysis(null)} />;
       case "top-reviewers":
@@ -32,13 +31,11 @@ const UserAnalysis = () => {
         return <SilentActive onBack={() => setSelectedAnalysis(null)} />;
       default:
         return null;
-    } 
+    }
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-     
-      
+    <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-amber-50 to-orange-50 shadow-lg rounded-lg">
       {selectedAnalysis ? (
         renderAnalysisComponent()
       ) : (
@@ -47,7 +44,7 @@ const UserAnalysis = () => {
             <div
               key={item.id}
               onClick={() => setSelectedAnalysis(item.path)}
-              className="block p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-amber-100 hover:border-amber-200 group cursor-pointer"
+              className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-amber-100 hover:border-amber-200 group cursor-pointer"
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 flex items-center justify-center bg-amber-600 text-white rounded-full mr-4 group-hover:bg-amber-700 transition-colors">
@@ -60,8 +57,19 @@ const UserAnalysis = () => {
               <div className="mt-3 flex justify-end">
                 <span className="text-amber-600 group-hover:text-amber-800 transition-colors text-sm font-medium flex items-center">
                   View Analysis
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 ml-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </span>
               </div>

@@ -18,7 +18,6 @@ const Footer = () => {
             </p>
           </div>
           
-          {/* Quick Links */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
             <div>
               <h3 className="font-bold mb-4">Explore</h3>

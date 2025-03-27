@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { FiMenu, FiX } from "react-icons/fi";
 
 const Navbar = () => {
@@ -8,12 +8,10 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
 
-  // Add scroll effect
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {
@@ -27,7 +25,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Accessibility - trap focus in mobile menu when open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -52,7 +49,6 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          {/* Left Section: Logo */}
           <div className="flex-shrink-0">
             <Link 
               to="/" 
@@ -63,7 +59,6 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Mobile Menu Button - Only visible on small screens */}
           <button
             type="button"
             className="lg:hidden p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -80,9 +75,7 @@ const Navbar = () => {
             )}
           </button>
 
-          {/* Desktop Navigation - Hidden on small screens */}
           <div className="hidden lg:flex items-center justify-between flex-grow ml-10">
-            {/* Middle Section: Main Navigation Links */}
             <ul className="flex space-x-8 roboto-regular text-lg mx-auto">
               <li>
                 <NavLink 

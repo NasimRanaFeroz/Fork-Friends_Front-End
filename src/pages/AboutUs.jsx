@@ -25,10 +25,10 @@ function AboutUs() {
       image: teamMember1,
       bio: "A problem-solving enthusiast who thrives on technical challenges. Aziz combines expertise in API development and database optimization to create seamless user experiences. With a background in competitive programming, he ensures our platform is technically robust.",
       social: {
-        email: "alex@restaurantfinder.com",
-        linkedin: "https://linkedin.com/in/alexrodriguez",
+        email: "azizurrahman.zero@gmail.com",
+        linkedin: "https://linkedin.com/in/azizurrahman-zero",
         twitter: "https://twitter.com/alexdev",
-        github: "https://github.com/alexrodriguez",
+        github: "https://github.com/azizurrahman-zero",
       },
     },
     {
@@ -38,10 +38,10 @@ function AboutUs() {
       image: teamMember2,
       bio: "Our algorithm specialist with expertise across the entire stack. Nezam's background in data science drives our recommendation engine, while his frontend skills ensure beautiful presentation. He constantly refines our algorithms to deliver spot-on restaurant suggestions.",
       social: {
-        email: "jamie@restaurantfinder.com",
-        linkedin: "https://linkedin.com/in/jamiechen",
-        twitter: "https://twitter.com/jamiebackend",
-        github: "https://github.com/jamiechen",
+        email: "nezam0266@gmail.com",
+        linkedin: "https://linkedin.com/in/md-nezam-uddin-497a54282",
+        twitter: "/",
+        github: "https://github.com/mdnezam-uddin",
       },
     },
     {
@@ -51,20 +51,17 @@ function AboutUs() {
       image: teamMember3,
       bio: "A versatile developer passionate about seamless user experiences. Nasim excels in React and Node.js, with a keen eye for UI/UX design that makes our platform both beautiful and functional. When not coding, he explores restaurants to enhance our database with firsthand insights.",
       social: {
-        email: "taylor@restaurantfinder.com",
-        linkedin: "https://linkedin.com/in/taylorjohnson",
-        twitter: "https://twitter.com/taylorcodes",
+        email: "feroznasimrana@gmail.com",
+        linkedin: "https://linkedin.com/in/nasim-rana-feroz",
+        twitter: "/about-us",
         github: "https://github.com/NasimRanaFeroz",
       },
     },
   ];
   
-
   return (
     <div className="min-h-screen bg-base-100">
       <Navbar />
-
-      {/* Mission Section */}
       <div className="container mx-auto mt-20 px-4 py-16">
         <div className="flex flex-col md:flex-row gap-12 items-center">
           <div className="md:w-1/2">
@@ -98,7 +95,6 @@ function AboutUs() {
         </div>
       </div>
 
-      {/* Team Section */}
       <div className="bg-base-200 py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -114,14 +110,12 @@ function AboutUs() {
             </p>
           </div>
 
-          {/* Team Members Grid - Responsive with different layouts for mobile, tablet, and desktop */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-auto max-w-5xl">
             {teamMembers.map((member) => (
               <div
                 key={member.id}
                 className="bg-base-100 rounded-lg overflow-hidden shadow-lg transition-transform duration-300 hover:transform hover:scale-105"
               >
-                {/* Team Member Image */}
                 <div className="h-80 overflow-hidden">
                   <img
                     src={member.image}
@@ -130,7 +124,6 @@ function AboutUs() {
                   />
                 </div>
 
-                {/* Team Member Info */}
                 <div className="p-6">
                   <h3 className="text-2xl font-bold bebas-neue">
                     {member.name}
@@ -140,7 +133,6 @@ function AboutUs() {
                   </p>
                   <p className="mb-6">{member.bio}</p>
 
-                  {/* Social Links - Updated with GitHub instead of Instagram */}
                   <div className="flex space-x-4">
                     <a
                       href={`mailto:${member.social.email}`}
@@ -179,8 +171,7 @@ function AboutUs() {
           </div>
         </div>
       </div>
-
-      {/* Values Section */}
+      
       <div className="bg-base-200 py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">

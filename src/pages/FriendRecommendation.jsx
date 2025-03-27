@@ -35,7 +35,6 @@ function FriendRecommendation() {
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
-  // Dropdown state for food types
   const [interestOptions] = useState([
     "Italian",
     "Japanese",
@@ -58,7 +57,6 @@ function FriendRecommendation() {
     "Dinner",
   ]);
 
-  // Dropdown state for restaurants
   const [placeOptions] = useState([
     "Bella Trattoria",
     "Sakura Sushi",
@@ -89,26 +87,19 @@ function FriendRecommendation() {
     "Miami, FL",
   ]);
 
-  // Selected items state
   const [selectedInterests, setSelectedInterests] = useState([
-    // "Chinese",
-    // "Thai",
   ]);
+
   const [selectedPlaces, setSelectedPlaces] = useState([
-    // "Bella Trattoria",
-    // "Sakura Sushi",
-    // "Bob's Kitchen",
   ]);
+  
   const [selectedCity, setSelectedCity] = useState(
-    // "New York, NY"
   );
 
-  // Dropdown visibility state
   const [interestsOpen, setInterestsOpen] = useState(false);
   const [placesOpen, setPlacesOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
 
-  // Dropdown refs for click outside handling
   const interestsRef = useRef(null);
   const placesRef = useRef(null);
   const cityRef = useRef(null);
@@ -136,7 +127,6 @@ function FriendRecommendation() {
     };
   }, []);
 
-  // Interest checkbox handlers
   const handleInterestToggle = (interest) => {
     if (selectedInterests.includes(interest)) {
       setSelectedInterests(
@@ -147,7 +137,6 @@ function FriendRecommendation() {
     }
   };
 
-  // Place checkbox handlers
   const handlePlaceToggle = (place) => {
     if (selectedPlaces.includes(place)) {
       setSelectedPlaces(selectedPlaces.filter((item) => item !== place));
@@ -156,34 +145,29 @@ function FriendRecommendation() {
     }
   };
 
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+  // useEffect(() => {
+  //   if (messagesEndRef.current) {
+  //     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // }, [messages]);
 
-  // City selection handler
   const handleCitySelect = (city) => {
     setSelectedCity(city);
     setCityOpen(false);
   };
 
-  // Select all interests
   const handleSelectAllInterests = () => {
     setSelectedInterests([...interestOptions]);
   };
 
-  // Clear all interests
   const handleClearInterests = () => {
     setSelectedInterests([]);
   };
 
-  // Select all places
   const handleSelectAllPlaces = () => {
     setSelectedPlaces([...placeOptions]);
   };
 
-  // Clear all places
   const handleClearPlaces = () => {
     setSelectedPlaces([]);
   };
@@ -216,7 +200,6 @@ function FriendRecommendation() {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
-    // Add user message
     const userMessage = {
       id: messages.length + 1,
       text: inputMessage,
@@ -229,7 +212,6 @@ function FriendRecommendation() {
     setIsTyping(true);
 
     if (inputMessage) {
-      // Call the restaurant API
       const apiResponse = await fetchRestaurantData(inputMessage);
 
       if (apiResponse.status === "success") {
@@ -243,7 +225,6 @@ function FriendRecommendation() {
 
         setMessages((prev) => [...prev, aiResponse]);
       } else {
-        // Handle error response
         const aiResponse = {
           id: messages.length + 2,
           text: "Sorry, I couldn't find information about that restaurant query right now.",
@@ -257,7 +238,6 @@ function FriendRecommendation() {
 
       setIsTyping(false);
     } else {
-      // Use the existing simulation logic for non-restaurant queries
       setTimeout(() => {
         const responseCategory = [
           "collaborative",
@@ -265,9 +245,6 @@ function FriendRecommendation() {
           "graph",
           "general",
         ][Math.floor(Math.random() * 4)];
-
-
-
 
         const aiResponsesData = {
           collaborative: [
@@ -388,19 +365,16 @@ function FriendRecommendation() {
   };
 
 
-  // Format timestamp
   const formatTime = (date) => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  // Quick suggestion buttons
   const suggestions = [
     "Suggest a friend who likes Chinese foods",
     "Recommend friends",
     "Find a buddy",
   ];
 
-  // Custom CSS to hide all scrollbars
   const noScrollbarStyles = {
     msOverflowStyle: "none",
     scrollbarWidth: "none",
@@ -428,7 +402,6 @@ function FriendRecommendation() {
                 </div>
               </div>
 
-              {/* Food Interests dropdown */}
               <div className="mb-4" ref={interestsRef}>
                 <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
                   <FiHeart className="mr-2 text-red-500" /> Food Interests
@@ -479,7 +452,6 @@ function FriendRecommendation() {
                   )}
                 </div>
 
-                {/* Display selected interests */}
                 {selectedInterests.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {selectedInterests.map((interest) => (
@@ -500,7 +472,6 @@ function FriendRecommendation() {
                 )}
               </div>
 
-              {/* Favorite Restaurants dropdown */}
               <div className="mb-4" ref={placesRef}>
                 <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
                   <FiStar className="mr-2 text-yellow-500" /> Favorite
@@ -552,7 +523,6 @@ function FriendRecommendation() {
                   )}
                 </div>
 
-                {/* Display selected places */}
                 {selectedPlaces.length > 0 && (
                   <div className="mt-2">
                     {selectedPlaces.map((place) => (
@@ -574,7 +544,6 @@ function FriendRecommendation() {
                 )}
               </div>
 
-              {/* Location dropdown */}
               <div className="mb-4" ref={cityRef}>
                 <h3 className="font-semibold text-sm uppercase opacity-70 flex items-center">
                   <FiMapPin className="mr-2 text-blue-500" /> Location
@@ -615,10 +584,8 @@ function FriendRecommendation() {
             </div>
           </div>
 
-          {/* Chat interface */}
           <div className="md:col-span-2">
             <div className="bg-base-200 rounded-lg shadow-lg flex flex-col h-[70vh]">
-              {/* Chat header */}
               <div className="px-4 py-3 border-b border-base-300 flex items-center">
                 <div className="w-10 h-10 rounded-full bg-[#ff5722] flex items-center justify-center text-white text-xl font-bold">
                   <FiMessageSquare />
@@ -630,8 +597,6 @@ function FriendRecommendation() {
                   </p>
                 </div>
               </div>
-
-              {/* Messages container */}
               <div
                 className="flex-grow p-4 overflow-y-auto"
                 style={noScrollbarStyles}
@@ -721,7 +686,6 @@ function FriendRecommendation() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Suggestion chips */}
               <div
                 className="px-4 py-2 border-t border-base-300 flex items-center overflow-x-auto"
                 style={noScrollbarStyles}
@@ -744,7 +708,6 @@ function FriendRecommendation() {
                 </div>
               </div>
 
-              {/* Input area */}
               <div className="px-4 py-3 border-t border-base-300">
                 <form onSubmit={handleSubmit} className="flex items-center">
                   <input

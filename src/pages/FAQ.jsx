@@ -75,10 +75,8 @@ function FAQ() {
     }
   ];
 
-  // State to track which FAQ items are open
   const [openItems, setOpenItems] = useState({});
 
-  // Toggle function for FAQ items
   const toggleItem = (id) => {
     setOpenItems(prev => ({
       ...prev,
@@ -90,7 +88,6 @@ function FAQ() {
     <div className="min-h-screen bg-base-100 flex flex-col">
       <Navbar />
       
-      {/* Hero Section */}
       <div className="bg-[#1a1a1a] text-white pt-24 pb-16">
         <div className="container mx-auto px-4">
           <h1 className="text-5xl md:text-6xl font-bold bebas-neue mb-4 text-center">Frequently Asked Questions</h1>
@@ -101,7 +98,6 @@ function FAQ() {
         </div>
       </div>
       
-      {/* FAQ Content */}
       <div className="container mx-auto px-4 py-16 flex-grow">
         <div className="max-w-4xl mx-auto">
           {faqData.map((item) => (
@@ -132,7 +128,6 @@ function FAQ() {
         </div>
       </div>
       
-      {/* Contact Section */}
       <div className="bg-base-200 py-16">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold bebas-neue mb-4">Still Have Questions?</h2>

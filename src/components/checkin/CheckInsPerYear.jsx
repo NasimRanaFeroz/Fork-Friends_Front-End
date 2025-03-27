@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import * as d3 from 'd3';
+import React, { useEffect, useRef, useState } from "react";
+import * as d3 from "d3";
 import { IoArrowBack } from "react-icons/io5";
-
 
 const CheckInsPerYear = ({ onBack }) => {
   const lineChartRef = useRef(null);
@@ -14,13 +13,14 @@ const CheckInsPerYear = ({ onBack }) => {
     if (onBack) onBack();
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.37.177:5001/api/checkin/checkins-per-year');
+        const response = await fetch(
+          "http://192.168.37.177:5001/api/checkin/checkins-per-year"
+        );
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         const result = await response.json();
         setData(result);
@@ -42,206 +42,206 @@ const CheckInsPerYear = ({ onBack }) => {
   }, [data]);
 
   const drawLineChart = () => {
-    // Clear previous chart
     d3.select(lineChartRef.current).selectAll("*").remove();
 
     const margin = { top: 40, right: 30, bottom: 50, left: 80 };
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    const svg = d3.select(lineChartRef.current)
-      .append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+    const svg = d3
+      .select(lineChartRef.current)
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Create scales
-    const x = d3.scaleLinear()
-      .domain(d3.extent(data, d => d.year))
+    const x = d3
+      .scaleLinear()
+      .domain(d3.extent(data, (d) => d.year))
       .range([0, width]);
 
-    const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.count)])
+    const y = d3
+      .scaleLinear()
+      .domain([0, d3.max(data, (d) => d.count)])
       .range([height, 0]);
 
-    // Add X axis
-    svg.append('g')
-      .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x).tickFormat(d3.format('d')))
-      .style('font-size', '12px');
+    svg
+      .append("g")
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x).tickFormat(d3.format("d")))
+      .style("font-size", "12px");
 
-    // Add Y axis
-    svg.append('g')
-      .call(d3.axisLeft(y).tickFormat(d => `${d / 1000}k`))
-      .style('font-size', '12px');
+    svg
+      .append("g")
+      .call(d3.axisLeft(y).tickFormat((d) => `${d / 1000}k`))
+      .style("font-size", "12px");
 
-    // Add X axis label
-    svg.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('x', width / 2)
-      .attr('y', height + 40)
-      .text('Year')
-      .style('fill', '#666')
-      .style('font-size', '14px');
+    svg
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("x", width / 2)
+      .attr("y", height + 40)
+      .text("Year")
+      .style("fill", "#666")
+      .style("font-size", "14px");
 
-    // Add Y axis label
-    svg.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', -margin.left + 20)
-      .attr('x', -height / 2)
-      .text('Number of Check-ins')
-      .style('fill', '#666')
-      .style('font-size', '14px');
+    svg
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -margin.left + 20)
+      .attr("x", -height / 2)
+      .text("Number of Check-ins")
+      .style("fill", "#666")
+      .style("font-size", "14px");
 
-    // Create the line
-    const line = d3.line()
-      .x(d => x(d.year))
-      .y(d => y(d.count))
+    const line = d3
+      .line()
+      .x((d) => x(d.year))
+      .y((d) => y(d.count))
       .curve(d3.curveMonotoneX);
 
-    // Add the line path with animation
-    const path = svg.append('path')
+    const path = svg
+      .append("path")
       .datum(data)
-      .attr('fill', 'none')
-      .attr('stroke', '#4B83F2')
-      .attr('stroke-width', 3)
-      .attr('d', line);
+      .attr("fill", "none")
+      .attr("stroke", "#4B83F2")
+      .attr("stroke-width", 3)
+      .attr("d", line);
 
-    // Add animation
     const length = path.node().getTotalLength();
     path
-      .attr('stroke-dasharray', length + ' ' + length)
-      .attr('stroke-dashoffset', length)
+      .attr("stroke-dasharray", length + " " + length)
+      .attr("stroke-dashoffset", length)
       .transition()
       .duration(2000)
       .ease(d3.easeLinear)
-      .attr('stroke-dashoffset', 0);
+      .attr("stroke-dashoffset", 0);
 
-    // Add dots with animation
-    svg.selectAll('.dot')
+    svg
+      .selectAll(".dot")
       .data(data)
       .enter()
-      .append('circle')
-      .attr('class', 'dot')
-      .attr('cx', d => x(d.year))
-      .attr('cy', d => y(d.count))
-      .attr('r', 0)
-      .attr('fill', '#4B83F2')
+      .append("circle")
+      .attr("class", "dot")
+      .attr("cx", (d) => x(d.year))
+      .attr("cy", (d) => y(d.count))
+      .attr("r", 0)
+      .attr("fill", "#4B83F2")
       .transition()
       .delay((d, i) => i * 150)
       .duration(500)
-      .attr('r', 5);
+      .attr("r", 5);
 
-    // Add title
-    svg.append('text')
-      .attr('x', width / 2)
-      .attr('y', -15)
-      .attr('text-anchor', 'middle')
-      .style('font-size', '16px')
-      .style('font-weight', 'bold')
-      .style('fill', '#333')
-      .text('Check-ins Trend Over Years');
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", -15)
+      .attr("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .style("fill", "#333")
+      .text("Check-ins Trend Over Years");
   };
 
   const drawBarChart = () => {
-    // Clear previous chart
     d3.select(barChartRef.current).selectAll("*").remove();
 
     const margin = { top: 40, right: 30, bottom: 50, left: 80 };
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    const svg = d3.select(barChartRef.current)
-      .append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+    const svg = d3
+      .select(barChartRef.current)
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Create scales
-    const x = d3.scaleBand()
+    const x = d3
+      .scaleBand()
       .range([0, width])
       .padding(0.2)
-      .domain(data.map(d => d.year));
+      .domain(data.map((d) => d.year));
 
-    const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.count)])
+    const y = d3
+      .scaleLinear()
+      .domain([0, d3.max(data, (d) => d.count)])
       .range([height, 0]);
 
-    // Add X axis
-    svg.append('g')
-      .attr('transform', `translate(0,${height})`)
+    svg
+      .append("g")
+      .attr("transform", `translate(0,${height})`)
       .call(d3.axisBottom(x))
-      .style('font-size', '12px');
+      .style("font-size", "12px");
 
-    // Add Y axis
-    svg.append('g')
-      .call(d3.axisLeft(y).tickFormat(d => `${d / 1000}k`))
-      .style('font-size', '12px');
+    svg
+      .append("g")
+      .call(d3.axisLeft(y).tickFormat((d) => `${d / 1000}k`))
+      .style("font-size", "12px");
 
-    // Add X axis label
-    svg.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('x', width / 2)
-      .attr('y', height + 40)
-      .text('Year')
-      .style('fill', '#666')
-      .style('font-size', '14px');
+    svg
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("x", width / 2)
+      .attr("y", height + 40)
+      .text("Year")
+      .style("fill", "#666")
+      .style("font-size", "14px");
 
-    // Add Y axis label
-    svg.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('transform', 'rotate(-90)')
-      .attr('y', -margin.left + 20)
-      .attr('x', -height / 2)
-      .text('Number of Check-ins')
-      .style('fill', '#666')
-      .style('font-size', '14px');
+    svg
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -margin.left + 20)
+      .attr("x", -height / 2)
+      .text("Number of Check-ins")
+      .style("fill", "#666")
+      .style("font-size", "14px");
 
-    // Create gradient
-    const gradient = svg.append('defs')
-      .append('linearGradient')
-      .attr('id', 'bar-gradient')
-      .attr('x1', '0%')
-      .attr('y1', '0%')
-      .attr('x2', '0%')
-      .attr('y2', '100%');
+    const gradient = svg
+      .append("defs")
+      .append("linearGradient")
+      .attr("id", "bar-gradient")
+      .attr("x1", "0%")
+      .attr("y1", "0%")
+      .attr("x2", "0%")
+      .attr("y2", "100%");
 
-    gradient.append('stop')
-      .attr('offset', '0%')
-      .attr('stop-color', '#4B83F2');
+    gradient.append("stop").attr("offset", "0%").attr("stop-color", "#4B83F2");
 
-    gradient.append('stop')
-      .attr('offset', '100%')
-      .attr('stop-color', '#85B0FF');
+    gradient
+      .append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "#85B0FF");
 
-    // Add bars with animation
-    svg.selectAll('.bar')
+    svg
+      .selectAll(".bar")
       .data(data)
       .enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('x', d => x(d.year))
-      .attr('width', x.bandwidth())
-      .attr('y', height)
-      .attr('height', 0)
-      .style('fill', 'url(#bar-gradient)')
+      .append("rect")
+      .attr("class", "bar")
+      .attr("x", (d) => x(d.year))
+      .attr("width", x.bandwidth())
+      .attr("y", height)
+      .attr("height", 0)
+      .style("fill", "url(#bar-gradient)")
       .transition()
       .duration(1000)
-      .attr('y', d => y(d.count))
-      .attr('height', d => height - y(d.count));
+      .attr("y", (d) => y(d.count))
+      .attr("height", (d) => height - y(d.count));
 
-    // Add title
-    svg.append('text')
-      .attr('x', width / 2)
-      .attr('y', -15)
-      .attr('text-anchor', 'middle')
-      .style('font-size', '16px')
-      .style('font-weight', 'bold')
-      .style('fill', '#333')
-      .text('Check-ins Distribution by Year');
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", -15)
+      .attr("text-anchor", "middle")
+      .style("font-size", "16px")
+      .style("font-weight", "bold")
+      .style("fill", "#333")
+      .text("Check-ins Distribution by Year");
   };
 
   if (loading) {
@@ -268,10 +268,11 @@ const CheckInsPerYear = ({ onBack }) => {
       <button
         onClick={handleGoBack}
         className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-        ref={el => {
+        ref={(el) => {
           if (el) {
             setTimeout(() => {
-              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.transition =
+                "opacity 0.6s ease-out, transform 0.6s ease-out";
               el.style.opacity = 1;
               el.style.transform = "translateX(0)";
             }, 300);

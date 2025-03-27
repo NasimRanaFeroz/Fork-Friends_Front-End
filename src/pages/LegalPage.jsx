@@ -17,7 +17,6 @@ function LegalPage() {
     <div className="min-h-screen bg-base-100 flex flex-col">
       <Navbar />
 
-      {/* Hero Section */}
       <div className="bg-[#1a1a1a] text-white pt-24 pb-16">
         <div className="container mx-auto px-4">
           <h1 className="text-5xl md:text-6xl font-bold bebas-neue mb-4 text-center">
@@ -31,7 +30,6 @@ function LegalPage() {
         </div>
       </div>
 
-      {/* Tab Navigation */}
       <div className="container mx-auto px-4 pt-8">
         <div className="flex justify-center border-b border-gray-200">
           <button
@@ -57,10 +55,8 @@ function LegalPage() {
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="container mx-auto px-4 py-12 flex-grow">
         <div className="max-w-4xl mx-auto">
-          {/* Privacy Policy Content */}
           {activeTab === "privacy" && (
             <div className="legal-content">
               <h2 className="text-3xl font-bold mb-6">Privacy Policy</h2>
@@ -338,7 +334,6 @@ function LegalPage() {
             </div>
           )}
 
-          {/* Terms of Service Content */}
           {activeTab === "terms" && (
             <div className="legal-content">
               <h2 className="text-3xl font-bold mb-6">Terms of Service</h2>

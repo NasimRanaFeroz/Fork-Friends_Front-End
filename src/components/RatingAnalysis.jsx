@@ -27,7 +27,7 @@ const RatingAnalysis = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-amber-50 to-orange-50 shadow-lg rounded-lg">
       
       {selectedAnalysis ? (
         renderAnalysisComponent()
@@ -37,7 +37,7 @@ const RatingAnalysis = () => {
             <div
               key={item.id}
               onClick={() => setSelectedAnalysis(item.path)}
-              className="block p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-amber-100 hover:border-amber-200 group cursor-pointer"
+              className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-amber-100 hover:border-amber-200 group cursor-pointer"
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 flex items-center justify-center bg-amber-600 text-white rounded-full p-4 mr-4 group-hover:bg-amber-700 transition-colors">

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 // import CountUsefulFunnyCool from './review/CountUsefulFunnyCool';
-import CountPerYear from './review/CountPerYear';
-import PositiveWords from './review/PositiveWords';
-import NegativeWords from './review/NegativeWords';
-import RankUsers from './review/RankUsers';
-import WordAssociation from './review/WordAssociation';
-import WordCloud from './review/WordCloud';
-import CommonWords from './review/CommonWords';
+import CountPerYear from "./review/CountPerYear";
+import PositiveWords from "./review/PositiveWords";
+import NegativeWords from "./review/NegativeWords";
+import RankUsers from "./review/RankUsers";
+import WordAssociation from "./review/WordAssociation";
+import WordCloud from "./review/WordCloud";
+import CommonWords from "./review/CommonWords";
 
 const ReviewAnalysis = () => {
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
@@ -15,16 +15,31 @@ const ReviewAnalysis = () => {
     { id: 1, title: "Number of Reviews per Year", path: "reviews-per-year" },
     // { id: 2, title: "Useful, Funny, and Cool Reviews Count", path: "review-attributes" },
     { id: 2, title: "User Rankings by Review Count", path: "user-rankings" },
-    { id: 3, title: "Top 20 Most Common Words in Reviews", path: "common-words" },
-    { id: 4, title: "Top 10 Words from Positive Reviews", path: "positive-words" },
-    { id: 5, title: "Top 10 Words from Negative Reviews", path: "negative-words" },
-    { id: 6, title: "Word Cloud Analysis with POS Filtering", path: "word-cloud" },
+    {
+      id: 3,
+      title: "Top 20 Most Common Words in Reviews",
+      path: "common-words",
+    },
+    {
+      id: 4,
+      title: "Top 10 Words from Positive Reviews",
+      path: "positive-words",
+    },
+    {
+      id: 5,
+      title: "Top 10 Words from Negative Reviews",
+      path: "negative-words",
+    },
+    {
+      id: 6,
+      title: "Word Cloud Analysis with POS Filtering",
+      path: "word-cloud",
+    },
     { id: 7, title: "Word Association Graph", path: "word-association" },
   ];
 
   const renderAnalysisComponent = () => {
-   
-    switch(selectedAnalysis) {
+    switch (selectedAnalysis) {
       case "reviews-per-year":
         return <CountPerYear onBack={() => setSelectedAnalysis(null)} />;
       case "user-rankings":
@@ -42,12 +57,10 @@ const ReviewAnalysis = () => {
       default:
         return null;
     }
-    
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-     
+    <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-amber-50 to-orange-50 shadow-lg rounded-lg">
       {selectedAnalysis ? (
         renderAnalysisComponent()
       ) : (
@@ -56,7 +69,7 @@ const ReviewAnalysis = () => {
             <div
               key={item.id}
               onClick={() => setSelectedAnalysis(item.path)}
-              className="block p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-amber-100 hover:border-amber-200 group cursor-pointer"
+              className="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border border-amber-100 hover:border-amber-200 group cursor-pointer"
             >
               <div className="flex items-center">
                 <div className="w-10 h-10 flex items-center justify-center bg-amber-600 text-white rounded-full p-4 mr-4 group-hover:bg-amber-700 transition-colors">
@@ -69,8 +82,19 @@ const ReviewAnalysis = () => {
               <div className="mt-3 flex justify-end">
                 <span className="text-amber-600 group-hover:text-amber-800 transition-colors text-sm font-medium flex items-center">
                   View Analysis
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 ml-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </span>
               </div>
