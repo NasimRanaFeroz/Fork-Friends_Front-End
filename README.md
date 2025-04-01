@@ -1,6 +1,10 @@
 # Fork & Friends
 ## Eat Together, Share Together
 
+## Visit Our Website
+
+Explore [Fork & Friends](https://fork-and-friends.onrender.com/) to experience our platform and its features firsthand.
+
 ## Overview
 
 Fork & Friends is a data analysis and recommendation platform leveraging the Yelp dataset. It combines big data analytics with DeepSeek AI to provide intelligent friend and business recommendations.
