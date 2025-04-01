@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
-import * as d3 from 'd3';
+import React, { useEffect, useState, useRef } from "react";
+import * as d3 from "d3";
 import { IoArrowBack } from "react-icons/io5";
-
 
 const WordCloud = ({ onBack }) => {
   const [wordData, setWordData] = useState([]);
@@ -14,19 +13,20 @@ const WordCloud = ({ onBack }) => {
     if (onBack) onBack();
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://192.168.37.177:5001/api/review/word-cloud-analysis');
+        const response = await fetch(
+          "http://192.168.37.177:5001/api/review/word-cloud-analysis"
+        );
         const data = await response.json();
 
         if (data && data.results) {
           console.log("Data received:", data.results);
           setWordData(data.results);
         } else {
-          throw new Error('Invalid data structure received from API');
+          throw new Error("Invalid data structure received from API");
         }
 
         setLoading(false);
@@ -42,11 +42,11 @@ const WordCloud = ({ onBack }) => {
 
   const getWordColor = (index) => {
     const colors = [
-      '#2563EB', // Blue
-      '#7C3AED', // Purple
-      '#059669', // Green
-      '#DC2626', // Red
-      '#D97706', // Orange
+      "#2563EB", // Blue
+      "#7C3AED", // Purple
+      "#059669", // Green
+      "#DC2626", // Red
+      "#D97706", // Orange
     ];
     return colors[index % colors.length];
   };
@@ -59,10 +59,14 @@ const WordCloud = ({ onBack }) => {
 
     const data = wordData.slice(0, 20);
     const margin = { top: 30, right: 30, bottom: 120, left: 80 };
-    const width = Math.max(barChartRef.current.clientWidth - margin.left - margin.right, 500);
+    const width = Math.max(
+      barChartRef.current.clientWidth - margin.left - margin.right,
+      500
+    );
     const height = 500 - margin.top - margin.bottom;
 
-    const svg = d3.select(barChartRef.current)
+    const svg = d3
+      .select(barChartRef.current)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -70,18 +74,16 @@ const WordCloud = ({ onBack }) => {
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Enhanced scales
-    const x = d3.scaleBand()
-      .range([0, width])
-      .padding(0.2);
+    const x = d3.scaleBand().range([0, width]).padding(0.2);
 
-    const y = d3.scaleLinear()
-      .range([height, 0]);
+    const y = d3.scaleLinear().range([height, 0]);
 
-    x.domain(data.map(d => d.text));
-    y.domain([0, d3.max(data, d => d.size) * 1.1]); // Add 10% padding
+    x.domain(data.map((d) => d.text));
+    y.domain([0, d3.max(data, (d) => d.size) * 1.1]); // Add 10% padding
 
     // Add X axis with improved visibility
-    svg.append("g")
+    svg
+      .append("g")
       .attr("transform", `translate(0,${height})`)
       .call(d3.axisBottom(x))
       .attr("class", "x-axis")
@@ -93,10 +95,9 @@ const WordCloud = ({ onBack }) => {
       .style("fill", "#000000");
 
     // Add Y axis with improved visibility
-    svg.append("g")
-      .call(d3.axisLeft(y)
-        .ticks(10)
-        .tickFormat(d3.format(",.0f")))
+    svg
+      .append("g")
+      .call(d3.axisLeft(y).ticks(10).tickFormat(d3.format(",.0f")))
       .attr("class", "y-axis")
       .selectAll("text")
       .style("font-size", "14px")
@@ -104,16 +105,19 @@ const WordCloud = ({ onBack }) => {
       .style("fill", "#000000");
 
     // Ensure axis lines are visible
-    svg.selectAll(".domain")
+    svg
+      .selectAll(".domain")
       .style("stroke", "#000000")
       .style("stroke-width", "2px");
 
-    svg.selectAll(".tick line")
+    svg
+      .selectAll(".tick line")
       .style("stroke", "#000000")
       .style("stroke-width", "1px");
 
     // Add X axis label
-    svg.append("text")
+    svg
+      .append("text")
       .attr("text-anchor", "middle")
       .attr("x", width / 2)
       .attr("y", height + margin.bottom - 20)
@@ -123,7 +127,8 @@ const WordCloud = ({ onBack }) => {
       .text("Words");
 
     // Add Y axis label
-    svg.append("text")
+    svg
+      .append("text")
       .attr("text-anchor", "middle")
       .attr("transform", "rotate(-90)")
       .attr("y", -margin.left + 20)
@@ -134,7 +139,8 @@ const WordCloud = ({ onBack }) => {
       .text("Frequency");
 
     // Add gradient definitions
-    const gradient = svg.append("defs")
+    const gradient = svg
+      .append("defs")
       .append("linearGradient")
       .attr("id", "bar-gradient")
       .attr("gradientUnits", "userSpaceOnUse")
@@ -143,21 +149,21 @@ const WordCloud = ({ onBack }) => {
       .attr("x2", "0%")
       .attr("y2", "100%");
 
-    gradient.append("stop")
-      .attr("offset", "0%")
-      .attr("stop-color", "#3B82F6");
+    gradient.append("stop").attr("offset", "0%").attr("stop-color", "#3B82F6");
 
-    gradient.append("stop")
+    gradient
+      .append("stop")
       .attr("offset", "100%")
       .attr("stop-color", "#1D4ED8");
 
     // Enhanced bars with animation and interaction
-    svg.selectAll(".bar")
+    svg
+      .selectAll(".bar")
       .data(data)
       .enter()
       .append("rect")
       .attr("class", "bar")
-      .attr("x", d => x(d.text))
+      .attr("x", (d) => x(d.text))
       .attr("width", x.bandwidth())
       .attr("y", height)
       .attr("height", 0)
@@ -165,30 +171,32 @@ const WordCloud = ({ onBack }) => {
       .transition()
       .duration(800)
       .delay((d, i) => i * 50)
-      .attr("y", d => y(d.size))
-      .attr("height", d => height - y(d.size));
+      .attr("y", (d) => y(d.size))
+      .attr("height", (d) => height - y(d.size));
 
     // Add value labels on top of bars
-    svg.selectAll(".label")
+    svg
+      .selectAll(".label")
       .data(data)
       .enter()
       .append("text")
       .attr("class", "label")
-      .attr("x", d => x(d.text) + x.bandwidth() / 2)
-      .attr("y", d => y(d.size) - 10)
+      .attr("x", (d) => x(d.text) + x.bandwidth() / 2)
+      .attr("y", (d) => y(d.size) - 10)
       .attr("text-anchor", "middle")
       .style("font-size", "12px")
       .style("font-weight", "bold")
       .style("fill", "#000000")
       .style("opacity", 0)
-      .text(d => d.size)
+      .text((d) => d.size)
       .transition()
       .duration(800)
       .delay((d, i) => i * 50)
       .style("opacity", 1);
 
     // Add hover effects
-    svg.selectAll(".bar")
+    svg
+      .selectAll(".bar")
       .on("mouseover", function (event, d) {
         d3.select(this)
           .transition()
@@ -198,8 +206,9 @@ const WordCloud = ({ onBack }) => {
           .attr("stroke-width", 2);
 
         // Highlight the corresponding label
-        svg.selectAll(".label")
-          .filter(label => label.text === d.text)
+        svg
+          .selectAll(".label")
+          .filter((label) => label.text === d.text)
           .transition()
           .duration(200)
           .style("font-size", "14px")
@@ -213,8 +222,9 @@ const WordCloud = ({ onBack }) => {
           .attr("stroke-width", 0);
 
         // Reset label
-        svg.selectAll(".label")
-          .filter(label => label.text === d.text)
+        svg
+          .selectAll(".label")
+          .filter((label) => label.text === d.text)
           .transition()
           .duration(200)
           .style("font-size", "12px");
@@ -234,8 +244,8 @@ const WordCloud = ({ onBack }) => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [wordData]);
 
   if (loading) {
@@ -249,33 +259,38 @@ const WordCloud = ({ onBack }) => {
     );
   }
 
-  if (error) return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-        <p className="font-bold">Error</p>
-        <p>{error}</p>
+  if (error)
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+        </div>
       </div>
-    </div>
-  );
+    );
 
-  if (wordData.length === 0) return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
-        <p className="font-bold">No Data Available</p>
-        <p>No word frequency data was found. Please check the API connection.</p>
+  if (wordData.length === 0)
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+          <p className="font-bold">No Data Available</p>
+          <p>
+            No word frequency data was found. Please check the API connection.
+          </p>
+        </div>
       </div>
-    </div>
-  );
+    );
 
   return (
     <div className="container mx-auto px-4 py-8 bg-gray-50 relative">
       <button
         onClick={handleGoBack}
         className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-        ref={el => {
+        ref={(el) => {
           if (el) {
             setTimeout(() => {
-              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.transition =
+                "opacity 0.6s ease-out, transform 0.6s ease-out";
               el.style.opacity = 1;
               el.style.transform = "translateX(0)";
             }, 300);
@@ -287,11 +302,16 @@ const WordCloud = ({ onBack }) => {
         <span className="text-gray-700 font-medium">Back to Dashboard</span>
       </button>
 
-      <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Word Cloud Analysis</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">
+        Word Cloud Analysis
+      </h1>
 
       {/* Word Cloud Section */}
       <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-        <div ref={wordCloudRef} className="flex flex-wrap gap-3 justify-center p-6 bg-gray-50 rounded-lg min-h-[200px]">
+        <div
+          ref={wordCloudRef}
+          className="flex flex-wrap gap-3 justify-center p-6 bg-gray-50 rounded-lg min-h-[200px]"
+        >
           {wordData.map((word, index) => (
             <div
               key={word.text}
@@ -306,9 +326,10 @@ const WordCloud = ({ onBack }) => {
                 style={{
                   fontSize: `${Math.max(14, Math.min(word.size / 250, 56))}px`,
                   color: getWordColor(index),
-                  fontWeight: word.size > 8000 ? 'bold' : 'normal',
-                  textShadow: word.size > 8000 ? '1px 1px 2px rgba(0,0,0,0.1)' : 'none',
-                  display: 'inline-block',
+                  fontWeight: word.size > 8000 ? "bold" : "normal",
+                  textShadow:
+                    word.size > 8000 ? "1px 1px 2px rgba(0,0,0,0.1)" : "none",
+                  display: "inline-block",
                 }}
               >
                 {word.text}
@@ -318,16 +339,27 @@ const WordCloud = ({ onBack }) => {
         </div>
         <style jsx>{`
           @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0); }
-            to { opacity: 1; transform: scale(1); }
+            from {
+              opacity: 0;
+              transform: scale(0);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
           }
         `}</style>
       </div>
 
       {/* Bar Chart Section */}
       <div className="bg-white rounded-lg shadow-lg p-8">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Top 20 Most Frequent Words</h2>
-        <div ref={barChartRef} className="w-full overflow-x-auto min-h-[550px]"></div>
+        <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+          Top 20 Most Frequent Words
+        </h2>
+        <div
+          ref={barChartRef}
+          className="w-full overflow-x-auto min-h-[550px]"
+        ></div>
       </div>
     </div>
   );

@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const CheckinCities = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <div></div>;
+};
 
-export default CheckinCities
+export default CheckinCities;

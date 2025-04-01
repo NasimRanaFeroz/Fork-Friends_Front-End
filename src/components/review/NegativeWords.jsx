@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import * as d3 from 'd3';
+import React, { useState, useEffect, useRef } from "react";
+import * as d3 from "d3";
 import { IoArrowBack } from "react-icons/io5";
-
 
 const NegativeWords = ({ onBack }) => {
   const [words, setWords] = useState([]);
@@ -14,13 +13,14 @@ const NegativeWords = ({ onBack }) => {
     if (onBack) onBack();
   };
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.37.177:5001/api/review/top-10-negative-words');
+        const response = await fetch(
+          "http://192.168.37.177:5001/api/review/top-10-negative-words"
+        );
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         const data = await response.json();
         setWords(data.results); // Extract the results array from the response
@@ -49,9 +49,15 @@ const NegativeWords = ({ onBack }) => {
     const height = 500 - margin.top - margin.bottom;
 
     // Create SVG with responsive container
-    const svg = d3.select(chartRef.current)
+    const svg = d3
+      .select(chartRef.current)
       .append("svg")
-      .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+      .attr(
+        "viewBox",
+        `0 0 ${width + margin.left + margin.right} ${
+          height + margin.top + margin.bottom
+        }`
+      )
       .attr("preserveAspectRatio", "xMidYMid meet")
       .attr("width", "100%")
       .append("g")
@@ -59,71 +65,85 @@ const NegativeWords = ({ onBack }) => {
 
     // Add gradient definition
     const defs = svg.append("defs");
-    const gradient = defs.append("linearGradient")
+    const gradient = defs
+      .append("linearGradient")
       .attr("id", "bar-gradient")
       .attr("x1", "0%")
       .attr("y1", "0%")
       .attr("x2", "100%")
       .attr("y2", "0%");
 
-    gradient.append("stop")
-      .attr("offset", "0%")
-      .attr("stop-color", "#EF4444");
+    gradient.append("stop").attr("offset", "0%").attr("stop-color", "#EF4444");
 
-    gradient.append("stop")
+    gradient
+      .append("stop")
       .attr("offset", "100%")
       .attr("stop-color", "#F87171");
 
     // Y axis (words)
-    const y = d3.scaleBand()
+    const y = d3
+      .scaleBand()
       .range([0, height])
-      .domain(words.map(d => d._id))
+      .domain(words.map((d) => d._id))
       .padding(0.3);
 
     // Add Y axis with enhanced text visibility
-    const yAxis = svg.append("g")
-      .call(d3.axisLeft(y));
+    const yAxis = svg.append("g").call(d3.axisLeft(y));
 
-    yAxis.selectAll("text")
+    yAxis
+      .selectAll("text")
       .style("font-size", "16px")
       .style("font-weight", "600")
       .style("fill", "#1F2937")
       .attr("dy", "0.32em");
 
-    yAxis.selectAll("line")
+    yAxis
+      .selectAll("line")
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
 
-    yAxis.selectAll("path")
+    yAxis
+      .selectAll("path")
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
 
     // X axis (counts)
-    const x = d3.scaleLinear()
-      .domain([0, d3.max(words, d => d.count) * 1.1])
+    const x = d3
+      .scaleLinear()
+      .domain([0, d3.max(words, (d) => d.count) * 1.1])
       .range([0, width]);
 
     // Add X axis with enhanced text visibility
-    const xAxis = svg.append("g")
+    const xAxis = svg
+      .append("g")
       .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x).ticks(5).tickFormat(d => d3.format(",")(d)));
+      .call(
+        d3
+          .axisBottom(x)
+          .ticks(5)
+          .tickFormat((d) => d3.format(",")(d))
+      );
 
-    xAxis.selectAll("text")
+    xAxis
+      .selectAll("text")
       .style("font-size", "14px")
       .style("font-weight", "600")
       .style("fill", "#1F2937")
       .attr("dy", "1em");
 
-    xAxis.selectAll("line")
+    xAxis
+      .selectAll("line")
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
 
-    xAxis.selectAll("path")
+    xAxis
+      .selectAll("path")
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
 
     // X axis label
-    svg.append("text")
+    svg
+      .append("text")
       .attr("text-anchor", "middle")
       .attr("x", width / 2)
       .attr("y", height + margin.bottom - 10)
@@ -133,26 +153,33 @@ const NegativeWords = ({ onBack }) => {
       .style("fill", "#4B5563");
 
     // Add bars with animation
-    const bars = svg.selectAll("myRect")
+    const bars = svg
+      .selectAll("myRect")
       .data(words)
       .enter()
       .append("rect")
-      .attr("y", d => y(d._id))
+      .attr("y", (d) => y(d._id))
       .attr("height", y.bandwidth())
       .attr("x", 0)
       .attr("width", 0) // Start with width 0 for animation
       .attr("fill", "url(#bar-gradient)")
       .attr("rx", 6)
       .attr("ry", 6)
-      .style("filter", d => activeWord === d._id ? "drop-shadow(0 0 10px rgba(239, 68, 68, 0.7))" : "none")
-      .style("opacity", d => activeWord === d._id || activeWord === null ? 1 : 0.5)
+      .style("filter", (d) =>
+        activeWord === d._id
+          ? "drop-shadow(0 0 10px rgba(239, 68, 68, 0.7))"
+          : "none"
+      )
+      .style("opacity", (d) =>
+        activeWord === d._id || activeWord === null ? 1 : 0.5
+      )
       .on("mouseover", function (event, d) {
         setActiveWord(d._id);
         d3.select(this)
           .transition()
           .duration(300)
           .attr("height", y.bandwidth() * 1.1)
-          .attr("y", d => y(d._id) - (y.bandwidth() * 0.05));
+          .attr("y", (d) => y(d._id) - y.bandwidth() * 0.05);
       })
       .on("mouseout", function () {
         setActiveWord(null);
@@ -160,27 +187,29 @@ const NegativeWords = ({ onBack }) => {
           .transition()
           .duration(300)
           .attr("height", y.bandwidth())
-          .attr("y", d => y(d._id));
+          .attr("y", (d) => y(d._id));
       });
 
     // Animate bars on load
-    bars.transition()
+    bars
+      .transition()
       .duration(1000)
       .delay((d, i) => i * 100)
-      .attr("width", d => x(d.count))
+      .attr("width", (d) => x(d.count))
       .ease(d3.easeBounceOut);
 
     // Add count labels
-    svg.selectAll(".count-label")
+    svg
+      .selectAll(".count-label")
       .data(words)
       .enter()
       .append("text")
       .attr("class", "count-label")
-      .attr("x", d => x(d.count) + 10)
-      .attr("y", d => y(d._id) + y.bandwidth() / 2)
+      .attr("x", (d) => x(d.count) + 10)
+      .attr("y", (d) => y(d._id) + y.bandwidth() / 2)
       .attr("dy", "0.35em")
       .attr("opacity", 0)
-      .text(d => d3.format(",")(d.count))
+      .text((d) => d3.format(",")(d.count))
       .style("font-size", "16px")
       .style("font-weight", "bold")
       .style("fill", "#1F2937")
@@ -191,16 +220,17 @@ const NegativeWords = ({ onBack }) => {
 
     // Add percentage labels
     const totalCount = words.reduce((sum, w) => sum + w.count, 0);
-    svg.selectAll(".percentage-label")
+    svg
+      .selectAll(".percentage-label")
       .data(words)
       .enter()
       .append("text")
       .attr("class", "percentage-label")
-      .attr("x", d => x(d.count) + 10)
-      .attr("y", d => y(d._id) + y.bandwidth() / 2)
+      .attr("x", (d) => x(d.count) + 10)
+      .attr("y", (d) => y(d._id) + y.bandwidth() / 2)
       .attr("dy", "1.5em")
       .attr("opacity", 0)
-      .text(d => `(${((d.count / totalCount) * 100).toFixed(1)}%)`)
+      .text((d) => `(${((d.count / totalCount) * 100).toFixed(1)}%)`)
       .style("font-size", "14px")
       .style("fill", "#6B7280")
       .transition()
@@ -209,7 +239,8 @@ const NegativeWords = ({ onBack }) => {
       .attr("opacity", 1);
 
     // Add title with animation
-    svg.append("text")
+    svg
+      .append("text")
       .attr("x", width / 2)
       .attr("y", -20)
       .attr("text-anchor", "middle")
@@ -223,19 +254,21 @@ const NegativeWords = ({ onBack }) => {
       .attr("opacity", 1);
 
     // Add decorative elements
-    svg.append("path")
+    svg
+      .append("path")
       .attr("d", `M0,${height + 2} L${width},${height + 2}`)
       .attr("stroke", "#E5E7EB")
       .attr("stroke-width", 3)
       .attr("stroke-dasharray", "5,5");
 
     // Add grid lines
-    svg.selectAll("grid-line")
+    svg
+      .selectAll("grid-line")
       .data(x.ticks(5))
       .enter()
       .append("line")
-      .attr("x1", d => x(d))
-      .attr("x2", d => x(d))
+      .attr("x1", (d) => x(d))
+      .attr("x2", (d) => x(d))
       .attr("y1", 0)
       .attr("y2", height)
       .attr("stroke", "#E5E7EB")
@@ -263,11 +296,24 @@ const NegativeWords = ({ onBack }) => {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50 p-4">
         <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full border-l-4 border-red-500 animate-fadeIn">
           <div className="flex items-center">
-            <svg className="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            <svg
+              className="w-12 h-12 text-red-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
             </svg>
             <div className="ml-4">
-              <h3 className="text-lg font-bold text-gray-800">Error Loading Data</h3>
+              <h3 className="text-lg font-bold text-gray-800">
+                Error Loading Data
+              </h3>
               <p className="text-gray-600 mt-1">{error}</p>
             </div>
           </div>
@@ -287,10 +333,11 @@ const NegativeWords = ({ onBack }) => {
       <button
         onClick={handleGoBack}
         className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-        ref={el => {
+        ref={(el) => {
           if (el) {
             setTimeout(() => {
-              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.transition =
+                "opacity 0.6s ease-out, transform 0.6s ease-out";
               el.style.opacity = 1;
               el.style.transform = "translateX(0)";
             }, 300);
@@ -310,7 +357,9 @@ const NegativeWords = ({ onBack }) => {
               <span className="inline-block animate-bounce mr-2">📉</span>
               Negative Review Word Analysis
             </h1>
-            <p className="text-red-100 text-center mt-2">Visualizing the most common words in negative reviews (rating ≤ 3)</p>
+            <p className="text-red-100 text-center mt-2">
+              Visualizing the most common words in negative reviews (rating ≤ 3)
+            </p>
           </div>
 
           {/* Chart */}
@@ -320,30 +369,45 @@ const NegativeWords = ({ onBack }) => {
 
           {/* Stats Cards */}
           <div className="px-6 pb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Word Statistics</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Word Statistics
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-4 shadow transform transition-all duration-300 hover:scale-105">
-                <h3 className="text-red-700 font-medium text-sm">Total Words</h3>
+                <h3 className="text-red-700 font-medium text-sm">
+                  Total Words
+                </h3>
                 <p className="text-3xl font-bold text-red-900">
                   {words.reduce((sum, w) => sum + w.count, 0).toLocaleString()}
                 </p>
               </div>
               <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 shadow transform transition-all duration-300 hover:scale-105">
-                <h3 className="text-orange-700 font-medium text-sm">Most Common Word</h3>
+                <h3 className="text-orange-700 font-medium text-sm">
+                  Most Common Word
+                </h3>
                 <p className="text-3xl font-bold text-orange-900">
                   {words.length > 0 ? words[0]._id : ""}
                 </p>
               </div>
               <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 shadow transform transition-all duration-300 hover:scale-105">
-                <h3 className="text-amber-700 font-medium text-sm">Highest Count</h3>
+                <h3 className="text-amber-700 font-medium text-sm">
+                  Highest Count
+                </h3>
                 <p className="text-3xl font-bold text-amber-900">
                   {words.length > 0 ? words[0].count.toLocaleString() : ""}
                 </p>
               </div>
               <div className="bg-gradient-to-br from-rose-50 to-rose-100 rounded-xl p-4 shadow transform transition-all duration-300 hover:scale-105">
-                <h3 className="text-rose-700 font-medium text-sm">Average Count</h3>
+                <h3 className="text-rose-700 font-medium text-sm">
+                  Average Count
+                </h3>
                 <p className="text-3xl font-bold text-rose-900">
-                  {words.length > 0 ? Math.round(words.reduce((sum, w) => sum + w.count, 0) / words.length).toLocaleString() : ""}
+                  {words.length > 0
+                    ? Math.round(
+                        words.reduce((sum, w) => sum + w.count, 0) /
+                          words.length
+                      ).toLocaleString()
+                    : ""}
                 </p>
               </div>
             </div>
@@ -351,36 +415,60 @@ const NegativeWords = ({ onBack }) => {
 
           {/* Data Table */}
           <div className="px-6 pb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Detailed Word Data</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Detailed Word Data
+            </h2>
             <div className="overflow-x-auto bg-white rounded-xl shadow">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead>
                   <tr className="bg-gradient-to-r from-red-600 to-orange-500">
-                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">Rank</th>
-                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">Word</th>
-                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">Count</th>
-                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">Percentage</th>
-                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">Visualization</th>
+                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">
+                      Rank
+                    </th>
+                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">
+                      Word
+                    </th>
+                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">
+                      Count
+                    </th>
+                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">
+                      Percentage
+                    </th>
+                    <th className="py-3 px-6 text-left text-xs font-medium text-white uppercase tracking-wider">
+                      Visualization
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {words.map((word, index) => {
-                    const totalCount = words.reduce((sum, w) => sum + w.count, 0);
-                    const percentage = ((word.count / totalCount) * 100).toFixed(2);
-                    const maxCount = Math.max(...words.map(w => w.count));
+                    const totalCount = words.reduce(
+                      (sum, w) => sum + w.count,
+                      0
+                    );
+                    const percentage = (
+                      (word.count / totalCount) *
+                      100
+                    ).toFixed(2);
+                    const maxCount = Math.max(...words.map((w) => w.count));
                     const widthPercentage = (word.count / maxCount) * 100;
 
                     return (
                       <tr
                         key={word._id}
-                        className={`hover:bg-red-50 transition-colors duration-150 ${activeWord === word._id ? 'bg-red-50' : ''
-                          }`}
+                        className={`hover:bg-red-50 transition-colors duration-150 ${
+                          activeWord === word._id ? "bg-red-50" : ""
+                        }`}
                         onMouseEnter={() => setActiveWord(word._id)}
                         onMouseLeave={() => setActiveWord(null)}
                       >
                         <td className="py-4 px-6 whitespace-nowrap">
-                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${index < 3 ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-800'
-                            } font-bold text-sm`}>
+                          <span
+                            className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${
+                              index < 3
+                                ? "bg-red-600 text-white"
+                                : "bg-gray-100 text-gray-800"
+                            } font-bold text-sm`}
+                          >
                             {index + 1}
                           </span>
                         </td>
@@ -413,7 +501,9 @@ const NegativeWords = ({ onBack }) => {
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
             <p className="text-sm text-gray-500 text-center">
               Data refreshed on {new Date().toLocaleDateString()} |
-              <span className="text-red-600 ml-1">Negative Review Analysis Tool</span>
+              <span className="text-red-600 ml-1">
+                Negative Review Analysis Tool
+              </span>
             </p>
           </div>
         </div>

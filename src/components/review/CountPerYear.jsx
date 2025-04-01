@@ -2,12 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import * as d3 from "d3";
 import { IoArrowBack } from "react-icons/io5";
 
-
 const CountPerYear = ({ onBack }) => {
   const [yearlyData, setYearlyData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeChart, setActiveChart] = useState("area"); // 'area' or 'bar'
+  const [activeChart, setActiveChart] = useState("area");
 
   const chartRef = useRef(null);
   const statsRef = useRef(null);
@@ -16,8 +15,6 @@ const CountPerYear = ({ onBack }) => {
     if (onBack) onBack();
   };
 
-
-  // Fetch data
   useEffect(() => {
     const fetchYearlyReviews = async () => {
       try {
@@ -173,7 +170,7 @@ const CountPerYear = ({ onBack }) => {
           .area()
           .x((d) => x(new Date(d._id, 0)))
           .y0(height)
-          .y1((d) => y(0))
+          .y1(() => y(0))
       )
       .transition()
       .duration(2000)
@@ -255,15 +252,17 @@ const CountPerYear = ({ onBack }) => {
             `
           <div class="font-bold">${d._id}</div>
           <div>${d3.format(",")(d.count)} reviews</div>
-          ${yearlyData.indexOf(d) > 0
+          ${
+            yearlyData.indexOf(d) > 0
               ? `
             <div class="text-xs mt-1">
-              ${calculateGrowth(
-                yearlyData[yearlyData.indexOf(d) - 1].count,
-                d.count
-              ) > 0
-                ? "+"
-                : ""
+              ${
+                calculateGrowth(
+                  yearlyData[yearlyData.indexOf(d) - 1].count,
+                  d.count
+                ) > 0
+                  ? "+"
+                  : ""
               }
               ${calculateGrowth(
                 yearlyData[yearlyData.indexOf(d) - 1].count,
@@ -272,18 +271,20 @@ const CountPerYear = ({ onBack }) => {
             </div>
           `
               : ""
-            }
+          }
         `
           )
           .style("opacity", 1)
           .style(
             "left",
-            `${event.pageX - chartRef.current.getBoundingClientRect().left + 10
+            `${
+              event.pageX - chartRef.current.getBoundingClientRect().left + 10
             }px`
           )
           .style(
             "top",
-            `${event.pageY - chartRef.current.getBoundingClientRect().top - 40
+            `${
+              event.pageY - chartRef.current.getBoundingClientRect().top - 40
             }px`
           );
       })
@@ -558,15 +559,17 @@ const CountPerYear = ({ onBack }) => {
             `
           <div class="font-bold">${d._id}</div>
           <div>${d3.format(",")(d.count)} reviews</div>
-          ${yearlyData.indexOf(d) > 0
+          ${
+            yearlyData.indexOf(d) > 0
               ? `
             <div class="text-xs mt-1">
-              ${calculateGrowth(
-                yearlyData[yearlyData.indexOf(d) - 1].count,
-                d.count
-              ) > 0
-                ? "+"
-                : ""
+              ${
+                calculateGrowth(
+                  yearlyData[yearlyData.indexOf(d) - 1].count,
+                  d.count
+                ) > 0
+                  ? "+"
+                  : ""
               }
               ${calculateGrowth(
                 yearlyData[yearlyData.indexOf(d) - 1].count,
@@ -575,22 +578,24 @@ const CountPerYear = ({ onBack }) => {
             </div>
           `
               : ""
-            }
+          }
         `
           )
           .style("opacity", 1)
           .style(
             "left",
-            `${event.pageX - chartRef.current.getBoundingClientRect().left + 10
+            `${
+              event.pageX - chartRef.current.getBoundingClientRect().left + 10
             }px`
           )
           .style(
             "top",
-            `${event.pageY - chartRef.current.getBoundingClientRect().top - 40
+            `${
+              event.pageY - chartRef.current.getBoundingClientRect().top - 40
             }px`
           );
       })
-      .on("mouseout", function (d) {
+      .on("mouseout", function () {
         d3.select(this)
           .transition()
           .duration(200)
@@ -665,7 +670,6 @@ const CountPerYear = ({ onBack }) => {
       prefix = "",
       suffix = ""
     ) => {
-      let start = 0;
       const startTime = performance.now();
 
       const updateCounter = (currentTime) => {
@@ -730,10 +734,11 @@ const CountPerYear = ({ onBack }) => {
     <button
       onClick={handleGoBack}
       className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-      ref={el => {
+      ref={(el) => {
         if (el) {
           setTimeout(() => {
-            el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+            el.style.transition =
+              "opacity 0.6s ease-out, transform 0.6s ease-out";
             el.style.opacity = 1;
             el.style.transform = "translateX(0)";
           }, 300);
@@ -748,7 +753,7 @@ const CountPerYear = ({ onBack }) => {
     <h1 className="text-3xl font-bold text-indigo-900 mb-6 text-center">
       Review Volume Analysis (2005-2022)
     </h1>
-  </div>
+  </div>;
 
   if (error) {
     return (
@@ -760,11 +765,7 @@ const CountPerYear = ({ onBack }) => {
   }
 
   return (
-
     <div className="bg-white p-6 rounded-lg shadow-lg ">
-
-
-
       {/* Stats Cards */}
       <div
         ref={statsRef}
@@ -838,10 +839,11 @@ const CountPerYear = ({ onBack }) => {
         <div className="inline-flex rounded-md shadow-sm" role="group">
           <button
             type="button"
-            className={`px-4 py-2 text-sm font-medium rounded-l-lg ${activeChart === "area"
+            className={`px-4 py-2 text-sm font-medium rounded-l-lg ${
+              activeChart === "area"
                 ? "bg-indigo-600 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
-              } border border-gray-200 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:text-indigo-700 transition-all duration-200`}
+            } border border-gray-200 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:text-indigo-700 transition-all duration-200`}
             onClick={() => setActiveChart("area")}
           >
             <svg
@@ -861,10 +863,11 @@ const CountPerYear = ({ onBack }) => {
           </button>
           <button
             type="button"
-            className={`px-4 py-2 text-sm font-medium rounded-r-lg ${activeChart === "bar"
+            className={`px-4 py-2 text-sm font-medium rounded-r-lg ${
+              activeChart === "bar"
                 ? "bg-indigo-600 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
-              } border border-gray-200 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:text-indigo-700 transition-all duration-200`}
+            } border border-gray-200 focus:z-10 focus:ring-2 focus:ring-indigo-500 focus:text-indigo-700 transition-all duration-200`}
             onClick={() => setActiveChart("bar")}
           >
             <svg
@@ -948,18 +951,18 @@ const CountPerYear = ({ onBack }) => {
               }
               , there has been a{" "}
               {yearlyData[yearlyData.length - 1].count <
-                yearlyData.reduce(
-                  (max, year) => (year.count > max.count ? year : max),
-                  yearlyData[0]
-                ).count
+              yearlyData.reduce(
+                (max, year) => (year.count > max.count ? year : max),
+                yearlyData[0]
+              ).count
                 ? "decline"
                 : "continued growth"}{" "}
               in review volume, potentially indicating{" "}
               {yearlyData[yearlyData.length - 1].count <
-                yearlyData.reduce(
-                  (max, year) => (year.count > max.count ? year : max),
-                  yearlyData[0]
-                ).count
+              yearlyData.reduce(
+                (max, year) => (year.count > max.count ? year : max),
+                yearlyData[0]
+              ).count
                 ? "market saturation or changing consumer behavior"
                 : "sustained market interest and engagement"}
               .
