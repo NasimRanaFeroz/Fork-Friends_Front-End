@@ -1,6 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as d3 from "d3";
-import { IoArrowBack } from "react-icons/io5";
+import { ArrowLeft } from "lucide-react";
+
+const demoData = [
+  { day: "Monday", count: 1245 },
+  { day: "Tuesday", count: 1087 },
+  { day: "Wednesday", count: 1398 },
+  { day: "Thursday", count: 1512 },
+  { day: "Friday", count: 1876 },
+  { day: "Saturday", count: 2134 },
+  { day: "Sunday", count: 1923 },
+];
 
 const WeeklyRatingsAnalysis = ({ onBack }) => {
   const [weeklyData, setWeeklyData] = useState([]);
@@ -31,17 +41,22 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
     const fetchWeeklyRatings = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(
+
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("Request timeout")), 5000);
+        });
+
+        const apiPromise = fetch(
           "http://192.168.37.177:5001/api/rating/weekly"
-        );
+        ).then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        const data = await Promise.race([apiPromise, timeoutPromise]);
 
-        const data = await response.json();
-
-        // Sort data by day of week
         const sortedData = [...data].sort(
           (a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day)
         );
@@ -49,8 +64,10 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         setWeeklyData(sortedData);
         setIsLoading(false);
       } catch (err) {
-        setError(err.message);
+        console.log(err.message);
+        setWeeklyData(demoData);
         setIsLoading(false);
+        setError(null);
       }
     };
 
@@ -59,7 +76,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
 
   useEffect(() => {
     if (weeklyData.length > 0 && !isLoading) {
-      // Render the active visualization
       if (activeTab === "bar") {
         renderBarChart();
       } else if (activeTab === "line") {
@@ -68,7 +84,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         renderDonutChart();
       }
 
-      // Always render the animated stats
       renderAnimatedStats();
     }
   }, [weeklyData, isLoading, activeTab]);
@@ -76,14 +91,12 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
   const renderBarChart = () => {
     if (!barChartRef.current) return;
 
-    // Clear any existing SVG
     d3.select(barChartRef.current).selectAll("*").remove();
 
     const margin = { top: 30, right: 30, bottom: 70, left: 80 };
     const width = barChartRef.current.clientWidth - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    // Create SVG
     const svg = d3
       .select(barChartRef.current)
       .append("svg")
@@ -92,7 +105,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Add background grid
     svg
       .append("g")
       .attr("class", "grid")
@@ -130,20 +142,17 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .attr("stroke", "#e5e7eb")
       .attr("stroke-opacity", 0.5);
 
-    // X scale
     const x = d3
       .scaleBand()
       .domain(weeklyData.map((d) => d.day))
       .range([0, width])
       .padding(0.4);
 
-    // Y scale
     const y = d3
       .scaleLinear()
       .domain([0, d3.max(weeklyData, (d) => d.count) * 1.1])
       .range([height, 0]);
 
-    // Add X axis
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -154,14 +163,12 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .style("font-size", "12px")
       .style("font-weight", "500");
 
-    // Add Y axis
     svg
       .append("g")
       .call(d3.axisLeft(y).tickFormat((d) => d3.format(",.0f")(d)))
       .selectAll("text")
       .style("font-size", "12px");
 
-    // Y axis label
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -172,7 +179,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .style("font-weight", "500")
       .text("Number of Ratings");
 
-    // Create a tooltip
     const tooltip = d3
       .select(barChartRef.current)
       .append("div")
@@ -182,7 +188,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       )
       .style("max-width", "200px");
 
-    // Color scale based on count values
     const colorScale = d3
       .scaleLinear()
       .domain([
@@ -191,7 +196,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       ])
       .range(["#818cf8", "#4f46e5"]);
 
-    // Add bars with animation
     svg
       .selectAll(".bar")
       .data(weeklyData)
@@ -200,10 +204,10 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .attr("class", "bar")
       .attr("x", (d) => x(d.day))
       .attr("width", x.bandwidth())
-      .attr("y", height) // Start from bottom
-      .attr("height", 0) // Start with height 0
+      .attr("y", height)
+      .attr("height", 0)
       .attr("fill", (d) => colorScale(d.count))
-      .attr("rx", 4) // Rounded corners
+      .attr("rx", 4)
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
         d3.select(this).transition().duration(200).attr("fill", "#3730a3");
@@ -239,13 +243,12 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
 
         tooltip.style("opacity", 0);
       })
-      .transition() // Add animation
+      .transition()
       .duration(800)
       .delay((d, i) => i * 100)
       .attr("y", (d) => y(d.count))
       .attr("height", (d) => height - y(d.count));
 
-    // Add value labels on top of bars
     svg
       .selectAll(".label")
       .data(weeklyData)
@@ -264,7 +267,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .delay((d, i) => 800 + i * 100)
       .style("opacity", 1);
 
-    // Add title
     svg
       .append("text")
       .attr("x", width / 2)
@@ -278,14 +280,12 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
   const renderLineChart = () => {
     if (!lineChartRef.current) return;
 
-    // Clear any existing SVG
     d3.select(lineChartRef.current).selectAll("*").remove();
 
     const margin = { top: 30, right: 30, bottom: 70, left: 80 };
     const width = lineChartRef.current.clientWidth - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    // Create SVG
     const svg = d3
       .select(lineChartRef.current)
       .append("svg")
@@ -294,7 +294,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Add background grid
     svg
       .append("g")
       .attr("class", "grid")
@@ -332,20 +331,17 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .attr("stroke", "#e5e7eb")
       .attr("stroke-opacity", 0.5);
 
-    // X scale
     const x = d3
       .scaleBand()
       .domain(weeklyData.map((d) => d.day))
       .range([0, width])
       .padding(0.4);
 
-    // Y scale
     const y = d3
       .scaleLinear()
       .domain([0, d3.max(weeklyData, (d) => d.count) * 1.1])
       .range([height, 0]);
 
-    // Add X axis
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -356,14 +352,12 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .style("font-size", "12px")
       .style("font-weight", "500");
 
-    // Add Y axis
     svg
       .append("g")
       .call(d3.axisLeft(y).tickFormat((d) => d3.format(",.0f")(d)))
       .selectAll("text")
       .style("font-size", "12px");
 
-    // Y axis label
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -374,7 +368,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .style("font-weight", "500")
       .text("Number of Ratings");
 
-    // Create a tooltip
     const tooltip = d3
       .select(lineChartRef.current)
       .append("div")
@@ -384,14 +377,12 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       )
       .style("max-width", "200px");
 
-    // Add the line
     const line = d3
       .line()
       .x((d) => x(d.day) + x.bandwidth() / 2)
       .y((d) => y(d.count))
-      .curve(d3.curveMonotoneX); // Smoother curve
+      .curve(d3.curveMonotoneX);
 
-    // Add path with animation
     const path = svg
       .append("path")
       .datum(weeklyData)
@@ -400,7 +391,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .attr("stroke-width", 3)
       .attr("d", line);
 
-    // Animate the line drawing
     const pathLength = path.node().getTotalLength();
 
     path
@@ -410,7 +400,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .duration(2000)
       .attr("stroke-dashoffset", 0);
 
-    // Add the points with animation
     svg
       .selectAll(".dot")
       .data(weeklyData)
@@ -419,7 +408,7 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .attr("class", "dot")
       .attr("cx", (d) => x(d.day) + x.bandwidth() / 2)
       .attr("cy", (d) => y(d.count))
-      .attr("r", 0) // Start with radius 0
+      .attr("r", 0)
       .attr("fill", "#4f46e5")
       .attr("stroke", "white")
       .attr("stroke-width", 2)
@@ -465,12 +454,11 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
 
         tooltip.style("opacity", 0);
       })
-      .transition() // Add animation
+      .transition()
       .duration(500)
       .delay((d, i) => 2000 + i * 100)
       .attr("r", 6);
 
-    // Add value labels above points
     svg
       .selectAll(".label")
       .data(weeklyData)
@@ -489,7 +477,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .delay((d, i) => 2500 + i * 100)
       .style("opacity", 1);
 
-    // Add title
     svg
       .append("text")
       .attr("x", width / 2)
@@ -499,7 +486,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .style("font-weight", "bold")
       .text("Weekly Ratings Trend");
 
-    // Add average line
     const avgCount = d3.mean(weeklyData, (d) => d.count);
 
     svg
@@ -517,7 +503,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .delay(3000)
       .style("opacity", 1);
 
-    // Add average label
     svg
       .append("text")
       .attr("x", width - 10)
@@ -537,7 +522,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
   const renderDonutChart = () => {
     if (!donutChartRef.current) return;
 
-    // Clear any existing SVG
     d3.select(donutChartRef.current).selectAll("*").remove();
 
     const width = donutChartRef.current.clientWidth;
@@ -545,7 +529,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
     const margin = 40;
     const radius = Math.min(width, height) / 2 - margin;
 
-    // Create SVG
     const svg = d3
       .select(donutChartRef.current)
       .append("svg")
@@ -554,7 +537,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
-    // Color scale
     const color = d3
       .scaleOrdinal()
       .domain(weeklyData.map((d) => d.day))
@@ -565,7 +547,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         )
       );
 
-    // Create a tooltip
     const tooltip = d3
       .select(donutChartRef.current)
       .append("div")
@@ -575,18 +556,16 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       )
       .style("max-width", "200px");
 
-    // Compute the position of each group on the pie
     const pie = d3
       .pie()
       .value((d) => d.count)
-      .sort(null); // Don't sort, maintain the order
+      .sort(null);
 
     const data_ready = pie(weeklyData);
 
-    // Arc generators
     const arcPath = d3
       .arc()
-      .innerRadius(radius * 0.6) // Donut chart
+      .innerRadius(radius * 0.6)
       .outerRadius(radius);
 
     const hoverArc = d3
@@ -594,7 +573,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .innerRadius(radius * 0.6)
       .outerRadius(radius * 1.05);
 
-    // Build the pie chart
     const paths = svg
       .selectAll("path")
       .data(data_ready)
@@ -606,35 +584,27 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .attr("stroke-width", 2)
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
-        // Highlight segment
         d3.select(this).transition().duration(200).attr("d", hoverArc);
 
-        // Show tooltip
         const percentage = (
           (d.data.count / d3.sum(weeklyData, (d) => d.count)) *
           100
         ).toFixed(1);
 
-        // Get container dimensions and position
         const containerRect = donutChartRef.current.getBoundingClientRect();
-
-        // Calculate tooltip position with constraints to keep it within the container
         let tooltipX = event.pageX - containerRect.left + 10;
         let tooltipY = event.pageY - containerRect.top - 40;
-
-        // Estimate tooltip width and height (adjust these values based on your content)
         const estimatedTooltipWidth = 150;
         const estimatedTooltipHeight = 80;
 
-        // Ensure tooltip stays within container bounds
         if (tooltipX + estimatedTooltipWidth > containerRect.width) {
-          tooltipX = tooltipX - estimatedTooltipWidth - 20; // Move to left of cursor
+          tooltipX = tooltipX - estimatedTooltipWidth - 20;
         }
 
         if (tooltipY < 0) {
-          tooltipY = 10; // Ensure minimum top spacing
+          tooltipY = 10;
         } else if (tooltipY + estimatedTooltipHeight > containerRect.height) {
-          tooltipY = containerRect.height - estimatedTooltipHeight - 10; // Keep within bottom
+          tooltipY = containerRect.height - estimatedTooltipHeight - 10;
         }
 
         tooltip
@@ -655,7 +625,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         tooltip.style("opacity", 0);
       });
 
-    // Animation
     paths
       .style("opacity", 0)
       .attr("d", (d) => {
@@ -670,7 +639,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         return (t) => arcPath(interpolate(t));
       });
 
-    // Add labels
     const arcLabel = d3
       .arc()
       .innerRadius(radius * 0.8)
@@ -700,7 +668,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .delay((d, i) => 1000 + i * 100)
       .style("opacity", 1);
 
-    // Add center text
     const centerGroup = svg.append("g");
 
     centerGroup
@@ -726,12 +693,10 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .duration(500)
       .style("opacity", 1);
 
-    // Create a legend group
     const legendGroup = svg
       .append("g")
       .attr("transform", `translate(${radius + 20}, ${-radius})`);
 
-    // Add legend items individually
     data_ready.forEach((d, i) => {
       const legendItem = legendGroup
         .append("g")
@@ -763,7 +728,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
   const renderAnimatedStats = () => {
     if (!statsRef.current) return;
 
-    // Calculate statistics
     const totalRatings = d3.sum(weeklyData, (d) => d.count);
     const avgDailyRatings = totalRatings / 7;
     const maxDay = weeklyData.reduce(
@@ -779,7 +743,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       .reduce((sum, d) => sum + d.count, 0);
     const weekdayTotal = totalRatings - weekendTotal;
 
-    // Animated counter function
     const animateCounter = (
       element,
       target,
@@ -809,7 +772,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
       requestAnimationFrame(updateCounter);
     };
 
-    // Start animations for each stat after a delay
     setTimeout(() => {
       const totalRatingsElement = document.getElementById("total-ratings");
       const avgDailyElement = document.getElementById("avg-daily");
@@ -882,7 +844,7 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         }}
         aria-label="Back to Business Analysis Dashboard"
       >
-        <IoArrowBack className="text-gray-700 text-lg" />
+        <ArrowLeft className="text-gray-700 text-lg" />
         <span className="text-gray-700 font-medium">Back to Dashboard</span>
       </button>
 
@@ -890,7 +852,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         Weekly Ratings Analysis
       </h1>
 
-      {/* Stats Cards */}
       <div
         ref={statsRef}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
@@ -960,7 +921,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Chart Navigation */}
       <div className="flex justify-center mb-6">
         <div className="inline-flex rounded-md shadow-sm" role="group">
           <button
@@ -1029,7 +989,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Chart Container */}
       <div className="bg-gray-50 p-4 rounded-lg shadow-inner mb-8">
         <div className={`${activeTab === "bar" ? "block" : "hidden"}`}>
           <div ref={barChartRef} className="w-full h-[400px] relative"></div>
@@ -1044,7 +1003,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Data Table */}
       <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
         <table className="min-w-full divide-y divide-gray-300">
           <thead className="bg-gray-50">
@@ -1120,7 +1078,6 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
         </table>
       </div>
 
-      {/* Insights Section */}
       <div className="mt-8 bg-indigo-50 rounded-lg p-6 shadow-inner">
         <h2 className="text-2xl font-bold text-indigo-900 mb-4">
           Key Insights

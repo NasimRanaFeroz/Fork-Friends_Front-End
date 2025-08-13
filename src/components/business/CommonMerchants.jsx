@@ -7,7 +7,6 @@ const CommonMerchants = ({ onBack }) => {
   const [merchants, setMerchants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const radialChartRef = useRef();
   const lineChartRef = useRef();
 

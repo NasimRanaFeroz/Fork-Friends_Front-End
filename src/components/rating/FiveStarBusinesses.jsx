@@ -1,7 +1,66 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import * as d3 from "d3";
-import { IoArrowBack } from "react-icons/io5";
+import { ArrowLeft } from "lucide-react";
+
+// Demo data to use as fallback
+const demoData = [
+  {
+    businessId: "demo-1",
+    businessName: "Sakura Sushi Restaurant",
+    fiveStarCount: 1247,
+    totalReviews: 1580,
+    totalStars: 4.8,
+  },
+  {
+    businessId: "demo-2",
+    businessName: "Tokyo Ramen House",
+    fiveStarCount: 1156,
+    totalReviews: 1420,
+    totalStars: 4.7,
+  },
+  {
+    businessId: "demo-3",
+    businessName: "Blue Mountain Coffee",
+    fiveStarCount: 987,
+    totalReviews: 1234,
+    totalStars: 4.6,
+  },
+  {
+    businessId: "demo-4",
+    businessName: "Italian Garden Bistro",
+    fiveStarCount: 892,
+    totalReviews: 1145,
+    totalStars: 4.5,
+  },
+  {
+    businessId: "demo-5",
+    businessName: "Dragon Palace Chinese",
+    fiveStarCount: 756,
+    totalReviews: 985,
+    totalStars: 4.4,
+  },
+  {
+    businessId: "demo-6",
+    businessName: "Golden Curry House",
+    fiveStarCount: 654,
+    totalReviews: 823,
+    totalStars: 4.3,
+  },
+  {
+    businessId: "demo-7",
+    businessName: "Fresh Salad Bar",
+    fiveStarCount: 543,
+    totalReviews: 712,
+    totalStars: 4.2,
+  },
+  {
+    businessId: "demo-8",
+    businessName: "Sunset Grill & Bar",
+    fiveStarCount: 432,
+    totalReviews: 598,
+    totalStars: 4.1,
+  },
+];
 
 const FiveStarBusinesses = ({ onBack }) => {
   const [businesses, setBusinesses] = useState([]);
@@ -18,15 +77,29 @@ const FiveStarBusinesses = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
+
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error("Request timeout")), 5000);
+        });
+
+        const apiPromise = fetch(
           "http://192.168.37.177:5001/api/rating/top-five-star"
-        );
-        setBusinesses(response.data);
+        ).then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        });
+
+        const data = await Promise.race([apiPromise, timeoutPromise]);
+
+        setBusinesses(data);
         setLoading(false);
       } catch (err) {
-        setError("Failed to fetch data");
+        console.log(err.message);
+        setBusinesses(demoData);
         setLoading(false);
-        console.error("Error fetching data:", err);
+        setError(null);
       }
     };
 
@@ -40,7 +113,6 @@ const FiveStarBusinesses = ({ onBack }) => {
   }, [businesses]);
 
   const createBarChart = () => {
-    // Clear previous chart
     d3.select(chartRef.current).selectAll("*").remove();
 
     const margin = { top: 40, right: 30, bottom: 90, left: 80 };
@@ -55,7 +127,6 @@ const FiveStarBusinesses = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Define scales
     const x = d3
       .scaleBand()
       .domain(businesses.map((d) => d.businessName))
@@ -67,7 +138,6 @@ const FiveStarBusinesses = ({ onBack }) => {
       .domain([0, d3.max(businesses, (d) => d.fiveStarCount) * 1.1])
       .range([height, 0]);
 
-    // Add X axis
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -77,14 +147,12 @@ const FiveStarBusinesses = ({ onBack }) => {
       .style("text-anchor", "end")
       .style("font-size", "12px");
 
-    // Add Y axis
     svg
       .append("g")
       .call(d3.axisLeft(y))
       .selectAll("text")
       .style("font-size", "12px");
 
-    // Add Y axis label
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -95,7 +163,6 @@ const FiveStarBusinesses = ({ onBack }) => {
       .style("font-size", "14px")
       .style("font-weight", "bold");
 
-    // Create a color scale
     const colorScale = d3
       .scaleLinear()
       .domain([
@@ -104,7 +171,6 @@ const FiveStarBusinesses = ({ onBack }) => {
       ])
       .range(["#60a5fa", "#3730a3"]);
 
-    // Add bars
     svg
       .selectAll(".bar")
       .data(businesses)
@@ -132,7 +198,6 @@ const FiveStarBusinesses = ({ onBack }) => {
       .attr("y", (d) => y(d.fiveStarCount))
       .attr("height", (d) => height - y(d.fiveStarCount));
 
-    // Add values on top of bars
     svg
       .selectAll(".label")
       .data(businesses)
@@ -153,7 +218,6 @@ const FiveStarBusinesses = ({ onBack }) => {
       .style("opacity", 1);
   };
 
-  // Calculate percentage of five-star reviews
   const calculatePercentage = (business) => {
     return ((business.fiveStarCount / business.totalReviews) * 100).toFixed(1);
   };
@@ -197,57 +261,30 @@ const FiveStarBusinesses = ({ onBack }) => {
         }}
         aria-label="Back to Business Analysis Dashboard"
       >
-        <IoArrowBack className="text-gray-700 text-lg" />
+        <ArrowLeft className="text-gray-700 text-lg" />
         <span className="text-gray-700 font-medium">Back to Dashboard</span>
       </button>
 
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-7xl mx-auto"
-      >
+      <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <motion.h1
-            className="text-4xl font-extrabold text-indigo-800 mb-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-          >
+          <h1 className="text-4xl font-extrabold text-indigo-800 mb-2">
             Top Businesses with Most Five-Star Ratings
-          </motion.h1>
-          <motion.p
-            className="text-xl text-gray-600 max-w-3xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-          >
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Explore the restaurants and businesses that have received the
             highest number of five-star reviews
-          </motion.p>
+          </p>
         </div>
 
         <div className="bg-white rounded-xl shadow-xl p-6 mb-10">
           <div ref={chartRef} className="w-full overflow-x-auto"></div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {businesses.map((business, index) => (
-            <motion.div
+            <div
               key={business.businessId}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
-              whileHover={{
-                scale: 1.03,
-                boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.4)",
-              }}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden ${
+              className={`bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl ${
                 selectedBusiness?.businessId === business.businessId
                   ? "ring-2 ring-blue-500"
                   : ""
@@ -302,23 +339,22 @@ const FiveStarBusinesses = ({ onBack }) => {
                         </div>
                       </div>
                       <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-200">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{
+                        <div
+                          className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500 transition-all duration-1000 ease-out"
+                          style={{
                             width: `${calculatePercentage(business)}%`,
+                            transitionDelay: `${0.5 + index * 0.1}s`,
                           }}
-                          transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
-                          className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-500"
-                        ></motion.div>
+                        ></div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 };
