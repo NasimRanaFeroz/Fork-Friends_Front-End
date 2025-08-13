@@ -88,31 +88,38 @@ const CityTopMerchants = ({ onBack }) => {
       try {
         setLoading(true);
 
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(
-            () => reject(new Error("Request timeout after 5 seconds")),
-            5000
-          );
-        });
-
-        const fetchPromise = fetch(
-          "http://192.168.37.177:5001/api/comprehensive/city-top-merchants"
+        /*
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(
+          () => reject(new Error("Request timeout after 5 seconds")),
+          5000
         );
+      });
 
-        const response = await Promise.race([fetchPromise, timeoutPromise]);
+      const fetchPromise = fetch(
+        "http://192.168.37.177:5001/api/comprehensive/city-top-merchants"
+      );
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
 
-        const result = await response.json();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-        if (!Array.isArray(result) || result.length === 0) {
-          throw new Error("Invalid data format received from API");
-        }
+      const result = await response.json();
 
-        setMerchantData(result);
-        setUsingDemoData(false);
+      if (!Array.isArray(result) || result.length === 0) {
+        throw new Error("Invalid data format received from API");
+      }
+
+      setMerchantData(result);
+      setUsingDemoData(false);
+      */
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        setMerchantData(demoData);
+        setUsingDemoData(true);
+
         setLoading(false);
       } catch (err) {
         console.warn(
