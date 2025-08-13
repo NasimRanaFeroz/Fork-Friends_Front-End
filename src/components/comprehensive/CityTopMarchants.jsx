@@ -91,7 +91,7 @@ const CityTopMerchants = ({ onBack }) => {
         /*
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(
-          () => reject(new Error("Request timeout after 5 seconds")),
+          () => reject(new Error("Request timeout")),
           5000
         );
       });
