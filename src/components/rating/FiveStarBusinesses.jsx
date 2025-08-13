@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { ArrowLeft } from "lucide-react";
 
-// Demo data to use as fallback
 const demoData = [
   {
     businessId: "demo-1",
@@ -78,25 +77,30 @@ const FiveStarBusinesses = ({ onBack }) => {
       try {
         setLoading(true);
 
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Request timeout")), 5000);
-        });
+        /*
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("Request timeout")), 5000);
+      });
 
-        const apiPromise = fetch(
-          "http://192.168.37.177:5001/api/rating/top-five-star"
-        ).then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        });
+      const apiPromise = fetch(
+        "http://192.168.37.177:5001/api/rating/top-five-star"
+      ).then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      });
 
-        const data = await Promise.race([apiPromise, timeoutPromise]);
+      const data = await Promise.race([apiPromise, timeoutPromise]);
+      setBusinesses(data);
+      */
 
-        setBusinesses(data);
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        setBusinesses(demoData);
+
         setLoading(false);
       } catch (err) {
-        console.log(err.message);
+        console.log(err?.message);
         setBusinesses(demoData);
         setLoading(false);
         setError(null);

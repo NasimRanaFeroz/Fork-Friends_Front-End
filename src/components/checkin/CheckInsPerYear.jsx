@@ -25,31 +25,40 @@ const CheckInsPerYear = ({ onBack }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(
-            () => reject(new Error("Request timeout after 5 seconds")),
-            5000
-          );
-        });
+        setLoading(true);
 
-        const fetchPromise = fetch(
-          "http://192.168.37.177:5001/api/checkin/checkins-per-year"
+        /*
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(
+          () => reject(new Error("Request timeout after 5 seconds")),
+          5000
         );
+      });
 
-        const response = await Promise.race([fetchPromise, timeoutPromise]);
+      const fetchPromise = fetch(
+        "http://192.168.37.177:5001/api/checkin/checkins-per-year"
+      );
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
 
-        const result = await response.json();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-        if (!Array.isArray(result) || result.length === 0) {
-          throw new Error("Invalid data format received from API");
-        }
+      const result = await response.json();
 
-        setData(result);
-        setUsingDemoData(false);
+      if (!Array.isArray(result) || result.length === 0) {
+        throw new Error("Invalid data format received from API");
+      }
+
+      setData(result);
+      setUsingDemoData(false);
+      */
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        setData(demoData);
+        setUsingDemoData(true);
+
         setLoading(false);
       } catch (err) {
         console.warn(
@@ -101,7 +110,12 @@ const CheckInsPerYear = ({ onBack }) => {
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x).tickFormat(d3.format("d")).tickValues([2020, 2021, 2022, 2023, 2024]))
+      .call(
+        d3
+          .axisBottom(x)
+          .tickFormat(d3.format("d"))
+          .tickValues([2020, 2021, 2022, 2023, 2024])
+      )
       .style("font-size", "12px")
       .style("color", "#0c285c");
 

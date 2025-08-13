@@ -27,31 +27,38 @@ const Distribution = ({ onBack }) => {
       try {
         setLoading(true);
 
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(
-            () => reject(new Error("Request timeout after 5 seconds")),
-            5000
-          );
-        });
-
-        const fetchPromise = fetch(
-          "http://192.168.37.177:5001/api/rating/distribution"
+        /*
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(
+          () => reject(new Error("Request timeout after 5 seconds")),
+          5000
         );
+      });
 
-        const response = await Promise.race([fetchPromise, timeoutPromise]);
+      const fetchPromise = fetch(
+        "http://192.168.37.177:5001/api/rating/distribution"
+      );
 
-        if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}`);
-        }
+      const response = await Promise.race([fetchPromise, timeoutPromise]);
 
-        const responseData = await response.json();
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
 
-        if (!Array.isArray(responseData) || responseData.length === 0) {
-          throw new Error("Invalid data format received from API");
-        }
+      const responseData = await response.json();
 
-        setData(responseData);
-        setUsingDemoData(false);
+      if (!Array.isArray(responseData) || responseData.length === 0) {
+        throw new Error("Invalid data format received from API");
+      }
+
+      setData(responseData);
+      setUsingDemoData(false);
+      */
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        setData(demoData);
+        setUsingDemoData(true);
+
         setLoading(false);
       } catch (err) {
         console.warn(

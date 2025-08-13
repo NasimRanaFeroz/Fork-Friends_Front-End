@@ -27,44 +27,50 @@ const WeeklyRatingsAnalysis = ({ onBack }) => {
     if (onBack) onBack();
   };
 
-  const dayOrder = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
+  // const dayOrder = [
+  //   "Monday",
+  //   "Tuesday",
+  //   "Wednesday",
+  //   "Thursday",
+  //   "Friday",
+  //   "Saturday",
+  //   "Sunday",
+  // ];
 
   useEffect(() => {
     const fetchWeeklyRatings = async () => {
       try {
         setIsLoading(true);
 
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Request timeout")), 5000);
-        });
+        /*
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("Request timeout")), 5000);
+      });
 
-        const apiPromise = fetch(
-          "http://192.168.37.177:5001/api/rating/weekly"
-        ).then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          return response.json();
-        });
+      const apiPromise = fetch(
+        "http://192.168.37.177:5001/api/rating/weekly"
+      ).then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      });
 
-        const data = await Promise.race([apiPromise, timeoutPromise]);
+      const data = await Promise.race([apiPromise, timeoutPromise]);
 
-        const sortedData = [...data].sort(
-          (a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day)
-        );
+      const sortedData = [...data].sort(
+        (a, b) => dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day)
+      );
 
-        setWeeklyData(sortedData);
+      setWeeklyData(sortedData);
+      */
+
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        setWeeklyData(demoData);
+
         setIsLoading(false);
       } catch (err) {
-        console.log(err.message);
+        console.log(err?.message);
         setWeeklyData(demoData);
         setIsLoading(false);
         setError(null);

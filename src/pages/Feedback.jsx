@@ -402,10 +402,10 @@ const Feedback = () => {
                   <p className="mt-1 text-sm text-gray-400">
                     Email us at{" "}
                     <a
-                      href="mailto:femboytahmid@gmail.com"
+                      href="mailto:feroznasimrana@gmail.com"
                       className="text-orange-500 hover:text-orange-400"
                     >
-                      femboytahmid@gmail.com
+                      feroznasimrana@gmail.com
                     </a>
                   </p>
                 </div>
