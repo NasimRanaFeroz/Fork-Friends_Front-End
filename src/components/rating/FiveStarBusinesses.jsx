@@ -95,7 +95,7 @@ const FiveStarBusinesses = ({ onBack }) => {
       setBusinesses(data);
       */
 
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setBusinesses(demoData);
 
         setLoading(false);
@@ -266,7 +266,7 @@ const FiveStarBusinesses = ({ onBack }) => {
         aria-label="Back to Business Analysis Dashboard"
       >
         <ArrowLeft className="text-gray-700 text-lg" />
-        <span className="text-gray-700 font-medium">Back to Dashboard</span>
+        <span className="text-gray-700 font-medium">Back</span>
       </button>
 
       <div className="max-w-7xl mx-auto">

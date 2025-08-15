@@ -23,25 +23,24 @@ const BusinessAnalysis = () => {
       title: "Top 10 Cities with Most Merchants in the U.S.",
       path: "merchant-cities",
     },
+    // {
+    //   id: 3,
+    //   title: "Top 5 States with Most Merchants in the U.S.",
+    //   path: "merchant-states",
+    // },
     {
       id: 3,
-      title: "Top 5 States with Most Merchants in the U.S.",
-      path: "merchant-states",
-    },
-    {
-      id: 4,
       title: "Top 10 Cities with Highest Ratings",
       path: "highest-rated-cities",
     },
-    { id: 5, title: "Category Distribution Analysis", path: "category-count" },
-    // { id: 6, title: "Top 10 Most Frequent Categories", path: "top-categories" },
+    { id: 4, title: "Category Distribution Analysis", path: "category-count" },
     {
-      id: 6,
+      id: 5,
       title: "Top 20 Merchants with Most Five-Star Reviews",
       path: "five-star-merchants",
     },
     {
-      id: 7,
+      id: 6,
       title: "Review Count by Restaurant Type",
       path: "restaurant-reviews",
     },

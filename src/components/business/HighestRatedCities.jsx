@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
+//import axios from "axios";
 import * as d3 from "d3";
 import { IoArrowBack } from "react-icons/io5";
 
@@ -7,8 +7,45 @@ const HighestRatedCities = ({ onBack }) => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const barChartRef = useRef();
+
+  const demoData = [
+    { city: "Napa", state: "CA", averageRating: 4.8, businessCount: 245 },
+    { city: "Aspen", state: "CO", averageRating: 4.7, businessCount: 189 },
+    { city: "Charleston", state: "SC", averageRating: 4.6, businessCount: 312 },
+    {
+      city: "Carmel-by-the-Sea",
+      state: "CA",
+      averageRating: 4.6,
+      businessCount: 156,
+    },
+    {
+      city: "Martha's Vineyard",
+      state: "MA",
+      averageRating: 4.5,
+      businessCount: 98,
+    },
+    {
+      city: "Saratoga Springs",
+      state: "NY",
+      averageRating: 4.5,
+      businessCount: 134,
+    },
+    { city: "Park City", state: "UT", averageRating: 4.5, businessCount: 201 },
+    { city: "Telluride", state: "CO", averageRating: 4.4, businessCount: 87 },
+    { city: "Jackson", state: "WY", averageRating: 4.4, businessCount: 165 },
+    {
+      city: "Kiawah Island",
+      state: "SC",
+      averageRating: 4.4,
+      businessCount: 76,
+    },
+    { city: "Burlington", state: "VT", averageRating: 4.3, businessCount: 178 },
+    { city: "Sedona", state: "AZ", averageRating: 4.3, businessCount: 223 },
+    { city: "Newport", state: "RI", averageRating: 4.3, businessCount: 145 },
+    { city: "Savannah", state: "GA", averageRating: 4.2, businessCount: 298 },
+    { city: "Asheville", state: "NC", averageRating: 4.2, businessCount: 267 },
+  ];
 
   const handleGoBack = () => {
     if (onBack) onBack();
@@ -18,11 +55,16 @@ const HighestRatedCities = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "http://192.168.37.177:5001/api/business/top-rated-cities"
-        );
-        setCities(response.data);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setCities(demoData);
         setLoading(false);
+
+        // const response = await axios.get(
+        //   "http://192.168.37.177:5001/api/business/top-rated-cities"
+        // );
+        // setCities(response.data);
+        // setLoading(false);
       } catch (err) {
         setError("Failed to fetch data");
         setLoading(false);
@@ -40,7 +82,6 @@ const HighestRatedCities = ({ onBack }) => {
   }, [cities, loading]);
 
   const drawBarChart = () => {
-    // Clear previous chart
     d3.select(barChartRef.current).selectAll("*").remove();
 
     const margin = { top: 50, right: 30, bottom: 100, left: 60 };
@@ -55,25 +96,18 @@ const HighestRatedCities = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Sort cities by rating
     const sortedCities = [...cities].sort(
       (a, b) => b.averageRating - a.averageRating
     );
 
-    // X scale
     const x = d3
       .scaleBand()
       .domain(sortedCities.map((d) => `${d.city}, ${d.state}`))
       .range([0, width])
       .padding(0.3);
 
-    // Y scale
-    const y = d3
-      .scaleLinear()
-      .domain([3.5, 5]) // Start from 3.5 to make differences more visible
-      .range([height, 0]);
+    const y = d3.scaleLinear().domain([3.5, 5]).range([height, 0]);
 
-    // Add X axis with black text
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -82,9 +116,8 @@ const HighestRatedCities = ({ onBack }) => {
       .attr("transform", "translate(-10,0)rotate(-45)")
       .style("text-anchor", "end")
       .style("font-size", "12px")
-      .style("fill", "black"); // Set text color to black
+      .style("fill", "black");
 
-    // Add Y axis with black text
     svg
       .append("g")
       .call(
@@ -94,9 +127,8 @@ const HighestRatedCities = ({ onBack }) => {
           .tickFormat((d) => d.toFixed(1))
       )
       .selectAll("text")
-      .style("fill", "black"); // Set text color to black
+      .style("fill", "black");
 
-    // Add Y axis label with black text
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -105,9 +137,8 @@ const HighestRatedCities = ({ onBack }) => {
       .attr("text-anchor", "middle")
       .text("Average Rating")
       .style("font-size", "14px")
-      .style("fill", "black"); // Set text color to black
+      .style("fill", "black");
 
-    // Add title with black text
     svg
       .append("text")
       .attr("x", width / 2)
@@ -116,9 +147,8 @@ const HighestRatedCities = ({ onBack }) => {
       .text("Highest Rated Cities by Average Rating")
       .style("font-size", "18px")
       .style("font-weight", "bold")
-      .style("fill", "black"); // Set text color to black
+      .style("fill", "black");
 
-    // Create a color scale based on rating
     const colorScale = d3
       .scaleLinear()
       .domain([
@@ -127,7 +157,6 @@ const HighestRatedCities = ({ onBack }) => {
       ])
       .range(["#60a5fa", "#2563eb"]);
 
-    // Add bars
     svg
       .selectAll(".bar")
       .data(sortedCities)
@@ -139,14 +168,12 @@ const HighestRatedCities = ({ onBack }) => {
       .attr("y", (d) => y(d.averageRating))
       .attr("height", (d) => height - y(d.averageRating))
       .attr("fill", (d) => colorScale(d.averageRating))
-      .attr("rx", 4) // Rounded corners
+      .attr("rx", 4)
       .on("mouseover", function (event, d) {
         d3.select(this).attr("opacity", 0.8);
 
-        // Create tooltip
         const tooltip = svg.append("g").attr("class", "tooltip");
 
-        // Add background rectangle
         tooltip
           .append("rect")
           .attr("x", x(`${d.city}, ${d.state}`) + x.bandwidth() / 2 - 80)
@@ -157,7 +184,6 @@ const HighestRatedCities = ({ onBack }) => {
           .attr("stroke", "#d1d5db")
           .attr("rx", 4);
 
-        // Add city name
         tooltip
           .append("text")
           .attr("x", x(`${d.city}, ${d.state}`) + x.bandwidth() / 2)
@@ -165,27 +191,25 @@ const HighestRatedCities = ({ onBack }) => {
           .attr("text-anchor", "middle")
           .style("font-size", "12px")
           .style("font-weight", "bold")
-          .style("fill", "black") // Set text color to black
+          .style("fill", "black")
           .text(`${d.city}, ${d.state}`);
 
-        // Add rating
         tooltip
           .append("text")
           .attr("x", x(`${d.city}, ${d.state}`) + x.bandwidth() / 2)
           .attr("y", y(d.averageRating) - 30)
           .attr("text-anchor", "middle")
           .style("font-size", "12px")
-          .style("fill", "black") // Set text color to black
+          .style("fill", "black")
           .text(`Rating: ${d.averageRating.toFixed(1)}`);
 
-        // Add business count
         tooltip
           .append("text")
           .attr("x", x(`${d.city}, ${d.state}`) + x.bandwidth() / 2)
           .attr("y", y(d.averageRating) - 10)
           .attr("text-anchor", "middle")
           .style("font-size", "12px")
-          .style("fill", "black") // Set text color to black
+          .style("fill", "black")
           .text(`Businesses: ${d.businessCount}`);
       })
       .on("mouseout", function () {
@@ -193,7 +217,6 @@ const HighestRatedCities = ({ onBack }) => {
         svg.selectAll(".tooltip").remove();
       });
 
-    // Add rating labels on top of bars
     svg
       .selectAll(".label")
       .data(sortedCities)
@@ -205,7 +228,7 @@ const HighestRatedCities = ({ onBack }) => {
       .attr("text-anchor", "middle")
       .style("font-size", "11px")
       .style("font-weight", "bold")
-      .style("fill", "black") // Set text color to black
+      .style("fill", "black")
       .text((d) => d.averageRating.toFixed(1));
   };
 
@@ -246,7 +269,6 @@ const HighestRatedCities = ({ onBack }) => {
 
   return (
     <div className="p-6 relative">
-      {/* Back button with animation */}
       <button
         onClick={handleGoBack}
         className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
@@ -270,7 +292,6 @@ const HighestRatedCities = ({ onBack }) => {
         Highest Rated Cities
       </h1>
 
-      {/* Data Table */}
       <div className="mb-8 overflow-x-auto bg-white rounded-lg shadow">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -355,7 +376,6 @@ const HighestRatedCities = ({ onBack }) => {
         </table>
       </div>
 
-      {/* Bar Chart */}
       <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
         <div ref={barChartRef}></div>
       </div>

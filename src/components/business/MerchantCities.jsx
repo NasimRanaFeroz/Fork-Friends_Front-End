@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+//import axios from "axios";
 import * as d3 from "d3";
 import { IoArrowBack } from "react-icons/io5";
 
@@ -7,9 +7,26 @@ const MerchantCities = ({ onBack }) => {
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const barChartRef = useRef();
   const lineChartRef = useRef();
+
+  const demoData = [
+    { city: "Las Vegas", state: "NV", count: 8945, averageRating: 3.9 },
+    { city: "Phoenix", state: "AZ", count: 7832, averageRating: 4.1 },
+    { city: "Charlotte", state: "NC", count: 6721, averageRating: 4.0 },
+    { city: "Scottsdale", state: "AZ", count: 5643, averageRating: 4.3 },
+    { city: "Pittsburgh", state: "PA", count: 4987, averageRating: 3.8 },
+    { city: "Montreal", state: "QC", count: 4756, averageRating: 4.2 },
+    { city: "Mesa", state: "AZ", count: 4234, averageRating: 3.9 },
+    { city: "Henderson", state: "NV", count: 3876, averageRating: 4.0 },
+    { city: "Tempe", state: "AZ", count: 3654, averageRating: 4.1 },
+    { city: "Chandler", state: "AZ", count: 3298, averageRating: 4.2 },
+    { city: "Cleveland", state: "OH", count: 2987, averageRating: 3.7 },
+    { city: "Madison", state: "WI", count: 2756, averageRating: 4.0 },
+    { city: "Glendale", state: "AZ", count: 2543, averageRating: 3.8 },
+    { city: "St. Louis", state: "MO", count: 2387, averageRating: 3.9 },
+    { city: "Tampa", state: "FL", count: 2154, averageRating: 4.1 },
+  ];
 
   const handleGoBack = () => {
     if (onBack) onBack();
@@ -19,11 +36,16 @@ const MerchantCities = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "http://192.168.37.177:5001/api/business/top-cities"
-        );
-        setCities(response.data);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setCities(demoData);
         setLoading(false);
+
+        // const response = await axios.get(
+        //   "http://192.168.37.177:5001/api/business/top-cities"
+        // );
+        // setCities(response.data);
+        // setLoading(false);
       } catch (err) {
         setError("Failed to fetch city data");
         setLoading(false);

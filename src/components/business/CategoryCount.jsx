@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { IoArrowBack } from "react-icons/io5";
 
 const CategoryCount = ({ onBack }) => {
   const [categoryStats, setCategoryStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const demoData = {
+    totalUniqueCategories: 1247,
+  };
 
   const handleGoBack = () => {
     if (onBack) onBack();
@@ -15,11 +19,16 @@ const CategoryCount = ({ onBack }) => {
     const fetchCategoryStats = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "http://192.168.37.177:5001/api/business/category-stats"
-        );
-        setCategoryStats(response.data);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setCategoryStats(demoData);
         setLoading(false);
+
+        // const response = await axios.get(
+        //   "http://192.168.37.177:5001/api/business/category-stats"
+        // );
+        // setCategoryStats(response.data);
+        // setLoading(false);
       } catch (err) {
         setError("Failed to fetch category statistics");
         setLoading(false);

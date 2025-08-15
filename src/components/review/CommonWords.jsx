@@ -9,6 +9,36 @@ const CommonWords = ({ onBack }) => {
   const [error, setError] = useState(null);
   const chartRef = useRef(null);
 
+  const demoData = {
+    results: [
+      { _id: "good", count: 1284567 },
+      { _id: "great", count: 1156890 },
+      { _id: "food", count: 987432 },
+      { _id: "place", count: 876543 },
+      { _id: "service", count: 765432 },
+      { _id: "time", count: 698745 },
+      { _id: "really", count: 623456 },
+      { _id: "love", count: 578923 },
+      { _id: "nice", count: 534567 },
+      { _id: "staff", count: 489234 },
+      { _id: "experience", count: 445678 },
+      { _id: "amazing", count: 398765 },
+      { _id: "delicious", count: 356789 },
+      { _id: "location", count: 323456 },
+      { _id: "atmosphere", count: 289345 },
+      { _id: "recommend", count: 267834 },
+      { _id: "quality", count: 245678 },
+      { _id: "customer", count: 223456 },
+      { _id: "friendly", count: 198765 },
+      { _id: "excellent", count: 176543 },
+    ],
+    metadata: {
+      sampleSize: 2500000,
+      processedAt: new Date().toISOString(),
+      executionTimeMs: 1847,
+    },
+  };
+
   const handleGoBack = () => {
     if (onBack) onBack();
   };
@@ -17,18 +47,22 @@ const CommonWords = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "http://192.168.37.177:5001/api/review/top-20-common-words"
-        );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
+        // const response = await fetch(
+        //   "http://192.168.37.177:5001/api/review/top-20-common-words"
+        // );
+        //
+        // if (!response.ok) {
+        //   throw new Error("Failed to fetch data");
+        // }
+        //
+        // const data = await response.json();
 
-        const data = await response.json();
-        setCommonWords(data.results);
-        setMetadata(data.metadata);
-        setLoading(false);
+        setTimeout(() => {
+          setCommonWords(demoData.results);
+          setMetadata(demoData.metadata);
+          setLoading(false);
+        }, 1000);
       } catch (err) {
         setError(err.message);
         setLoading(false);
@@ -45,14 +79,12 @@ const CommonWords = ({ onBack }) => {
   }, [commonWords]);
 
   const createBarChart = () => {
-    // Clear previous chart if any
     d3.select(chartRef.current).selectAll("*").remove();
 
     const margin = { top: 40, right: 30, bottom: 120, left: 100 };
     const width = 800 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
-    // Create SVG
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -61,7 +93,6 @@ const CommonWords = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // X axis
     const x = d3
       .scaleBand()
       .range([0, width])
@@ -79,7 +110,6 @@ const CommonWords = ({ onBack }) => {
       .style("fill", "#4B5563")
       .style("font-weight", "bold");
 
-    // Add X axis label
     svg
       .append("text")
       .attr("x", width / 2)
@@ -90,20 +120,18 @@ const CommonWords = ({ onBack }) => {
       .style("font-weight", "bold")
       .text("Words");
 
-    // Y axis
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(commonWords, (d) => d.count) * 1.1]) // Add 10% padding at the top
+      .domain([0, d3.max(commonWords, (d) => d.count) * 1.1])
       .range([height, 0]);
 
     svg
       .append("g")
-      .call(d3.axisLeft(y).tickFormat((d) => d3.format(",")(d))) // Format numbers with commas
+      .call(d3.axisLeft(y).tickFormat((d) => d3.format(",")(d)))
       .selectAll("text")
       .style("font-size", "14px")
       .style("fill", "#4B5563");
 
-    // Add Y axis label
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -115,7 +143,6 @@ const CommonWords = ({ onBack }) => {
       .style("font-weight", "bold")
       .text("Frequency");
 
-    // Add title
     svg
       .append("text")
       .attr("x", width / 2)
@@ -126,7 +153,6 @@ const CommonWords = ({ onBack }) => {
       .style("fill", "#1F2937")
       .text("Top 20 Most Common Words in Reviews");
 
-    // Add grid lines
     svg
       .append("g")
       .attr("class", "grid")
@@ -135,13 +161,11 @@ const CommonWords = ({ onBack }) => {
       .style("stroke-opacity", "0.7")
       .style("shape-rendering", "crispEdges");
 
-    // Create a color scale
     const colorScale = d3
       .scaleSequential()
       .domain([0, commonWords.length - 1])
       .interpolator(d3.interpolateInferno);
 
-    // Bars with animation
     svg
       .selectAll("bar")
       .data(commonWords)
@@ -150,20 +174,18 @@ const CommonWords = ({ onBack }) => {
       .attr("x", (d) => x(d._id))
       .attr("width", x.bandwidth())
       .attr("fill", (d, i) => colorScale(i))
-      .attr("y", height) // Start from the bottom for animation
-      .attr("height", 0) // Start with height 0 for animation
-      .transition() // Add transition
+      .attr("y", height)
+      .attr("height", 0)
+      .transition()
       .duration(800)
-      .delay((d, i) => i * 100) // Stagger the animations
+      .delay((d, i) => i * 100)
       .attr("y", (d) => y(d.count))
       .attr("height", (d) => height - y(d.count));
 
-    // Add interactive elements after the animation
     setTimeout(() => {
       svg
         .selectAll("rect")
         .on("mouseover", function (event, d) {
-          // Highlight the bar
           d3.select(this)
             .transition()
             .duration(200)
@@ -171,13 +193,11 @@ const CommonWords = ({ onBack }) => {
             .attr("stroke", "#000")
             .attr("stroke-width", 2);
 
-          // Add tooltip
           const tooltip = svg
             .append("g")
             .attr("class", "tooltip")
             .attr("id", "tooltip");
 
-          // Add background for tooltip
           tooltip
             .append("rect")
             .attr("x", x(d._id) + x.bandwidth() / 2 - 70)
@@ -187,7 +207,6 @@ const CommonWords = ({ onBack }) => {
             .attr("fill", "rgba(0,0,0,0.7)")
             .attr("rx", 5);
 
-          // Add text for tooltip
           tooltip
             .append("text")
             .attr("x", x(d._id) + x.bandwidth() / 2)
@@ -207,7 +226,6 @@ const CommonWords = ({ onBack }) => {
           d3.select("#tooltip").remove();
         });
 
-      // Add count labels on top of each bar
       svg
         .selectAll(".count-label")
         .data(commonWords)
@@ -217,14 +235,14 @@ const CommonWords = ({ onBack }) => {
         .attr("x", (d) => x(d._id) + x.bandwidth() / 2)
         .attr("y", (d) => y(d.count) - 5)
         .attr("text-anchor", "middle")
-        .style("font-size", "0px") // Start with size 0 for animation
+        .style("font-size", "0px")
         .style("fill", "#fff")
         .style("font-weight", "bold")
         .text((d) => d3.format(",")(d.count))
         .transition()
         .delay((d, i) => 1000 + i * 50)
         .duration(500)
-        .style("font-size", "10px"); // Animate to final size
+        .style("font-size", "10px");
     }, commonWords.length * 100 + 800);
   };
 
@@ -311,7 +329,6 @@ const CommonWords = ({ onBack }) => {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Table with animation */}
         <div className="bg-white rounded-xl shadow-xl overflow-hidden transform transition duration-500 motion-safe:hover:shadow-2xl">
           <div className="bg-indigo-600 text-white p-4">
             <h2 className="text-xl font-bold">Word Frequency Table</h2>
@@ -375,15 +392,12 @@ const CommonWords = ({ onBack }) => {
           </div>
         </div>
 
-        {/* Chart with animation */}
         <div className="bg-white rounded-xl shadow-xl p-6 transform transition duration-500 motion-safe:hover:shadow-2xl">
           <div ref={chartRef} className="w-full overflow-x-auto"></div>
         </div>
       </div>
 
-      {/* Add Tailwind animations config */}
       <div className="hidden">
-        {/* This div is just for Tailwind to detect these classes */}
         <div className="animate-pulse animate-bounce animate-spin"></div>
       </div>
     </div>

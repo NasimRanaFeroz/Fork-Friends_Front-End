@@ -116,7 +116,7 @@ const CityTopMerchants = ({ onBack }) => {
       setUsingDemoData(false);
       */
 
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setMerchantData(demoData);
         setUsingDemoData(true);
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+//import axios from "axios";
 import * as d3 from "d3";
 import { geoAlbersUsa, geoPath } from "d3-geo";
 import * as topojson from "topojson-client";
@@ -10,6 +10,19 @@ const MerchantStates = ({ onBack }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [usaGeoData, setUsaGeoData] = useState(null);
+
+  const demoData = [
+    { state: "CA", count: 15678 },
+    { state: "TX", count: 12345 },
+    { state: "FL", count: 9876 },
+    { state: "NY", count: 8765 },
+    { state: "PA", count: 7543 },
+    { state: "IL", count: 6789 },
+    { state: "OH", count: 5432 },
+    { state: "GA", count: 4987 },
+    { state: "NC", count: 4321 },
+    { state: "MI", count: 3876 },
+  ];
 
   const handleGoBack = () => {
     if (onBack) onBack();
@@ -24,14 +37,11 @@ const MerchantStates = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Fetch state data
-        const response = await axios.get(
-          "http://192.168.37.177:5001/api/business/top-states"
-        );
-        setStates(response.data);
-        console.log(response.data);
 
-        // Fetch USA GeoJSON data for the map with better error handling
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setStates(demoData);
+        console.log(demoData);
+
         try {
           const geoResponse = await fetch(
             "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json"
@@ -49,6 +59,12 @@ const MerchantStates = ({ onBack }) => {
         }
 
         setLoading(false);
+
+        // const response = await axios.get(
+        //   "http://192.168.37.177:5001/api/business/top-states"
+        // );
+        // setStates(response.data);
+        // console.log(response.data);
       } catch (err) {
         setError("Failed to fetch data");
         setLoading(false);
@@ -72,10 +88,9 @@ const MerchantStates = ({ onBack }) => {
   }, [states, loading, usaGeoData]);
 
   const drawBarChart = () => {
-    // Clear previous chart
     d3.select(barChartRef.current).selectAll("*").remove();
 
-    const margin = { top: 50, right: 30, bottom: 70, left: 80 };
+    const margin = { top: 50, right: 30, bottom: 70, left: 30 };
     const width = 600 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
@@ -87,20 +102,17 @@ const MerchantStates = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // X scale
     const x = d3
       .scaleBand()
       .domain(states.map((d) => d.state))
       .range([0, width])
-      .padding(0.3);
+      .padding(0.2);
 
-    // Y scale
     const y = d3
       .scaleLinear()
       .domain([0, d3.max(states, (d) => d.count) * 1.1])
       .range([height, 0]);
 
-    // Add X axis
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -111,10 +123,8 @@ const MerchantStates = ({ onBack }) => {
       .style("font-weight", "bold")
       .style("fill", "#000000");
 
-    // Add Y axis
     svg.append("g").call(d3.axisLeft(y));
 
-    // Add Y axis label
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -124,7 +134,6 @@ const MerchantStates = ({ onBack }) => {
       .text("Number of Merchants")
       .style("font-size", "14px");
 
-    // Add title
     svg
       .append("text")
       .attr("x", width / 4)
@@ -134,32 +143,28 @@ const MerchantStates = ({ onBack }) => {
       .style("font-size", "18px")
       .style("font-weight", "bold");
 
-    // Create a color scale
     const colorScale = d3
       .scaleLinear()
       .domain([d3.min(states, (d) => d.count), d3.max(states, (d) => d.count)])
       .range(["#60a5fa", "#2563eb"]);
 
-    // Add bars
     svg
       .selectAll(".bar")
       .data(states)
       .enter()
       .append("rect")
       .attr("class", "bar")
-      .attr("x", (d) => x(d.state))
-      .attr("width", x.bandwidth())
+      .attr("x", (d) => x(d.state) + x.bandwidth() * 0.15)
+      .attr("width", x.bandwidth() * 0.7)
       .attr("y", (d) => y(d.count))
       .attr("height", (d) => height - y(d.count))
       .attr("fill", (d) => colorScale(d.count))
-      .attr("rx", 4) // Rounded corners
+      .attr("rx", 4)
       .on("mouseover", function (event, d) {
         d3.select(this).attr("opacity", 0.8);
 
-        // Create tooltip
         const tooltip = svg.append("g").attr("class", "tooltip");
 
-        // Add background rectangle
         tooltip
           .append("rect")
           .attr("x", x(d.state) + x.bandwidth() / 2 - 70)
@@ -170,7 +175,6 @@ const MerchantStates = ({ onBack }) => {
           .attr("stroke", "#d1d5db")
           .attr("rx", 4);
 
-        // Add state name
         tooltip
           .append("text")
           .attr("x", x(d.state) + x.bandwidth() / 2)
@@ -180,7 +184,6 @@ const MerchantStates = ({ onBack }) => {
           .style("font-weight", "bold")
           .text(getStateName(d.state));
 
-        // Add count
         tooltip
           .append("text")
           .attr("x", x(d.state) + x.bandwidth() / 2)
@@ -194,7 +197,6 @@ const MerchantStates = ({ onBack }) => {
         svg.selectAll(".tooltip").remove();
       });
 
-    // Add count labels on top of bars
     svg
       .selectAll(".label")
       .data(states)
@@ -209,12 +211,10 @@ const MerchantStates = ({ onBack }) => {
   };
 
   const drawMapChart = () => {
-    // Skip if no geo data is available
     if (!usaGeoData) {
       return;
     }
 
-    // Clear previous chart
     d3.select(mapChartRef.current).selectAll("*").remove();
 
     const width = 800;
@@ -226,33 +226,26 @@ const MerchantStates = ({ onBack }) => {
       .attr("width", width)
       .attr("height", height);
 
-    // Create a color scale
     const colorScale = d3
       .scaleLinear()
       .domain([d3.min(states, (d) => d.count), d3.max(states, (d) => d.count)])
       .range(["#bfdbfe", "#1e40af"]);
 
-    // Create a map of state codes to counts
     const stateDataMap = {};
     states.forEach((d) => {
       stateDataMap[d.state] = d;
     });
 
-    // Create a projection - Albers USA is best for US maps
     const projection = geoAlbersUsa()
       .scale(1000)
       .translate([width / 2, height / 2]);
 
-    // Create a path generator
     const path = geoPath().projection(projection);
 
-    // Make sure we're accessing the correct object in the TopoJSON
     const statesFeature = usaGeoData.objects.states || usaGeoData.objects.state;
 
-    // Convert TopoJSON to GeoJSON
     const statesGeo = topojson.feature(usaGeoData, statesFeature).features;
 
-    // Add state paths
     svg
       .selectAll(".state")
       .data(statesGeo)
@@ -261,7 +254,6 @@ const MerchantStates = ({ onBack }) => {
       .attr("class", "state")
       .attr("d", path)
       .attr("fill", (d) => {
-        // The id in newer versions might be a string or number
         const stateCode = getStateCodeFromId(d.id.toString());
         return stateDataMap[stateCode]
           ? colorScale(stateDataMap[stateCode].count)
@@ -274,12 +266,10 @@ const MerchantStates = ({ onBack }) => {
         if (stateDataMap[stateCode]) {
           d3.select(this).attr("opacity", 0.8);
 
-          // Create tooltip
           const [x, y] = path.centroid(d);
 
           const tooltip = svg.append("g").attr("class", "tooltip");
 
-          // Add background rectangle
           tooltip
             .append("rect")
             .attr("x", x - 70)
@@ -290,7 +280,6 @@ const MerchantStates = ({ onBack }) => {
             .attr("stroke", "#d1d5db")
             .attr("rx", 4);
 
-          // Add state name
           tooltip
             .append("text")
             .attr("x", x)
@@ -300,7 +289,6 @@ const MerchantStates = ({ onBack }) => {
             .style("font-weight", "bold")
             .text(getStateName(stateCode));
 
-          // Add count
           tooltip
             .append("text")
             .attr("x", x)
@@ -317,7 +305,6 @@ const MerchantStates = ({ onBack }) => {
         svg.selectAll(".tooltip").remove();
       });
 
-    // Add title
     svg
       .append("text")
       .attr("x", width / 2)
@@ -327,7 +314,6 @@ const MerchantStates = ({ onBack }) => {
       .style("font-size", "18px")
       .style("font-weight", "bold");
 
-    // Add legend
     const legendWidth = 200;
     const legendHeight = 20;
     const legendX = width - legendWidth - 20;
@@ -343,7 +329,6 @@ const MerchantStates = ({ onBack }) => {
       .ticks(5)
       .tickFormat((d) => d.toLocaleString());
 
-    // Create gradient
     const defs = svg.append("defs");
     const gradient = defs
       .append("linearGradient")
@@ -360,7 +345,6 @@ const MerchantStates = ({ onBack }) => {
       .attr("offset", "100%")
       .attr("stop-color", "#1e40af");
 
-    // Add legend rectangle
     svg
       .append("rect")
       .attr("x", legendX)
@@ -369,13 +353,11 @@ const MerchantStates = ({ onBack }) => {
       .attr("height", legendHeight)
       .style("fill", "url(#legend-gradient)");
 
-    // Add legend axis
     svg
       .append("g")
       .attr("transform", `translate(${legendX}, ${legendY + legendHeight})`)
       .call(legendAxis);
 
-    // Add legend title
     svg
       .append("text")
       .attr("x", legendX)
@@ -385,7 +367,6 @@ const MerchantStates = ({ onBack }) => {
   };
 
   const drawPieChart = () => {
-    // Clear previous chart
     d3.select(pieChartRef.current).selectAll("*").remove();
 
     const width = 500;
@@ -400,13 +381,11 @@ const MerchantStates = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
-    // Create color scale
     const color = d3
       .scaleOrdinal()
       .domain(states.map((d) => d.state))
       .range(["#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe", "#dbeafe"]);
 
-    // Compute the position of each group on the pie
     const pie = d3
       .pie()
       .value((d) => d.count)
@@ -414,10 +393,8 @@ const MerchantStates = ({ onBack }) => {
 
     const data_ready = pie(states);
 
-    // Build the pie chart
     const arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
 
-    // Add the arcs
     svg
       .selectAll("slices")
       .data(data_ready)
@@ -431,16 +408,13 @@ const MerchantStates = ({ onBack }) => {
       .on("mouseover", function (event, d) {
         d3.select(this).style("opacity", 1);
 
-        // Show percentage
         const percent = (
           (d.data.count / d3.sum(states, (d) => d.count)) *
           100
         ).toFixed(1);
 
-        // Create tooltip
         const tooltip = svg.append("g").attr("class", "tooltip");
 
-        // Add background rectangle
         tooltip
           .append("rect")
           .attr("x", -70)
@@ -451,7 +425,6 @@ const MerchantStates = ({ onBack }) => {
           .attr("stroke", "#d1d5db")
           .attr("rx", 4);
 
-        // Add state name
         tooltip
           .append("text")
           .attr("x", 0)
@@ -461,7 +434,6 @@ const MerchantStates = ({ onBack }) => {
           .style("font-weight", "bold")
           .text(getStateName(d.data.state));
 
-        // Add count
         tooltip
           .append("text")
           .attr("x", 0)
@@ -470,7 +442,6 @@ const MerchantStates = ({ onBack }) => {
           .style("font-size", "12px")
           .text(`Merchants: ${d.data.count.toLocaleString()}`);
 
-        // Add percentage
         tooltip
           .append("text")
           .attr("x", 0)
@@ -484,7 +455,6 @@ const MerchantStates = ({ onBack }) => {
         svg.selectAll(".tooltip").remove();
       });
 
-    // Add labels
     const arcLabel = d3
       .arc()
       .innerRadius(radius * 0.6)
@@ -502,7 +472,6 @@ const MerchantStates = ({ onBack }) => {
       .style("font-weight", "bold")
       .style("fill", "#1f2937");
 
-    // Add title
     svg
       .append("text")
       .attr("x", 0)
@@ -514,7 +483,6 @@ const MerchantStates = ({ onBack }) => {
   };
 
   const drawCombinedChart = () => {
-    // Clear previous chart
     d3.select(combinedChartRef.current).selectAll("*").remove();
 
     const margin = { top: 50, right: 120, bottom: 70, left: 80 };
@@ -529,14 +497,12 @@ const MerchantStates = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // X scale
     const x = d3
       .scaleBand()
       .domain(states.map((d) => d.state))
       .range([0, width])
       .padding(0.3);
 
-    // Y scales for count and rating
     const yCount = d3
       .scaleLinear()
       .domain([0, d3.max(states, (d) => d.count) * 1.1])
@@ -544,7 +510,6 @@ const MerchantStates = ({ onBack }) => {
 
     const yRating = d3.scaleLinear().domain([3, 5]).range([height, 0]);
 
-    // Add X axis
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -553,16 +518,13 @@ const MerchantStates = ({ onBack }) => {
       .style("font-size", "14px")
       .style("font-weight", "bold");
 
-    // Add Y axis for count
     svg.append("g").call(d3.axisLeft(yCount));
 
-    // Add Y axis for rating
     svg
       .append("g")
       .attr("transform", `translate(${width}, 0)`)
       .call(d3.axisRight(yRating));
 
-    // Add Y axis label for count
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -573,7 +535,6 @@ const MerchantStates = ({ onBack }) => {
       .style("font-size", "14px")
       .style("fill", "#2563eb");
 
-    // Add Y axis label for rating
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -584,7 +545,6 @@ const MerchantStates = ({ onBack }) => {
       .style("font-size", "14px")
       .style("fill", "#dc2626");
 
-    // Add title
     svg
       .append("text")
       .attr("x", width / 2)
@@ -594,7 +554,6 @@ const MerchantStates = ({ onBack }) => {
       .style("font-size", "18px")
       .style("font-weight", "bold");
 
-    // Add bars for count
     svg
       .selectAll(".bar")
       .data(states)
@@ -607,14 +566,12 @@ const MerchantStates = ({ onBack }) => {
       .attr("height", (d) => height - yCount(d.count))
       .attr("fill", "#3b82f6")
       .attr("opacity", 0.7)
-      .attr("rx", 4) // Rounded corners
+      .attr("rx", 4)
       .on("mouseover", function (event, d) {
         d3.select(this).attr("opacity", 1);
 
-        // Create tooltip
         const tooltip = svg.append("g").attr("class", "tooltip");
 
-        // Add background rectangle
         tooltip
           .append("rect")
           .attr("x", x(d.state) + x.bandwidth() / 2 - 70)
@@ -625,7 +582,6 @@ const MerchantStates = ({ onBack }) => {
           .attr("stroke", "#d1d5db")
           .attr("rx", 4);
 
-        // Add state name
         tooltip
           .append("text")
           .attr("x", x(d.state) + x.bandwidth() / 2)
@@ -635,7 +591,6 @@ const MerchantStates = ({ onBack }) => {
           .style("font-weight", "bold")
           .text(getStateName(d.state));
 
-        // Add count
         tooltip
           .append("text")
           .attr("x", x(d.state) + x.bandwidth() / 2)
@@ -649,7 +604,6 @@ const MerchantStates = ({ onBack }) => {
         svg.selectAll(".tooltip").remove();
       });
 
-    // Add line for rating
     const line = d3
       .line()
       .x((d) => x(d.state) + x.bandwidth() / 2)
@@ -664,7 +618,6 @@ const MerchantStates = ({ onBack }) => {
       .attr("stroke-width", 3)
       .attr("d", line);
 
-    // Add dots for rating
     svg
       .selectAll(".dot")
       .data(states)
@@ -678,10 +631,8 @@ const MerchantStates = ({ onBack }) => {
       .on("mouseover", function (event, d) {
         d3.select(this).attr("r", 8);
 
-        // Create tooltip
         const tooltip = svg.append("g").attr("class", "tooltip");
 
-        // Add background rectangle
         tooltip
           .append("rect")
           .attr("x", x(d.state) + x.bandwidth() / 2 - 70)
@@ -692,7 +643,6 @@ const MerchantStates = ({ onBack }) => {
           .attr("stroke", "#d1d5db")
           .attr("rx", 4);
 
-        // Add state name
         tooltip
           .append("text")
           .attr("x", x(d.state) + x.bandwidth() / 2)
@@ -702,7 +652,6 @@ const MerchantStates = ({ onBack }) => {
           .style("font-weight", "bold")
           .text(getStateName(d.state));
 
-        // Add rating
         tooltip
           .append("text")
           .attr("x", x(d.state) + x.bandwidth() / 2)
@@ -716,7 +665,6 @@ const MerchantStates = ({ onBack }) => {
         svg.selectAll(".tooltip").remove();
       });
 
-    // Add legend
     const legend = svg
       .append("g")
       .attr("transform", `translate(${width + 20}, 0)`);
@@ -752,7 +700,6 @@ const MerchantStates = ({ onBack }) => {
       .style("font-size", "12px");
   };
 
-  // Helper function to get full state name from abbreviation
   const getStateName = (abbr) => {
     const stateNames = {
       AL: "Alabama",
@@ -811,7 +758,6 @@ const MerchantStates = ({ onBack }) => {
     return stateNames[abbr] || abbr;
   };
 
-  // Helper function to get state code from FIPS id
   const getStateCodeFromId = (id) => {
     const stateCodes = {
       "01": "AL",

@@ -9,35 +9,131 @@ const WordCloud = ({ onBack }) => {
   const barChartRef = useRef(null);
   const wordCloudRef = useRef(null);
 
+  const demoWordData = {
+    metadata: {
+      sampleSize: 25000,
+      processedAt: "2024-08-15T10:30:00Z",
+      executionTimeMs: 1650,
+      totalUniqueWords: 156,
+    },
+    results: [
+      { text: "food", size: 12500 },
+      { text: "service", size: 11200 },
+      { text: "great", size: 10800 },
+      { text: "good", size: 9600 },
+      { text: "delicious", size: 8900 },
+      { text: "restaurant", size: 8400 },
+      { text: "amazing", size: 7800 },
+      { text: "excellent", size: 7200 },
+      { text: "staff", size: 6900 },
+      { text: "place", size: 6500 },
+      { text: "fresh", size: 6200 },
+      { text: "friendly", size: 5800 },
+      { text: "tasty", size: 5600 },
+      { text: "atmosphere", size: 5300 },
+      { text: "quality", size: 5000 },
+      { text: "pizza", size: 4800 },
+      { text: "price", size: 4600 },
+      { text: "experience", size: 4400 },
+      { text: "clean", size: 4200 },
+      { text: "recommend", size: 4000 },
+      { text: "fast", size: 3800 },
+      { text: "menu", size: 3600 },
+      { text: "location", size: 3500 },
+      { text: "customer", size: 3300 },
+      { text: "order", size: 3200 },
+      { text: "value", size: 3100 },
+      { text: "chicken", size: 3000 },
+      { text: "portion", size: 2900 },
+      { text: "wait", size: 2800 },
+      { text: "flavor", size: 2700 },
+      { text: "busy", size: 2600 },
+      { text: "comfortable", size: 2500 },
+      { text: "burger", size: 2400 },
+      { text: "coffee", size: 2300 },
+      { text: "sauce", size: 2200 },
+      { text: "salad", size: 2100 },
+      { text: "cozy", size: 2000 },
+      { text: "spicy", size: 1950 },
+      { text: "hot", size: 1900 },
+      { text: "lunch", size: 1850 },
+      { text: "dinner", size: 1800 },
+      { text: "pasta", size: 1750 },
+      { text: "dessert", size: 1700 },
+      { text: "drink", size: 1650 },
+      { text: "expensive", size: 1600 },
+      { text: "cheap", size: 1550 },
+      { text: "reasonable", size: 1500 },
+      { text: "parking", size: 1450 },
+      { text: "seating", size: 1400 },
+      { text: "music", size: 1350 },
+      { text: "noisy", size: 1300 },
+      { text: "quiet", size: 1250 },
+      { text: "romantic", size: 1200 },
+      { text: "family", size: 1150 },
+      { text: "kids", size: 1100 },
+      { text: "outdoor", size: 1050 },
+      { text: "patio", size: 1000 },
+      { text: "view", size: 950 },
+      { text: "decor", size: 900 },
+      { text: "lighting", size: 850 },
+      { text: "temperature", size: 800 },
+      { text: "bathroom", size: 750 },
+      { text: "handicap", size: 700 },
+      { text: "accessible", size: 650 },
+      { text: "reservation", size: 600 },
+      { text: "takeout", size: 550 },
+      { text: "delivery", size: 500 },
+      { text: "credit", size: 450 },
+      { text: "cash", size: 400 },
+      { text: "tip", size: 350 },
+      { text: "manager", size: 300 },
+      { text: "owner", size: 250 },
+      { text: "chef", size: 200 },
+    ],
+  };
+
   const handleGoBack = () => {
     if (onBack) onBack();
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const loadDemoData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "http://192.168.37.177:5001/api/review/word-cloud-analysis"
-        );
-        const data = await response.json();
 
-        if (data && data.results) {
-          console.log("Data received:", data.results);
-          setWordData(data.results);
+        /*
+      const response = await fetch(
+        "http://192.168.37.177:5001/api/review/word-cloud-analysis"
+      );
+      const data = await response.json();
+      
+      if (data && data.results) {
+        console.log("Data received:", data.results);
+        setWordData(data.results);
+      } else {
+        throw new Error("Invalid data structure received from API");
+      }
+      */
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        if (demoWordData && demoWordData.results) {
+          console.log("Demo data loaded:", demoWordData.results);
+          setWordData(demoWordData.results);
         } else {
-          throw new Error("Invalid data structure received from API");
+          throw new Error("Invalid demo data structure");
         }
 
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching data:", err);
-        setError(`Failed to fetch data: ${err.message}`);
+        console.error("Error loading demo data:", err);
+        setError(`Failed to load data: ${err.message}`);
         setLoading(false);
       }
     };
 
-    fetchData();
+    loadDemoData();
   }, []);
 
   const getWordColor = (index) => {
@@ -54,7 +150,6 @@ const WordCloud = ({ onBack }) => {
   const createBarChart = () => {
     if (!barChartRef.current || wordData.length === 0) return;
 
-    // Clear previous chart
     d3.select(barChartRef.current).selectAll("*").remove();
 
     const data = wordData.slice(0, 20);
@@ -73,15 +168,13 @@ const WordCloud = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Enhanced scales
     const x = d3.scaleBand().range([0, width]).padding(0.2);
 
     const y = d3.scaleLinear().range([height, 0]);
 
     x.domain(data.map((d) => d.text));
-    y.domain([0, d3.max(data, (d) => d.size) * 1.1]); // Add 10% padding
+    y.domain([0, d3.max(data, (d) => d.size) * 1.1]);
 
-    // Add X axis with improved visibility
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -94,7 +187,6 @@ const WordCloud = ({ onBack }) => {
       .style("font-weight", "bold")
       .style("fill", "#000000");
 
-    // Add Y axis with improved visibility
     svg
       .append("g")
       .call(d3.axisLeft(y).ticks(10).tickFormat(d3.format(",.0f")))
@@ -104,7 +196,6 @@ const WordCloud = ({ onBack }) => {
       .style("font-weight", "bold")
       .style("fill", "#000000");
 
-    // Ensure axis lines are visible
     svg
       .selectAll(".domain")
       .style("stroke", "#000000")
@@ -115,7 +206,6 @@ const WordCloud = ({ onBack }) => {
       .style("stroke", "#000000")
       .style("stroke-width", "1px");
 
-    // Add X axis label
     svg
       .append("text")
       .attr("text-anchor", "middle")
@@ -126,7 +216,6 @@ const WordCloud = ({ onBack }) => {
       .style("fill", "#000000")
       .text("Words");
 
-    // Add Y axis label
     svg
       .append("text")
       .attr("text-anchor", "middle")
@@ -138,7 +227,6 @@ const WordCloud = ({ onBack }) => {
       .style("fill", "#000000")
       .text("Frequency");
 
-    // Add gradient definitions
     const gradient = svg
       .append("defs")
       .append("linearGradient")
@@ -156,7 +244,6 @@ const WordCloud = ({ onBack }) => {
       .attr("offset", "100%")
       .attr("stop-color", "#1D4ED8");
 
-    // Enhanced bars with animation and interaction
     svg
       .selectAll(".bar")
       .data(data)
@@ -174,7 +261,6 @@ const WordCloud = ({ onBack }) => {
       .attr("y", (d) => y(d.size))
       .attr("height", (d) => height - y(d.size));
 
-    // Add value labels on top of bars
     svg
       .selectAll(".label")
       .data(data)
@@ -194,7 +280,6 @@ const WordCloud = ({ onBack }) => {
       .delay((d, i) => i * 50)
       .style("opacity", 1);
 
-    // Add hover effects
     svg
       .selectAll(".bar")
       .on("mouseover", function (event, d) {
@@ -205,7 +290,6 @@ const WordCloud = ({ onBack }) => {
           .attr("stroke", "#000000")
           .attr("stroke-width", 2);
 
-        // Highlight the corresponding label
         svg
           .selectAll(".label")
           .filter((label) => label.text === d.text)
@@ -221,7 +305,6 @@ const WordCloud = ({ onBack }) => {
           .style("filter", "none")
           .attr("stroke-width", 0);
 
-        // Reset label
         svg
           .selectAll(".label")
           .filter((label) => label.text === d.text)
@@ -306,7 +389,6 @@ const WordCloud = ({ onBack }) => {
         Word Cloud Analysis
       </h1>
 
-      {/* Word Cloud Section */}
       <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
         <div
           ref={wordCloudRef}
@@ -351,7 +433,6 @@ const WordCloud = ({ onBack }) => {
         `}</style>
       </div>
 
-      {/* Bar Chart Section */}
       <div className="bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">
           Top 20 Most Frequent Words

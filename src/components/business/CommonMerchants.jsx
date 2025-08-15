@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+//import axios from "axios";
 import * as d3 from "d3";
 import { IoArrowBack } from "react-icons/io5";
 
@@ -10,6 +10,24 @@ const CommonMerchants = ({ onBack }) => {
   const radialChartRef = useRef();
   const lineChartRef = useRef();
 
+  const demoData = [
+    { name: "McDonald's", count: 450, averageRating: 3.8 },
+    { name: "Starbucks", count: 380, averageRating: 4.2 },
+    { name: "Subway", count: 320, averageRating: 3.5 },
+    { name: "Pizza Hut", count: 290, averageRating: 3.9 },
+    { name: "KFC", count: 275, averageRating: 3.6 },
+    { name: "Burger King", count: 260, averageRating: 3.4 },
+    { name: "Domino's Pizza", count: 245, averageRating: 4.0 },
+    { name: "Taco Bell", count: 230, averageRating: 3.7 },
+    { name: "Dunkin'", count: 220, averageRating: 4.1 },
+    { name: "Wendy's", count: 200, averageRating: 3.8 },
+    { name: "Papa John's", count: 185, averageRating: 3.9 },
+    { name: "Chipotle", count: 170, averageRating: 4.3 },
+    { name: "Panera Bread", count: 155, averageRating: 4.0 },
+    { name: "Arby's", count: 140, averageRating: 3.5 },
+    { name: "Jack in the Box", count: 125, averageRating: 3.3 },
+  ];
+
   const handleGoBack = () => {
     if (onBack) onBack();
   };
@@ -18,11 +36,16 @@ const CommonMerchants = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "http://192.168.37.177:5001/api/business/top-merchants"
-        );
-        setMerchants(response.data);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setMerchants(demoData);
         setLoading(false);
+
+        // const response = await axios.get(
+        //   "http://192.168.37.177:5001/api/business/top-merchants"
+        // );
+        // setMerchants(response.data);
+        // setLoading(false);
       } catch (err) {
         setError("Failed to fetch merchant data");
         setLoading(false);
@@ -65,7 +88,6 @@ const CommonMerchants = ({ onBack }) => {
       .append("text")
       .attr("text-anchor", "middle")
       .attr("y", -height / 2 + 20)
-      .text("Top 10 Merchants by Count")
       .style("font-size", "18px")
       .style("font-weight", "bold")
       .style("fill", "#333")

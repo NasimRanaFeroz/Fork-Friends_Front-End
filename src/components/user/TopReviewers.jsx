@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import * as d3 from 'd3';
-import axios from 'axios';
+import React, { useEffect, useRef, useState } from "react";
+import * as d3 from "d3";
+import axios from "axios";
 import { IoArrowBack } from "react-icons/io5";
-
 
 const TopReviewers = ({ onBack }) => {
   const [data, setData] = useState([]);
@@ -10,6 +9,78 @@ const TopReviewers = ({ onBack }) => {
   const [error, setError] = useState(null);
   const svgRef = useRef();
 
+  const demoData = [
+    {
+      name: "Michael Chen",
+      review_count: 2847,
+      user_id: "reviewer_001",
+      average_rating: 4.2,
+      join_date: "2019-01-15",
+    },
+    {
+      name: "Sarah Rodriguez",
+      review_count: 2634,
+      user_id: "reviewer_002",
+      average_rating: 3.8,
+      join_date: "2018-06-22",
+    },
+    {
+      name: "David Thompson",
+      review_count: 2451,
+      user_id: "reviewer_003",
+      average_rating: 4.1,
+      join_date: "2020-03-08",
+    },
+    {
+      name: "Jennifer Kim",
+      review_count: 2298,
+      user_id: "reviewer_004",
+      average_rating: 4.5,
+      join_date: "2019-09-14",
+    },
+    {
+      name: "Robert Martinez",
+      review_count: 2156,
+      user_id: "reviewer_005",
+      average_rating: 3.9,
+      join_date: "2018-11-03",
+    },
+    {
+      name: "Amanda Wilson",
+      review_count: 1987,
+      user_id: "reviewer_006",
+      average_rating: 4.3,
+      join_date: "2020-07-19",
+    },
+    {
+      name: "James Anderson",
+      review_count: 1834,
+      user_id: "reviewer_007",
+      average_rating: 4.0,
+      join_date: "2019-12-05",
+    },
+    {
+      name: "Lisa Garcia",
+      review_count: 1692,
+      user_id: "reviewer_008",
+      average_rating: 4.4,
+      join_date: "2021-02-28",
+    },
+    {
+      name: "Christopher Lee",
+      review_count: 1578,
+      user_id: "reviewer_009",
+      average_rating: 3.7,
+      join_date: "2020-05-16",
+    },
+    {
+      name: "Maria Gonzalez",
+      review_count: 1425,
+      user_id: "reviewer_010",
+      average_rating: 4.2,
+      join_date: "2021-08-11",
+    },
+  ];
 
   const handleGoBack = () => {
     if (onBack) onBack();
@@ -19,14 +90,26 @@ const TopReviewers = ({ onBack }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://192.168.37.177:5001/api/user/top-reviewers');
-        const sortedData = response.data.sort((a, b) => b.review_count - a.review_count);
-        setData(sortedData);
-        setLoading(false);
+
+        // const response = await axios.get(
+        //   "http://192.168.37.177:5001/api/user/top-reviewers"
+        // );
+        // const sortedData = response.data.sort(
+        //   (a, b) => b.review_count - a.review_count
+        // );
+        // setData(sortedData);
+
+        setTimeout(() => {
+          const sortedData = demoData.sort(
+            (a, b) => b.review_count - a.review_count
+          );
+          setData(sortedData);
+          setLoading(false);
+        }, 1000);
       } catch (err) {
-        setError('Failed to fetch top reviewers data');
+        setError("Failed to fetch top reviewers data");
         setLoading(false);
-        console.error('Error fetching data:', err);
+        console.error("Error fetching data:", err);
       }
     };
 
@@ -42,166 +125,181 @@ const TopReviewers = ({ onBack }) => {
   const drawChart = () => {
     d3.select(svgRef.current).selectAll("*").remove();
 
-    const margin = { top: 40, right: 30, bottom: 60, left: 120 }; // Increased margins
+    const margin = { top: 40, right: 30, bottom: 60, left: 120 };
     const width = 800 - margin.left - margin.right;
     const height = 400 - margin.top - margin.bottom;
 
-    const svg = d3.select(svgRef.current)
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
+    const svg = d3
+      .select(svgRef.current)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.review_count) * 1.1])
+    const x = d3
+      .scaleLinear()
+      .domain([0, d3.max(data, (d) => d.review_count) * 1.1])
       .range([0, width]);
 
-    const y = d3.scaleBand()
-      .domain(data.map(d => d.name))
+    const y = d3
+      .scaleBand()
+      .domain(data.map((d) => d.name))
       .range([0, height])
       .padding(0.3);
 
-    // Add X axis with improved visibility
-    svg.append('g')
-      .attr('transform', `translate(0,${height})`)
+    svg
+      .append("g")
+      .attr("transform", `translate(0,${height})`)
       .call(d3.axisBottom(x).ticks(5))
-      .selectAll('text')
-      .style('font-size', '12px')
-      .style('fill', '#333')
-      .attr('dy', '1em'); // Move text slightly down
+      .selectAll("text")
+      .style("font-size", "12px")
+      .style("fill", "#333")
+      .attr("dy", "1em");
 
-    // Add X axis label
-    svg.append('text')
-      .attr('x', width / 2)
-      .attr('y', height + margin.bottom - 10)
-      .attr('text-anchor', 'middle')
-      .style('font-size', '14px')
-      .style('fill', '#333')
-      .text('Number of Reviews');
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", height + margin.bottom - 10)
+      .attr("text-anchor", "middle")
+      .style("font-size", "14px")
+      .style("fill", "#333")
+      .text("Number of Reviews");
 
-    // Add Y axis with improved visibility
-    svg.append('g')
+    svg
+      .append("g")
       .call(d3.axisLeft(y))
-      .selectAll('text')
-      .style('font-size', '12px')
-      .style('fill', '#333')
-      .style('font-weight', 'bold')
-      .attr('dx', '-0.5em'); // Move text slightly left
+      .selectAll("text")
+      .style("font-size", "12px")
+      .style("fill", "#333")
+      .style("font-weight", "bold")
+      .attr("dx", "-0.5em");
 
-    // Add title
-    svg.append('text')
-      .attr('x', width / 2)
-      .attr('y', -margin.top / 2)
-      .attr('text-anchor', 'middle')
-      .style('font-size', '18px')
-      .style('font-weight', 'bold')
-      .style('fill', '#333')
-      .text('Top Reviewers');
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", -margin.top / 2)
+      .attr("text-anchor", "middle")
+      .style("font-size", "18px")
+      .style("font-weight", "bold")
+      .style("fill", "#333")
+      .text("Top Reviewers");
 
-    const colorScale = d3.scaleOrdinal()
-      .domain(data.map(d => d.name))
+    const colorScale = d3
+      .scaleOrdinal()
+      .domain(data.map((d) => d.name))
       .range(d3.schemeCategory10);
 
-    // Create and animate bars
-    svg.selectAll('.bar')
+    svg
+      .selectAll(".bar")
       .data(data)
       .enter()
-      .append('rect')
-      .attr('class', 'bar')
-      .attr('y', d => y(d.name))
-      .attr('height', y.bandwidth())
-      .attr('x', 0)
-      .attr('width', 0)
-      .attr('fill', d => colorScale(d.name))
-      .attr('rx', 4)
-      .attr('ry', 4)
+      .append("rect")
+      .attr("class", "bar")
+      .attr("y", (d) => y(d.name))
+      .attr("height", y.bandwidth())
+      .attr("x", 0)
+      .attr("width", 0)
+      .attr("fill", (d) => colorScale(d.name))
+      .attr("rx", 4)
+      .attr("ry", 4)
       .transition()
       .duration(800)
       .delay((d, i) => i * 100)
-      .attr('width', d => x(d.review_count));
+      .attr("width", (d) => x(d.review_count));
 
-    // Add review count labels
-    svg.selectAll('.label')
+    svg
+      .selectAll(".label")
       .data(data)
       .enter()
-      .append('text')
-      .attr('class', 'label')
-      .attr('x', d => x(d.review_count) - 40)
-      .attr('y', d => y(d.name) + y.bandwidth() / 2 + 5)
-      .style('font-size', '12px')
-      .style('font-weight', 'bold')
-      .style('fill', 'white')
-      .style('opacity', 0)
-      .text(d => d3.format(",")(d.review_count))
+      .append("text")
+      .attr("class", "label")
+      .attr("x", (d) => x(d.review_count) - 40)
+      .attr("y", (d) => y(d.name) + y.bandwidth() / 2 + 5)
+      .style("font-size", "12px")
+      .style("font-weight", "bold")
+      .style("fill", "white")
+      .style("opacity", 0)
+      .text((d) => d3.format(",")(d.review_count))
       .transition()
       .duration(800)
       .delay((d, i) => i * 100 + 300)
-      .style('opacity', 1);
+      .style("opacity", 1);
 
-    // Hover effects
-    svg.selectAll('.bar')
-      .on('mouseover', function (event, d) {
+    svg
+      .selectAll(".bar")
+      .on("mouseover", function (event, d) {
         d3.select(this)
           .transition()
           .duration(300)
-          .attr('opacity', 0.8)
-          .attr('stroke', '#333')
-          .attr('stroke-width', 2);
+          .attr("opacity", 0.8)
+          .attr("stroke", "#333")
+          .attr("stroke-width", 2);
 
-        const tooltip = svg.append('g')
-          .attr('class', 'tooltip')
-          .attr('transform', `translate(${x(d.review_count) / 2}, ${y(d.name) - 15})`);
+        const tooltip = svg
+          .append("g")
+          .attr("class", "tooltip")
+          .attr(
+            "transform",
+            `translate(${x(d.review_count) / 2}, ${y(d.name) - 15})`
+          );
 
-        tooltip.append('rect')
-          .attr('width', 160)
-          .attr('height', 50)
-          .attr('rx', 5)
-          .attr('ry', 5)
-          .attr('fill', 'rgba(0,0,0,0.7)');
+        tooltip
+          .append("rect")
+          .attr("width", 160)
+          .attr("height", 50)
+          .attr("rx", 5)
+          .attr("ry", 5)
+          .attr("fill", "rgba(0,0,0,0.7)");
 
-        tooltip.append('text')
-          .attr('x', 80)
-          .attr('y', 20)
-          .attr('text-anchor', 'middle')
-          .attr('fill', 'white')
-          .style('font-weight', 'bold')
+        tooltip
+          .append("text")
+          .attr("x", 80)
+          .attr("y", 20)
+          .attr("text-anchor", "middle")
+          .attr("fill", "white")
+          .style("font-weight", "bold")
           .text(`${d.name}`);
 
-        tooltip.append('text')
-          .attr('x', 80)
-          .attr('y', 40)
-          .attr('text-anchor', 'middle')
-          .attr('fill', 'white')
+        tooltip
+          .append("text")
+          .attr("x", 80)
+          .attr("y", 40)
+          .attr("text-anchor", "middle")
+          .attr("fill", "white")
           .text(`Reviews: ${d3.format(",")(d.review_count)}`);
       })
-      .on('mouseout', function () {
+      .on("mouseout", function () {
         d3.select(this)
           .transition()
           .duration(300)
-          .attr('opacity', 1)
-          .attr('stroke', 'none');
+          .attr("opacity", 1)
+          .attr("stroke", "none");
 
-        svg.select('.tooltip').remove();
+        svg.select(".tooltip").remove();
       });
   };
 
   return (
-    <div className="top-reviewers-container" style={{
-      maxWidth: '850px',
-      margin: '0 auto',
-      padding: '20px',
-      backgroundColor: 'white',
-      borderRadius: '8px',
-      position: 'relative',
-      boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-    }}>
+    <div
+      className="top-reviewers-container"
+      style={{
+        maxWidth: "850px",
+        margin: "0 auto",
+        padding: "20px",
+        backgroundColor: "white",
+        borderRadius: "8px",
+        position: "relative",
+        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+      }}
+    >
       <button
         onClick={handleGoBack}
         className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
-        ref={el => {
+        ref={(el) => {
           if (el) {
             setTimeout(() => {
-              el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+              el.style.transition =
+                "opacity 0.6s ease-out, transform 0.6s ease-out";
               el.style.opacity = 1;
               el.style.transform = "translateX(0)";
             }, 300);
@@ -212,8 +310,9 @@ const TopReviewers = ({ onBack }) => {
         <IoArrowBack className="text-gray-700 text-lg" />
         <span className="text-gray-700 font-medium">Back to Dashboard</span>
       </button>
-      <h1 className="text-3xl font-bold text-center text-gray-800">Top Review Analysis</h1>
-
+      <h1 className="text-3xl font-bold text-center text-gray-800">
+        Top Review Analysis
+      </h1>
 
       {loading && (
         <div className="flex justify-center items-center h-64">
@@ -230,20 +329,27 @@ const TopReviewers = ({ onBack }) => {
 
       {!loading && !error && (
         <>
-          <div style={{ overflowX: 'auto' }}>
+          <div style={{ overflowX: "auto" }}>
             <svg ref={svgRef}></svg>
           </div>
 
-          <div style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
-            <p>This chart displays our top reviewers based on the total number of reviews submitted.</p>
+          <div style={{ marginTop: "20px", fontSize: "14px", color: "#666" }}>
+            <p>
+              This chart displays our top reviewers based on the total number of
+              reviews submitted.
+            </p>
           </div>
         </>
       )}
 
       <style jsx>{`
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>

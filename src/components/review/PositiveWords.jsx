@@ -9,6 +9,19 @@ const PositiveWords = ({ onBack }) => {
   const [activeWord, setActiveWord] = useState(null);
   const chartRef = useRef(null);
 
+  const demoData = [
+    { _id: "great", count: 156789 },
+    { _id: "excellent", count: 143265 },
+    { _id: "amazing", count: 132456 },
+    { _id: "tasty", count: 118743 },
+    { _id: "wonderful", count: 105632 },
+    { _id: "perfect", count: 94587 },
+    { _id: "outstanding", count: 83421 },
+    { _id: "awesome", count: 76543 },
+    { _id: "superb", count: 68765 },
+    { _id: "delicious", count: 61234 },
+  ];
+
   const handleGoBack = () => {
     if (onBack) onBack();
   };
@@ -16,15 +29,18 @@ const PositiveWords = ({ onBack }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://192.168.37.177:5001/api/review/top-10-positive-words"
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setWords(data);
-        setLoading(false);
+        // const response = await fetch(
+        //   "http://192.168.37.177:5001/api/review/top-10-positive-words"
+        // );
+        // if (!response.ok) {
+        //   throw new Error("Network response was not ok");
+        // }
+        // const data = await response.json();
+
+        setTimeout(() => {
+          setWords(demoData);
+          setLoading(false);
+        }, 1000);
       } catch (err) {
         setError(err.message);
         setLoading(false);
@@ -41,14 +57,12 @@ const PositiveWords = ({ onBack }) => {
   }, [words, activeWord]);
 
   const createHorizontalBarChart = () => {
-    // Clear any existing chart
     d3.select(chartRef.current).selectAll("*").remove();
 
     const margin = { top: 50, right: 150, bottom: 50, left: 150 };
     const width = 800 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
-    // Create SVG with responsive container
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -63,7 +77,6 @@ const PositiveWords = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Add gradient definition
     const defs = svg.append("defs");
     const gradient = defs
       .append("linearGradient")
@@ -80,14 +93,12 @@ const PositiveWords = ({ onBack }) => {
       .attr("offset", "100%")
       .attr("stop-color", "#8B5CF6");
 
-    // Y axis (words)
     const y = d3
       .scaleBand()
       .range([0, height])
       .domain(words.map((d) => d._id))
       .padding(0.3);
 
-    // Add Y axis with enhanced text visibility
     const yAxis = svg.append("g").call(d3.axisLeft(y));
 
     yAxis
@@ -107,13 +118,11 @@ const PositiveWords = ({ onBack }) => {
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
 
-    // X axis (counts)
     const x = d3
       .scaleLinear()
       .domain([0, d3.max(words, (d) => d.count) * 1.1])
       .range([0, width]);
 
-    // Add X axis with enhanced text visibility
     const xAxis = svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -141,7 +150,6 @@ const PositiveWords = ({ onBack }) => {
       .style("stroke", "#9CA3AF")
       .style("stroke-width", "1.5px");
 
-    // X axis label
     svg
       .append("text")
       .attr("text-anchor", "middle")
@@ -152,7 +160,6 @@ const PositiveWords = ({ onBack }) => {
       .style("font-weight", "bold")
       .style("fill", "#4B5563");
 
-    // Add bars with animation
     const bars = svg
       .selectAll("myRect")
       .data(words)
@@ -161,7 +168,7 @@ const PositiveWords = ({ onBack }) => {
       .attr("y", (d) => y(d._id))
       .attr("height", y.bandwidth())
       .attr("x", 0)
-      .attr("width", 0) // Start with width 0 for animation
+      .attr("width", 0)
       .attr("fill", "url(#bar-gradient)")
       .attr("rx", 6)
       .attr("ry", 6)
@@ -190,7 +197,6 @@ const PositiveWords = ({ onBack }) => {
           .attr("y", (d) => y(d._id));
       });
 
-    // Animate bars on load
     bars
       .transition()
       .duration(1000)
@@ -198,7 +204,6 @@ const PositiveWords = ({ onBack }) => {
       .attr("width", (d) => x(d.count))
       .ease(d3.easeBounceOut);
 
-    // Add count labels
     svg
       .selectAll(".count-label")
       .data(words)
@@ -218,7 +223,6 @@ const PositiveWords = ({ onBack }) => {
       .delay((d, i) => 1000 + i * 100)
       .attr("opacity", 1);
 
-    // Add percentage labels
     const totalCount = words.reduce((sum, w) => sum + w.count, 0);
     svg
       .selectAll(".percentage-label")
@@ -238,7 +242,6 @@ const PositiveWords = ({ onBack }) => {
       .delay((d, i) => 1200 + i * 100)
       .attr("opacity", 1);
 
-    // Add title with animation
     svg
       .append("text")
       .attr("x", width / 2)
@@ -253,7 +256,6 @@ const PositiveWords = ({ onBack }) => {
       .duration(1000)
       .attr("opacity", 1);
 
-    // Add decorative elements
     svg
       .append("path")
       .attr("d", `M0,${height + 2} L${width},${height + 2}`)
@@ -261,7 +263,6 @@ const PositiveWords = ({ onBack }) => {
       .attr("stroke-width", 3)
       .attr("stroke-dasharray", "5,5");
 
-    // Add grid lines
     svg
       .selectAll("grid-line")
       .data(x.ticks(5))
@@ -362,12 +363,10 @@ const PositiveWords = ({ onBack }) => {
             </p>
           </div>
 
-          {/* Chart */}
           <div className="p-6 mb-8">
             <div ref={chartRef} className="w-full overflow-x-auto"></div>
           </div>
 
-          {/* Stats Cards */}
           <div className="px-6 pb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
               Word Statistics
@@ -413,7 +412,6 @@ const PositiveWords = ({ onBack }) => {
             </div>
           </div>
 
-          {/* Data Table */}
           <div className="px-6 pb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
               Detailed Word Data
@@ -497,7 +495,6 @@ const PositiveWords = ({ onBack }) => {
             </div>
           </div>
 
-          {/* Footer */}
           <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
             <p className="text-sm text-gray-500 text-center">
               Data refreshed on {new Date().toLocaleDateString()} |

@@ -55,7 +55,7 @@ const Distribution = ({ onBack }) => {
       setUsingDemoData(false);
       */
 
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         setData(demoData);
         setUsingDemoData(true);
 

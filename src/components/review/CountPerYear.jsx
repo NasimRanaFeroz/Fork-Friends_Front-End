@@ -7,9 +7,29 @@ const CountPerYear = ({ onBack }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeChart, setActiveChart] = useState("area");
-
   const chartRef = useRef(null);
   const statsRef = useRef(null);
+
+  const demoData = [
+    { _id: 2005, count: 12500 },
+    { _id: 2006, count: 28900 },
+    { _id: 2007, count: 56780 },
+    { _id: 2008, count: 98450 },
+    { _id: 2009, count: 145600 },
+    { _id: 2010, count: 234500 },
+    { _id: 2011, count: 389200 },
+    { _id: 2012, count: 567800 },
+    { _id: 2013, count: 789400 },
+    { _id: 2014, count: 1123400 },
+    { _id: 2015, count: 1456700 },
+    { _id: 2016, count: 1789300 },
+    { _id: 2017, count: 2134600 },
+    { _id: 2018, count: 2489200 },
+    { _id: 2019, count: 2756800 },
+    { _id: 2020, count: 1987500 },
+    { _id: 2021, count: 1654300 },
+    { _id: 2022, count: 1423700 },
+  ];
 
   const handleGoBack = () => {
     if (onBack) onBack();
@@ -19,17 +39,21 @@ const CountPerYear = ({ onBack }) => {
     const fetchYearlyReviews = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(
-          "http://192.168.37.177:5001/api/review/count-by-year"
-        );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        // const response = await fetch(
+        //   "http://192.168.37.177:5001/api/review/count-by-year"
+        // );
+        //
+        // if (!response.ok) {
+        //   throw new Error(`HTTP error! Status: ${response.status}`);
+        // }
+        //
+        // const data = await response.json();
 
-        const data = await response.json();
-        setYearlyData(data);
-        setIsLoading(false);
+        setTimeout(() => {
+          setYearlyData(demoData);
+          setIsLoading(false);
+        }, 1000);
       } catch (err) {
         setError(err.message);
         setIsLoading(false);
@@ -39,7 +63,6 @@ const CountPerYear = ({ onBack }) => {
     fetchYearlyReviews();
   }, []);
 
-  // Render chart when data is available
   useEffect(() => {
     if (yearlyData.length > 0 && !isLoading) {
       if (activeChart === "area") {
@@ -54,14 +77,12 @@ const CountPerYear = ({ onBack }) => {
   const renderAreaChart = () => {
     if (!chartRef.current) return;
 
-    // Clear any existing SVG
     d3.select(chartRef.current).selectAll("*").remove();
 
     const margin = { top: 40, right: 30, bottom: 60, left: 80 };
     const width = chartRef.current.clientWidth - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
-    // Create SVG
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -70,7 +91,6 @@ const CountPerYear = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Add background grid
     svg
       .append("g")
       .attr("class", "grid")
@@ -108,19 +128,16 @@ const CountPerYear = ({ onBack }) => {
       .attr("stroke", "#e5e7eb")
       .attr("stroke-opacity", 0.5);
 
-    // X scale
     const x = d3
       .scaleTime()
       .domain(d3.extent(yearlyData, (d) => new Date(d._id, 0)))
       .range([0, width]);
 
-    // Y scale
     const y = d3
       .scaleLinear()
       .domain([0, d3.max(yearlyData, (d) => d.count) * 1.1])
       .range([height, 0]);
 
-    // Add X axis
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -129,14 +146,12 @@ const CountPerYear = ({ onBack }) => {
       .style("font-size", "12px")
       .style("font-weight", "500");
 
-    // Add Y axis
     svg
       .append("g")
       .call(d3.axisLeft(y).tickFormat((d) => d3.format(",.0f")(d)))
       .selectAll("text")
       .style("font-size", "12px");
 
-    // Y axis label
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -147,7 +162,6 @@ const CountPerYear = ({ onBack }) => {
       .style("font-weight", "500")
       .text("Number of Reviews");
 
-    // Create a tooltip
     const tooltip = d3
       .select(chartRef.current)
       .append("div")
@@ -157,7 +171,6 @@ const CountPerYear = ({ onBack }) => {
       )
       .style("max-width", "200px");
 
-    // Add the area
     svg
       .append("path")
       .datum(yearlyData)
@@ -183,7 +196,6 @@ const CountPerYear = ({ onBack }) => {
           .y1((d) => y(d.count))
       );
 
-    // Create gradient
     const gradient = svg
       .append("defs")
       .append("linearGradient")
@@ -205,7 +217,6 @@ const CountPerYear = ({ onBack }) => {
       .attr("stop-color", "#4f46e5")
       .attr("stop-opacity", 0.1);
 
-    // Add the line
     const line = d3
       .line()
       .x((d) => x(new Date(d._id, 0)))
@@ -220,7 +231,6 @@ const CountPerYear = ({ onBack }) => {
       .attr("stroke-width", 3)
       .attr("d", line);
 
-    // Animate the line
     const pathLength = path.node().getTotalLength();
 
     path
@@ -230,7 +240,6 @@ const CountPerYear = ({ onBack }) => {
       .duration(2000)
       .attr("stroke-dashoffset", 0);
 
-    // Add the points
     svg
       .selectAll(".dot")
       .data(yearlyData)
@@ -298,7 +307,6 @@ const CountPerYear = ({ onBack }) => {
       .delay((d, i) => 2000 + i * 100)
       .attr("r", 5);
 
-    // Add title
     svg
       .append("text")
       .attr("x", width / 2)
@@ -308,8 +316,6 @@ const CountPerYear = ({ onBack }) => {
       .style("font-weight", "bold")
       .text("Review Volume Growth (2005-2022)");
 
-    // Add annotations for key events or milestones
-    // Find the year with highest growth
     let maxGrowthYear = null;
     let maxGrowthRate = 0;
 
@@ -325,7 +331,6 @@ const CountPerYear = ({ onBack }) => {
     }
 
     if (maxGrowthYear) {
-      // Add annotation for highest growth year
       svg
         .append("line")
         .attr("x1", x(new Date(maxGrowthYear._id, 0)))
@@ -369,13 +374,11 @@ const CountPerYear = ({ onBack }) => {
         .style("opacity", 1);
     }
 
-    // Find the peak year
     const peakYear = yearlyData.reduce(
       (max, year) => (year.count > max.count ? year : max),
       yearlyData[0]
     );
 
-    // Add annotation for peak year
     svg
       .append("line")
       .attr("x1", x(new Date(peakYear._id, 0)))
@@ -422,14 +425,12 @@ const CountPerYear = ({ onBack }) => {
   const renderBarChart = () => {
     if (!chartRef.current) return;
 
-    // Clear any existing SVG
     d3.select(chartRef.current).selectAll("*").remove();
 
     const margin = { top: 40, right: 30, bottom: 60, left: 80 };
     const width = chartRef.current.clientWidth - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
-    // Create SVG
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -438,7 +439,6 @@ const CountPerYear = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Add background grid
     svg
       .append("g")
       .attr("class", "grid")
@@ -476,20 +476,17 @@ const CountPerYear = ({ onBack }) => {
       .attr("stroke", "#e5e7eb")
       .attr("stroke-opacity", 0.5);
 
-    // X scale
     const x = d3
       .scaleBand()
       .domain(yearlyData.map((d) => d._id))
       .range([0, width])
       .padding(0.2);
 
-    // Y scale
     const y = d3
       .scaleLinear()
       .domain([0, d3.max(yearlyData, (d) => d.count) * 1.1])
       .range([height, 0]);
 
-    // Add X axis
     svg
       .append("g")
       .attr("transform", `translate(0,${height})`)
@@ -500,14 +497,12 @@ const CountPerYear = ({ onBack }) => {
       .style("font-size", "12px")
       .style("font-weight", "500");
 
-    // Add Y axis
     svg
       .append("g")
       .call(d3.axisLeft(y).tickFormat((d) => d3.format(",.0f")(d)))
       .selectAll("text")
       .style("font-size", "12px");
 
-    // Y axis label
     svg
       .append("text")
       .attr("transform", "rotate(-90)")
@@ -518,7 +513,6 @@ const CountPerYear = ({ onBack }) => {
       .style("font-weight", "500")
       .text("Number of Reviews");
 
-    // Create a tooltip
     const tooltip = d3
       .select(chartRef.current)
       .append("div")
@@ -528,7 +522,6 @@ const CountPerYear = ({ onBack }) => {
       )
       .style("max-width", "200px");
 
-    // Color scale based on growth rate
     const colorScale = d3
       .scaleLinear()
       .domain([
@@ -537,7 +530,6 @@ const CountPerYear = ({ onBack }) => {
       ])
       .range(["#818cf8", "#4f46e5"]);
 
-    // Add bars with animation
     svg
       .selectAll(".bar")
       .data(yearlyData)
@@ -546,10 +538,10 @@ const CountPerYear = ({ onBack }) => {
       .attr("class", "bar")
       .attr("x", (d) => x(d._id))
       .attr("width", x.bandwidth())
-      .attr("y", height) // Start from bottom
-      .attr("height", 0) // Start with height 0
+      .attr("y", height)
+      .attr("height", 0)
       .attr("fill", (d) => colorScale(d.count))
-      .attr("rx", 4) // Rounded corners
+      .attr("rx", 4)
       .style("cursor", "pointer")
       .on("mouseover", function (event, d) {
         d3.select(this).transition().duration(200).attr("fill", "#3730a3");
@@ -603,13 +595,12 @@ const CountPerYear = ({ onBack }) => {
 
         tooltip.style("opacity", 0);
       })
-      .transition() // Add animation
+      .transition()
       .duration(800)
       .delay((d, i) => i * 100)
       .attr("y", (d) => y(d.count))
       .attr("height", (d) => height - y(d.count));
 
-    // Add title
     svg
       .append("text")
       .attr("x", width / 2)
@@ -623,14 +614,12 @@ const CountPerYear = ({ onBack }) => {
   const renderStats = () => {
     if (!statsRef.current) return;
 
-    // Calculate statistics
     const totalReviews = d3.sum(yearlyData, (d) => d.count);
     const peakYear = yearlyData.reduce(
       (max, year) => (year.count > max.count ? year : max),
       yearlyData[0]
     );
 
-    // Calculate average annual growth rate
     let totalGrowthRate = 0;
     let growthYears = 0;
 
@@ -647,7 +636,6 @@ const CountPerYear = ({ onBack }) => {
 
     const avgAnnualGrowth = totalGrowthRate / growthYears;
 
-    // Find year with highest growth
     let maxGrowthYear = null;
     let maxGrowthRate = 0;
 
@@ -662,7 +650,6 @@ const CountPerYear = ({ onBack }) => {
       }
     }
 
-    // Animated counter function
     const animateCounter = (
       element,
       target,
@@ -692,7 +679,6 @@ const CountPerYear = ({ onBack }) => {
       requestAnimationFrame(updateCounter);
     };
 
-    // Start animations for each stat after a delay
     setTimeout(() => {
       const totalReviewsElement = document.getElementById("total-reviews");
       const peakYearElement = document.getElementById("peak-year");
@@ -714,9 +700,8 @@ const CountPerYear = ({ onBack }) => {
     }, 500);
   };
 
-  // Helper function to calculate growth percentage
   const calculateGrowth = (previous, current) => {
-    if (previous === 0) return 100; // Avoid division by zero
+    if (previous === 0) return 100;
     return ((current - previous) / previous) * 100;
   };
 
@@ -733,7 +718,7 @@ const CountPerYear = ({ onBack }) => {
   <div className="relative">
     <button
       onClick={handleGoBack}
-      className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10 opacity-0 transform -translate-x-4"
+      className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-50 opacity-0 transform -translate-x-4"
       ref={(el) => {
         if (el) {
           setTimeout(() => {
@@ -766,7 +751,6 @@ const CountPerYear = ({ onBack }) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg ">
-      {/* Stats Cards */}
       <div
         ref={statsRef}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
@@ -834,7 +818,6 @@ const CountPerYear = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Chart Navigation */}
       <div className="flex justify-center mb-6">
         <div className="inline-flex rounded-md shadow-sm" role="group">
           <button
@@ -883,10 +866,8 @@ const CountPerYear = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Chart Container */}
       <div ref={chartRef} className="relative h-[500px] w-full"></div>
 
-      {/* Insights Section */}
       <div className="mt-8 bg-gray-50 p-4 rounded-lg">
         <h2 className="text-xl font-bold text-indigo-900 mb-4">Key Insights</h2>
 
@@ -971,7 +952,6 @@ const CountPerYear = ({ onBack }) => {
         )}
       </div>
 
-      {/* Download Options */}
       <div className="mt-6 flex justify-end">
         <button
           className="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 px-4 py-2 rounded-md text-sm font-medium flex items-center mr-2"
@@ -1011,7 +991,6 @@ const CountPerYear = ({ onBack }) => {
         <button
           className="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-md text-sm font-medium flex items-center"
           onClick={() => {
-            // Create CSV content
             let csvContent = "Year,Review Count,Growth Rate\n";
             yearlyData.forEach((d, i) => {
               const growthRate =
@@ -1021,7 +1000,6 @@ const CountPerYear = ({ onBack }) => {
               csvContent += `${d._id},${d.count},${growthRate}%\n`;
             });
 
-            // Create download link
             const blob = new Blob([csvContent], {
               type: "text/csv;charset=utf-8;",
             });

@@ -12,30 +12,30 @@ const ReviewAnalysis = () => {
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
 
   const analysisItems = [
-    { id: 1, title: "Number of Reviews per Year", path: "reviews-per-year" },
-    // { id: 2, title: "Useful, Funny, and Cool Reviews Count", path: "review-attributes" },
-    { id: 2, title: "User Rankings by Review Count", path: "user-rankings" },
+    { id: 1, title: "Word Association Graph", path: "word-association" },
+
     {
-      id: 3,
+      id: 2,
+      title: "Word Cloud Analysis with POS Filtering",
+      path: "word-cloud",
+    },
+    { id: 3, title: "User Rankings by Review Count", path: "user-rankings" },
+    {
+      id: 4,
       title: "Top 20 Most Common Words in Reviews",
       path: "common-words",
     },
     {
-      id: 4,
+      id: 5,
       title: "Top 10 Words from Positive Reviews",
       path: "positive-words",
     },
     {
-      id: 5,
+      id: 6,
       title: "Top 10 Words from Negative Reviews",
       path: "negative-words",
     },
-    {
-      id: 6,
-      title: "Word Cloud Analysis with POS Filtering",
-      path: "word-cloud",
-    },
-    { id: 7, title: "Word Association Graph", path: "word-association" },
+    { id: 7, title: "Number of Reviews per Year", path: "reviews-per-year" },
   ];
 
   const renderAnalysisComponent = () => {

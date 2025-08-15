@@ -9,6 +9,16 @@ const ReviewsPerYear = ({ onBack }) => {
   const chartRef = useRef(null);
   const [activeYear, setActiveYear] = useState(null);
 
+  const demoData = [
+    { year: 2018, reviewCount: 1250 },
+    { year: 2019, reviewCount: 1680 },
+    { year: 2020, reviewCount: 2100 },
+    { year: 2021, reviewCount: 1890 },
+    { year: 2022, reviewCount: 2450 },
+    { year: 2023, reviewCount: 2780 },
+    { year: 2024, reviewCount: 3120 },
+  ];
+
   const handleGoBack = () => {
     if (onBack) onBack();
   };
@@ -16,21 +26,22 @@ const ReviewsPerYear = ({ onBack }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://192.168.37.177:5001/api/review/rank-users-by-reviews"
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const result = await response.json();
+        // const response = await fetch(
+        //   "http://192.168.37.177:5001/api/review/rank-users-by-reviews"
+        // );
+        // if (!response.ok) {
+        //   throw new Error("Network response was not ok");
+        // }
+        // const result = await response.json();
 
-        // Format data for our needs
-        const formattedData = result.map((item) => ({
-          year: item.year,
-          reviewCount: item.topUsers[0].totalReviews,
-        }));
+        // const formattedData = result.map((item) => ({
+        //   year: item.year,
+        //   reviewCount: item.topUsers[0].totalReviews,
+        // }));
 
-        setData(formattedData);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        setData(demoData);
         setLoading(false);
       } catch (error) {
         setError("Error fetching data: " + error.message);
@@ -48,14 +59,12 @@ const ReviewsPerYear = ({ onBack }) => {
   }, [data, activeYear]);
 
   const createChart = () => {
-    // Clear any existing chart
     d3.select(chartRef.current).selectAll("*").remove();
 
     const margin = { top: 50, right: 50, bottom: 100, left: 120 };
     const width = 1000 - margin.left - margin.right;
     const height = 500 - margin.top - margin.bottom;
 
-    // Create SVG
     const svg = d3
       .select(chartRef.current)
       .append("svg")
@@ -64,7 +73,6 @@ const ReviewsPerYear = ({ onBack }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Add title with gradient text
     const titleGradient = svg
       .append("defs")
       .append("linearGradient")
@@ -94,7 +102,6 @@ const ReviewsPerYear = ({ onBack }) => {
       .style("fill", "url(#title-gradient)")
       .text("Number of Reviews Per Year");
 
-    // Add subtle grid lines
     svg
       .append("g")
       .attr("class", "grid")
@@ -128,7 +135,6 @@ const ReviewsPerYear = ({ onBack }) => {
       )
       .style("stroke-opacity", 0.1);
 
-    // X axis
     const x = d3
       .scaleBand()
       .range([0, width])
@@ -145,7 +151,6 @@ const ReviewsPerYear = ({ onBack }) => {
       .style("font-size", "14px")
       .style("font-weight", "bold");
 
-    // Add X axis label
     svg
       .append("text")
       .attr("text-anchor", "middle")
@@ -155,7 +160,6 @@ const ReviewsPerYear = ({ onBack }) => {
       .style("font-size", "16px")
       .style("font-weight", "bold");
 
-    // Y axis
     const y = d3
       .scaleLinear()
       .domain([0, d3.max(data, (d) => d.reviewCount) * 1.1])
@@ -172,7 +176,6 @@ const ReviewsPerYear = ({ onBack }) => {
       .selectAll("text")
       .style("font-size", "12px");
 
-    // Add Y axis label
     svg
       .append("text")
       .attr("text-anchor", "middle")
@@ -183,7 +186,6 @@ const ReviewsPerYear = ({ onBack }) => {
       .style("font-size", "16px")
       .style("font-weight", "bold");
 
-    // Create a gradient for the bars
     const gradient = svg
       .append("defs")
       .append("linearGradient")
@@ -200,7 +202,6 @@ const ReviewsPerYear = ({ onBack }) => {
       .attr("offset", "100%")
       .attr("stop-color", "#6366f1");
 
-    // Add hover gradient
     const hoverGradient = svg
       .append("defs")
       .append("linearGradient")
@@ -220,22 +221,21 @@ const ReviewsPerYear = ({ onBack }) => {
       .attr("offset", "100%")
       .attr("stop-color", "#4f46e5");
 
-    // Add bars with animation
     svg
       .selectAll("bars")
       .data(data)
       .enter()
       .append("rect")
       .attr("x", (d) => x(d.year))
-      .attr("y", height) // Start from bottom
+      .attr("y", height)
       .attr("width", x.bandwidth())
-      .attr("height", 0) // Start with height 0
+      .attr("height", 0)
       .attr("fill", (d) =>
         activeYear === d.year
           ? "url(#bar-hover-gradient)"
           : "url(#bar-gradient)"
       )
-      .attr("rx", 6) // Rounded corners
+      .attr("rx", 6)
       .attr("ry", 6)
       .attr("stroke", "#2a2a7c")
       .attr("stroke-width", (d) => (activeYear === d.year ? 2 : 0))
@@ -260,14 +260,13 @@ const ReviewsPerYear = ({ onBack }) => {
           .attr("width", x.bandwidth())
           .attr("x", x(d.year));
       })
-      .transition() // Add animation
+      .transition()
       .duration(1000)
       .delay((d, i) => i * 200)
       .attr("y", (d) => y(d.reviewCount))
       .attr("height", (d) => height - y(d.reviewCount))
       .ease(d3.easeBounceOut);
 
-    // Add value labels on top of bars with animation
     svg
       .selectAll(".label")
       .data(data)
@@ -275,20 +274,19 @@ const ReviewsPerYear = ({ onBack }) => {
       .append("text")
       .attr("class", "label")
       .attr("x", (d) => x(d.year) + x.bandwidth() / 2)
-      .attr("y", height) // Start from bottom
+      .attr("y", height)
       .attr("text-anchor", "middle")
       .text((d) => d3.format(",")(d.reviewCount))
       .style("font-size", "14px")
       .style("font-weight", "bold")
       .style("fill", "#333")
-      .style("opacity", 0) // Start invisible
-      .transition() // Add animation
+      .style("opacity", 0)
+      .transition()
       .duration(1000)
-      .delay((d, i) => i * 200 + 500) // Delay a bit more than bars
+      .delay((d, i) => i * 200 + 500)
       .attr("y", (d) => y(d.reviewCount) - 15)
       .style("opacity", 1);
 
-    // Add year-over-year change indicators
     data.forEach((d, i) => {
       if (i > 0) {
         const prevYear = data[i - 1];
@@ -298,7 +296,6 @@ const ReviewsPerYear = ({ onBack }) => {
         );
         const isPositive = change > 0;
 
-        // Add arrow
         svg
           .append("path")
           .attr(
@@ -321,7 +318,6 @@ const ReviewsPerYear = ({ onBack }) => {
           .delay(i * 200 + 1000)
           .style("opacity", 1);
 
-        // Add percentage text
         svg
           .append("text")
           .attr("x", x(d.year) + x.bandwidth() / 2)
@@ -339,14 +335,11 @@ const ReviewsPerYear = ({ onBack }) => {
       }
     });
 
-    // Add tooltip for active year
     if (activeYear) {
       const activeData = data.find((d) => d.year === activeYear);
       if (activeData) {
-        // Tooltip container
         const tooltip = svg.append("g").attr("class", "tooltip");
 
-        // Background rectangle
         tooltip
           .append("rect")
           .attr("x", x(activeYear) + x.bandwidth() / 2 - 80)
@@ -357,7 +350,6 @@ const ReviewsPerYear = ({ onBack }) => {
           .attr("rx", 8)
           .attr("ry", 8);
 
-        // Text
         tooltip
           .append("text")
           .attr("x", x(activeYear) + x.bandwidth() / 2)
@@ -403,7 +395,6 @@ const ReviewsPerYear = ({ onBack }) => {
     );
   }
 
-  // Calculate total, average, highest and lowest review counts
   const totalReviews = data.reduce((sum, item) => sum + item.reviewCount, 0);
   const avgReviews = Math.round(totalReviews / data.length);
   const highestYear = data.reduce(
@@ -446,7 +437,6 @@ const ReviewsPerYear = ({ onBack }) => {
         Reviews Per Year Analysis
       </h1>
 
-      {/* Stats cards with animations */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500 transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
           <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wider">
@@ -491,12 +481,10 @@ const ReviewsPerYear = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Chart */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8 overflow-x-auto transform transition-all duration-500 hover:shadow-xl">
         <div ref={chartRef} className="w-full min-h-96"></div>
       </div>
 
-      {/* Data table with animations */}
       <div className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-500 hover:shadow-xl">
         <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-indigo-500 to-purple-600">
           <h2 className="text-xl font-semibold text-white">
@@ -582,7 +570,6 @@ const ReviewsPerYear = ({ onBack }) => {
         </div>
       </div>
 
-      {/* Trend analysis with animations */}
       <div className="mt-8 bg-white rounded-lg shadow-lg p-6 transform transition-all duration-500 hover:shadow-xl">
         <h2 className="text-xl font-semibold text-gray-800 mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
           Review Count Trend Analysis
@@ -601,7 +588,6 @@ const ReviewsPerYear = ({ onBack }) => {
             }) compared to the previous year.`}
         </p>
 
-        {/* Growth rate visualization - enhanced sparkline */}
         <div className="mt-6">
           <h3 className="text-md font-medium text-gray-700 mb-3">
             Year-over-Year Growth Rate

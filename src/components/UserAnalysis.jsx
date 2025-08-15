@@ -11,10 +11,9 @@ const UserAnalysis = () => {
   const analysisItems = [
     { id: 1, title: "Users Joining Each Year", path: "users-per-year" },
     { id: 2, title: "Top Reviewers by Review Count", path: "top-reviewers" },
-    { id: 3, title: "Most Popular Users by Fans", path: "popular-users" },
+    //{ id: 3, title: "Most Popular Users by Fans", path: "popular-users" },
     { id: 4, title: "Elite to Regular Users Ratio", path: "elite-ratio" },
     { id: 5, title: "Total vs. Silent Users Proportion", path: "silent-users" },
-    // { id: 6, title: "Yearly User Statistics", path: "yearly-stats" },
   ];
 
   const renderAnalysisComponent = () => {

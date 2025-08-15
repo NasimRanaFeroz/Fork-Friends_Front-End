@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -26,6 +26,210 @@ const FiveStarMerchants = ({ onBack }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [mapKey, setMapKey] = useState(0);
 
+  const demoData = [
+    {
+      business_id: "1",
+      name: "The French Laundry",
+      stars: 5.0,
+      review_count: 4852,
+      address: "6640 Washington St",
+      city: "Yountville",
+      state: "CA",
+      postal_code: "94599",
+      latitude: 38.4024,
+      longitude: -122.3625,
+      categories: "French, Fine Dining, Restaurants",
+      hours: {
+        Monday: "0:0-0:0",
+        Tuesday: "17:30-21:00",
+        Wednesday: "17:30-21:00",
+        Thursday: "17:30-21:00",
+        Friday: "17:30-21:00",
+        Saturday: "17:30-21:00",
+        Sunday: "17:30-21:00",
+      },
+      attributes: {
+        RestaurantsPriceRange2: "4",
+        RestaurantsDelivery: "False",
+        RestaurantsTakeOut: "False",
+        RestaurantsReservations: "True",
+        GoodForKids: "False",
+        RestaurantsGoodForGroups: "True",
+        OutdoorSeating: "True",
+        RestaurantsAttire: "formal",
+        Ambience: "romantic, upscale",
+        WiFi: "no",
+        RestaurantsTableService: "True",
+        NoiseLevel: "quiet",
+        Alcohol: "full_bar",
+        HasTV: "False",
+        RestaurantsCounterService: "False",
+        Caters: "True",
+        WheelchairAccessible: "True",
+      },
+    },
+    {
+      business_id: "2",
+      name: "Eleven Madison Park",
+      stars: 5.0,
+      review_count: 3245,
+      address: "11 Madison Ave",
+      city: "New York",
+      state: "NY",
+      postal_code: "10010",
+      latitude: 40.7422,
+      longitude: -73.9874,
+      categories: "American (New), Fine Dining, Restaurants",
+      hours: {
+        Monday: "0:0-0:0",
+        Tuesday: "0:0-0:0",
+        Wednesday: "17:30-22:00",
+        Thursday: "17:30-22:00",
+        Friday: "17:30-22:00",
+        Saturday: "17:30-22:00",
+        Sunday: "0:0-0:0",
+      },
+      attributes: {
+        RestaurantsPriceRange2: "4",
+        RestaurantsDelivery: "False",
+        RestaurantsTakeOut: "False",
+        RestaurantsReservations: "True",
+        GoodForKids: "False",
+        RestaurantsGoodForGroups: "True",
+        OutdoorSeating: "False",
+        RestaurantsAttire: "formal",
+        Ambience: "romantic, upscale, trendy",
+        WiFi: "no",
+        RestaurantsTableService: "True",
+        NoiseLevel: "average",
+        Alcohol: "full_bar",
+        HasTV: "False",
+        Caters: "True",
+        WheelchairAccessible: "True",
+      },
+    },
+    {
+      business_id: "3",
+      name: "Alinea",
+      stars: 5.0,
+      review_count: 2876,
+      address: "1723 N Halsted St",
+      city: "Chicago",
+      state: "IL",
+      postal_code: "60614",
+      latitude: 41.9134,
+      longitude: -87.6486,
+      categories: "American (New), Molecular Gastronomy, Fine Dining",
+      hours: {
+        Monday: "0:0-0:0",
+        Tuesday: "0:0-0:0",
+        Wednesday: "17:30-21:30",
+        Thursday: "17:30-21:30",
+        Friday: "17:30-21:30",
+        Saturday: "17:30-21:30",
+        Sunday: "0:0-0:0",
+      },
+      attributes: {
+        RestaurantsPriceRange2: "4",
+        RestaurantsDelivery: "False",
+        RestaurantsTakeOut: "False",
+        RestaurantsReservations: "True",
+        GoodForKids: "False",
+        RestaurantsGoodForGroups: "True",
+        OutdoorSeating: "False",
+        RestaurantsAttire: "formal",
+        Ambience: "romantic, upscale",
+        WiFi: "no",
+        RestaurantsTableService: "True",
+        NoiseLevel: "quiet",
+        Alcohol: "full_bar",
+        HasTV: "False",
+        Caters: "False",
+        WheelchairAccessible: "True",
+      },
+    },
+    {
+      business_id: "4",
+      name: "Le Bernardin",
+      stars: 5.0,
+      review_count: 4123,
+      address: "155 W 51st St",
+      city: "New York",
+      state: "NY",
+      postal_code: "10019",
+      latitude: 40.7614,
+      longitude: -73.9776,
+      categories: "French, Seafood, Fine Dining",
+      hours: {
+        Monday: "12:00-14:15",
+        Tuesday: "12:00-14:15",
+        Wednesday: "12:00-14:15",
+        Thursday: "12:00-14:15",
+        Friday: "12:00-14:15",
+        Saturday: "0:0-0:0",
+        Sunday: "0:0-0:0",
+      },
+      attributes: {
+        RestaurantsPriceRange2: "4",
+        RestaurantsDelivery: "False",
+        RestaurantsTakeOut: "False",
+        RestaurantsReservations: "True",
+        GoodForKids: "False",
+        RestaurantsGoodForGroups: "True",
+        OutdoorSeating: "False",
+        RestaurantsAttire: "formal",
+        Ambience: "romantic, upscale, classy",
+        WiFi: "no",
+        RestaurantsTableService: "True",
+        NoiseLevel: "quiet",
+        Alcohol: "full_bar",
+        HasTV: "False",
+        Caters: "True",
+        WheelchairAccessible: "True",
+      },
+    },
+    {
+      business_id: "5",
+      name: "Per Se",
+      stars: 5.0,
+      review_count: 3567,
+      address: "10 Columbus Circle",
+      city: "New York",
+      state: "NY",
+      postal_code: "10019",
+      latitude: 40.7686,
+      longitude: -73.983,
+      categories: "American (New), Fine Dining, Restaurants",
+      hours: {
+        Monday: "0:0-0:0",
+        Tuesday: "17:30-21:30",
+        Wednesday: "17:30-21:30",
+        Thursday: "17:30-21:30",
+        Friday: "17:30-21:30",
+        Saturday: "17:30-21:30",
+        Sunday: "17:30-21:30",
+      },
+      attributes: {
+        RestaurantsPriceRange2: "4",
+        RestaurantsDelivery: "False",
+        RestaurantsTakeOut: "False",
+        RestaurantsReservations: "True",
+        GoodForKids: "False",
+        RestaurantsGoodForGroups: "True",
+        OutdoorSeating: "True",
+        RestaurantsAttire: "formal",
+        Ambience: "romantic, upscale",
+        WiFi: "no",
+        RestaurantsTableService: "True",
+        NoiseLevel: "quiet",
+        Alcohol: "full_bar",
+        HasTV: "False",
+        Caters: "True",
+        WheelchairAccessible: "True",
+      },
+    },
+  ];
+
   const handleGoBack = () => {
     if (onBack) onBack();
   };
@@ -34,7 +238,7 @@ const FiveStarMerchants = ({ onBack }) => {
     width: "100%",
     height: "400px",
     borderRadius: "0.5rem",
-    zIndex: 0,
+    zIndex: -10,
   };
 
   const [center, setCenter] = useState([0, 0]);
@@ -43,16 +247,24 @@ const FiveStarMerchants = ({ onBack }) => {
     const fetchMerchants = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(
-          "http://192.168.37.177:5001/api/business/top-rated-merchants"
-        );
-        setMerchants(response.data);
 
-        if (response.data.length > 0) {
-          setCenter([response.data[0].latitude, response.data[0].longitude]);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setMerchants(demoData);
+
+        if (demoData.length > 0) {
+          setCenter([demoData[0].latitude, demoData[0].longitude]);
         }
 
         setLoading(false);
+
+        // const response = await axios.get(
+        //   "http://192.168.37.177:5001/api/business/top-rated-merchants"
+        // );
+        // setMerchants(response.data);
+        // if (response.data.length > 0) {
+        //   setCenter([response.data[0].latitude, response.data[0].longitude]);
+        // }
+        // setLoading(false);
       } catch (err) {
         setError("Failed to fetch merchant data");
         setLoading(false);
@@ -177,7 +389,7 @@ const FiveStarMerchants = ({ onBack }) => {
                   </span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 ml-1 text-yellow-500"
+                    className="h-4 w-4 ml-1 text-yellow-500 z-0"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -222,7 +434,7 @@ const FiveStarMerchants = ({ onBack }) => {
           ))}
         </div>
 
-        <div className="lg:w-1/2">
+        <div className="lg:w-1/2 z-10">
           {merchants.length > 0 && (
             <div style={mapContainerStyle}>
               <MapContainer
