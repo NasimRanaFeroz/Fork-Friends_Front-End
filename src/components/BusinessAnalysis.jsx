@@ -15,29 +15,24 @@ const BusinessAnalysis = () => {
   const analysisItems = [
     {
       id: 1,
-      title: "Top 20 Most Common Merchants in the U.S.",
-      path: "common-merchants",
-    },
-    {
-      id: 2,
       title: "Top 10 Cities with Most Merchants in the U.S.",
       path: "merchant-cities",
     },
-    // {
-    //   id: 3,
-    //   title: "Top 5 States with Most Merchants in the U.S.",
-    //   path: "merchant-states",
-    // },
     {
-      id: 3,
+      id: 2,
       title: "Top 10 Cities with Highest Ratings",
       path: "highest-rated-cities",
     },
-    { id: 4, title: "Category Distribution Analysis", path: "category-count" },
+    { id: 3, title: "Category Distribution Analysis", path: "category-count" },
     {
-      id: 5,
+      id: 4,
       title: "Top 20 Merchants with Most Five-Star Reviews",
       path: "five-star-merchants",
+    },
+    {
+      id: 5,
+      title: "Top 20 Most Common Merchants in the U.S.",
+      path: "common-merchants",
     },
     {
       id: 6,

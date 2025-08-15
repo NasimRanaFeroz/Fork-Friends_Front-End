@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as d3 from "d3";
+import { IoArrowBack } from "react-icons/io5";
 
 const WordAssociationGraph = ({ onBack }) => {
   const [data, setData] = useState(null);
@@ -514,7 +515,8 @@ const WordAssociationGraph = ({ onBack }) => {
         className="absolute top-5 left-5 flex items-center gap-2 py-2 px-4 bg-white rounded-lg shadow-md hover:bg-gray-100 transition-all duration-300 z-10"
         aria-label="Back to Business Analysis Dashboard"
       >
-        <span className="text-gray-700 font-medium">← Back to Dashboard</span>
+        <IoArrowBack className="text-gray-700 text-lg" />
+        <span className="text-gray-700 font-medium">Back</span>
       </button>
 
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
